@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo 6 Meses · RX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#DCDFE3; --panel:#F6F7F8; --panel2:#EDEFF1;
+  --ink:#14171B; --muted:#5B626B; --faint:#8A9099;
+  --line:#C6CBD1; --line2:#D9DDE2;
+  --red:#CC3B2E; --blue:#2C6E8F; --green:#3E8E6E; --amber:#C08129;
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;font-size:15px;
+  background-image:linear-gradient(var(--line2) 1px,transparent 1px);background-size:100% 34px;background-attachment:fixed}
+::selection{background:var(--red);color:#fff}
+
+/* ---- shell ---- */
+.wrap{max-width:960px;margin:0 auto;padding:0 18px 90px}
+header.top{padding:26px 0 14px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:600;color:var(--red)}
+h1.title{font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,52px);line-height:.96;letter-spacing:-.01em;margin:6px 0 4px}
+.subid{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.subid b{color:var(--ink);font-weight:500}
+
+/* ---- tabs ---- */
+nav.tabs{position:sticky;top:0;z-index:20;display:flex;gap:0;background:var(--bg);
+  border-bottom:2px solid var(--ink);margin-bottom:24px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:var(--display);text-transform:uppercase;letter-spacing:.1em;font-size:12.5px;font-weight:600;
+  color:var(--muted);background:none;border:none;padding:13px 14px;cursor:pointer;white-space:nowrap;
+  border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .12s}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--red)}
+.panelpage{display:none;animation:fade .25s ease}
+.panelpage.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panelpage{animation:none}}
+
+/* ---- generic panel ---- */
+.card{background:var(--panel);border:1.5px solid var(--line);border-radius:3px;padding:20px 22px;margin-bottom:16px}
+.card h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em;margin-bottom:2px}
+.card h3{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--muted);margin:18px 0 8px}
+.card p{margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.lead{font-size:16px}
+.mono{font-family:var(--mono)}
+.hl{background:linear-gradient(transparent 62%,#F3D3CE 62%);padding:0 1px;font-weight:600}
+small.note{display:block;font-size:12.5px;color:var(--muted);font-family:var(--mono);margin-top:8px}
+
+/* ---- diagnosis banner ---- */
+.diag{background:var(--ink);color:#EDEFF1;border-radius:3px;padding:22px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+.diag .eyebrow{color:#F0A79E}
+.diag h2{font-family:var(--display);font-weight:800;font-size:22px;color:#fff;margin:6px 0 10px;letter-spacing:-.01em}
+.diag p{color:#C7CCD2;margin-bottom:8px;max-width:62ch}
+.diag b{color:#fff}
+
+/* ---- phase timeline ---- */
+.timeline{margin:6px 0 4px}
+.tl-track{display:flex;gap:4px;margin-bottom:14px}
+.tl-seg{flex:1;border-radius:2px;padding:12px 12px 14px;color:#fff;position:relative;min-width:0}
+.tl-seg .ph{font-family:var(--mono);font-size:11px;opacity:.85;letter-spacing:.05em}
+.tl-seg .nm{font-family:var(--display);font-weight:700;font-size:15px;line-height:1.1;margin-top:3px}
+.tl-seg .wk{font-family:var(--mono);font-size:11px;opacity:.85;margin-top:6px}
+.tl-1{background:var(--green)}.tl-2{background:var(--blue)}.tl-3{background:var(--red)}
+.tl-seg[data-now="1"]::after{content:"AHORA";position:absolute;top:-9px;right:8px;background:var(--ink);color:#fff;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:2px 6px;border-radius:2px}
+
+/* ---- 26-week ribbon (signature) ---- */
+.ribbon{display:grid;grid-template-columns:repeat(26,1fr);gap:2px;margin:12px 0 8px}
+.rw{height:30px;border-radius:2px;position:relative;opacity:.28}
+.rw.f1{background:var(--green)}.rw.f2{background:var(--blue)}.rw.f3{background:var(--red)}
+.rw.past{opacity:1}
+.rw.now{opacity:1;outline:2.5px solid var(--ink);outline-offset:1.5px;z-index:2}
+.rw.now::after{content:attr(data-w);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  color:#fff;font-family:var(--mono);font-size:10px;font-weight:700}
+.ribbon-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+@media(max-width:640px){.ribbon{grid-template-columns:repeat(13,1fr)}.rw{height:22px}}
+
+/* ---- metric strip ---- */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1.5px;background:var(--line);
+  border:1.5px solid var(--line);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.metric{background:var(--panel);padding:14px 15px}
+.metric .k{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.metric .v{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;margin-top:5px}
+.metric .u{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:3px}
+.metric .v.good{color:var(--green)}.metric .v.warn{color:var(--red)}.metric .v.blue{color:var(--blue)}
+
+/* ---- alerts ---- */
+.alerts{list-style:none;margin:4px 0 0}
+.alerts li{border-left:3px solid var(--line);background:var(--panel2);border-radius:0 2px 2px 0;
+  padding:9px 12px;margin-bottom:8px;font-size:13.5px}
+.alerts li b{font-family:var(--display);font-weight:700}
+.alerts li.bad{border-left-color:var(--red);background:#F6E2DF}
+.alerts li.warn{border-left-color:var(--amber);background:#F5EDDA}
+.alerts li.ok{border-left-color:var(--green);background:#DFEEE6}
+.alerts li.info{border-left-color:var(--blue);background:#E1EAF0}
+
+/* ---- readiness gauge ---- */
+.gauge{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.gauge .num{font-family:var(--display);font-weight:800;font-size:44px;line-height:1}
+.gauge .bar{flex:1;min-width:160px;height:10px;background:var(--panel2);border:1px solid var(--line);border-radius:2px;position:relative;overflow:hidden}
+.gauge .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:1px}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line2)}
+th{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--muted);font-weight:600}
+td.num,th.num{font-family:var(--mono);text-align:right}
+tbody tr:last-child td{border-bottom:none}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.05em;padding:2px 7px;border-radius:2px;text-transform:uppercase;font-weight:500}
+.tag.hard{background:#F6D9D5;color:#9A2A20}.tag.mod{background:#F3E6CB;color:#7A5410}.tag.rec{background:#D4EADE;color:#1F6347}
+.tag.z2{background:#D3E2EA;color:#1E5670}
+.tag.pr{background:var(--ink);color:#fff}
+.tablewrap{overflow-x:auto}
+
+/* ---- meal blocks ---- */
+.meal{border-left:3px solid var(--line);padding:2px 0 2px 14px;margin-bottom:14px}
+.meal.crit{border-left-color:var(--red)}
+.meal .t{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.meal .n{font-family:var(--display);font-weight:600;font-size:15px;margin:1px 0 3px}
+.meal .d{font-size:14px;color:var(--ink)}
+.meal .kc{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---- week grid ---- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:1.5px;background:var(--line);border:1.5px solid var(--line);border-radius:3px;overflow:hidden}
+.day{background:var(--panel);padding:11px 9px;min-height:118px;display:flex;flex-direction:column}
+.day .dn{font-family:var(--display);text-transform:uppercase;font-size:10.5px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.day .body{font-size:12.5px;margin-top:6px;line-height:1.35}
+.day .body b{display:block;font-family:var(--display);font-weight:600;font-size:13px;margin-bottom:2px}
+.day.rest{background:var(--panel2)}
+.day.today{outline:2px solid var(--red);outline-offset:-2px}
+@media(max-width:640px){.week{grid-template-columns:repeat(2,1fr)}.day{min-height:auto}}
+
+/* ---- adherence heatmap ---- */
+.hmwrap{display:flex;gap:8px;align-items:flex-start}
+.hmlabels{display:flex;flex-direction:column;gap:3px;padding-top:20px}
+.hmlabels span{font-family:var(--mono);font-size:9.5px;color:var(--faint);height:22px;display:flex;align-items:center}
+.hm{flex:1}
+.hmhead{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+.hmhead span{font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center;height:17px}
+.hmgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.hmc{height:22px;border-radius:2px;background:var(--panel2);border:1px solid var(--line2)}
+.hmc.l1{background:#CBE3D6;border-color:#B4D5C4}
+.hmc.l2{background:#7FB89D;border-color:#6FA98E}
+.hmc.l3{background:var(--green);border-color:var(--green)}
+.hmc.future{background:transparent;border-style:dashed}
+.hmc.today{outline:2px solid var(--ink);outline-offset:-1px}
+
+/* ---- forms / logging ---- */
+.logbar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:3px}
+.field label{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+input,select,textarea{font-family:var(--mono);font-size:14px;background:#fff;border:1.5px solid var(--line);
+  border-radius:2px;padding:8px 9px;color:var(--ink);width:100%}
+textarea{font-family:var(--body);resize:vertical;min-height:38px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--red);outline-offset:-1px;border-color:var(--red)}
+.field.w-sm input,.field.w-sm select{width:88px}
+.field.w-md input,.field.w-md select{width:140px}
+.field.grow{flex:1;min-width:150px}
+button.add{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-size:13px;
+  background:var(--ink);color:#fff;border:none;border-radius:2px;padding:9px 16px;cursor:pointer;height:38px}
+button.add:hover{background:var(--red)}
+button.add:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+button.mini{font-family:var(--mono);font-size:11px;background:none;border:1px solid var(--line);border-radius:2px;
+  padding:4px 8px;cursor:pointer;color:var(--muted)}
+button.mini:hover{border-color:var(--red);color:var(--red)}
+.del{font-family:var(--mono);font-size:15px;background:none;border:none;color:var(--faint);cursor:pointer;line-height:1}
+.del:hover{color:var(--red)}
+.empty{font-family:var(--mono);font-size:13px;color:var(--faint);padding:16px 0;text-align:center}
+
+/* ---- quick actions ---- */
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.quick button{font-family:var(--display);text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;font-weight:600;
+  background:var(--panel2);border:1.5px solid var(--line);border-radius:2px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.quick button:hover{border-color:var(--ink)}
+
+/* ---- chart ---- */
+.chartwrap{background:var(--panel2);border-radius:3px;padding:14px;margin:6px 0 14px}
+.chartwrap svg{width:100%;height:auto;display:block}
+.chart-empty{font-family:var(--mono);font-size:12px;color:var(--faint);padding:26px 0;text-align:center}
+.legend{display:flex;gap:16px;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:3px;margin-right:5px;vertical-align:middle}
+
+.datatools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.datatools .sp{flex:1}
+footer{font-family:var(--mono);font-size:11.5px;color:var(--faint);text-align:center;padding:30px 0 0;line-height:1.7}
+a{color:var(--blue)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+ul.clean{list-style:none;margin:8px 0}
+ul.clean li{padding:5px 0 5px 20px;position:relative;font-size:14px}
+ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;height:7px;background:var(--red);border-radius:1px}
+
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.03em;padding:5px 11px;border-radius:2px;font-weight:500;display:inline-block}
+.pill.ok{background:#D4EADE;color:#1F6347}
+.pill.warn{background:#F3E6CB;color:#7A5410}
+.pill.bad{background:#F6D9D5;color:#9A2A20}
+.pill.neutral{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Protocolo de rendimiento · 6 meses</div>
+  <h1 class="title">DE RX A ATLETA<br>INTEGRAL</h1>
+  <div class="subid">
+    <span>ATLETA <b>Carlos</b></span>
+    <span>26 a · 170 cm</span>
+    <span>OBJETIVO <b>cerrar la mayoría de WODs RX en time cap</b></span>
+    <span class="mono">v2 · jul 2026</span>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true"  data-t="hoy">Hoy</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="plan">Plan</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="dieta">Dieta</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="entrenos">Entrenos</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="registros">Registros</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="analisis">Análisis</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
+</nav>
+
+<!-- ============ HOY ============ -->
+<section class="panelpage on" id="hoy">
+
+  <div class="card">
+    <div class="eyebrow">Estado del protocolo</div>
+    <h2 id="hoy-week-title" style="margin:4px 0 0">—</h2>
+    <div class="ribbon" id="ribbon"></div>
+    <div class="ribbon-cap"><span>F1 · rellenar & base</span><span>F2 · capacidad</span><span>F3 · pico</span></div>
+    <div style="margin-top:12px"><span class="pill neutral" id="cloudStatusHoy">● comprobando…</span></div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <div class="eyebrow">Sesión de hoy · <span id="hoy-dayname">—</span></div>
+      <h2 id="hoy-session" style="margin:4px 0 6px">—</h2>
+      <p id="hoy-session-desc" style="font-size:14px;color:var(--muted)">—</p>
+      <p id="hoy-session-phase" style="font-size:13px;margin-top:8px"></p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Nutrición de hoy</div>
+      <h2 style="margin:4px 0 6px"><span id="hoy-diet-label">—</span> <span id="hoy-diet-tag"></span></h2>
+      <table style="font-size:13.5px">
+        <tbody>
+          <tr><td>Calorías</td><td class="num" id="hoy-kcal">—</td></tr>
+          <tr><td>Carbohidrato</td><td class="num" id="hoy-carb">—</td></tr>
+          <tr><td>Proteína</td><td class="num">180 g</td></tr>
+          <tr><td>Grasa</td><td class="num">90 g</td></tr>
+        </tbody>
+      </table>
+      <small class="note" id="hoy-diet-note">La comida crítica es el pre-entreno de las 16:30.</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Readiness · último check-in</div>
+    <div class="gauge" style="margin-top:8px">
+      <div class="num" id="rd-num">—</div>
+      <div style="min-width:120px"><span class="pill neutral" id="rd-pill">sin check-in</span>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:5px" id="rd-date"></div></div>
+      <div class="bar"><i id="rd-bar" style="width:0%;background:var(--faint)"></i></div>
+    </div>
+    <small class="note" id="rd-advice">Rellena el check-in diario en Registros para que el sistema te diga si hoy toca apretar o levantar el pie.</small>
+  </div>
+
+  <div class="card">
+    <h2>Avisos del sistema</h2>
+    <ul class="alerts" id="alerts"></ul>
+  </div>
+
+  <div class="metrics" id="hoy-kpis">
+    <div class="metric"><div class="k">Peso último</div><div class="v" id="kpi-peso">—</div><div class="u" id="kpi-peso-u">kg · banda 72–73</div></div>
+    <div class="metric"><div class="k">Motor W/bpm</div><div class="v blue" id="kpi-z2">—</div><div class="u" id="kpi-z2-u">último Z2</div></div>
+    <div class="metric"><div class="k">Press e1RM</div><div class="v" id="kpi-press">—</div><div class="u" id="kpi-press-u">kg estimado</div></div>
+    <div class="metric"><div class="k">RX cerrados</div><div class="v" id="kpi-rx">—</div><div class="u">últimos 30 días</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Registrar rápido</h2>
+    <div class="quick">
+      <button data-goto="registros:card-checkin">+ Check-in de hoy</button>
+      <button data-goto="registros:card-wod">+ WOD</button>
+      <button data-goto="registros:card-z2">+ Sesión Z2</button>
+      <button data-goto="registros:card-peso">+ Peso</button>
+      <button data-goto="registros:card-press">+ Press</button>
+      <button data-goto="registros:card-fuerza">+ Levantamiento</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ PLAN ============ -->
+<section class="panelpage" id="plan">
+
+  <div class="diag">
+    <div class="eyebrow">Diagnóstico</div>
+    <h2>No es un problema de motor. Es un problema de gasolina.</h2>
+    <p>Tu fuerza sobra para tu peso (sentadilla 2,09×BW · peso muerto 2,16× · clean 1,58×). Lo que te frena no es fuerza: es que llegas a los WODs con el tanque medio vacío.</p>
+    <p>Bajaste de <b>74,8 → 69,5 kg en 24 días</b> sin buscarlo. Comes mucho <b>volumen</b> pero pocas <b>calorías</b> (~2.600 kcal frente a ~3.100 de mantenimiento) y sobre todo pocos carbohidratos (~260 g cuando necesitas 380-420). El glucógeno vacío explica pieza por pieza lo que te pasa en el box: thrusters a 5+5+5, 300 m en vez de 400, aliento a amoníaco, mandíbula caída en la segunda mitad.</p>
+    <p><b>Paso 0 antes de cualquier progreso:</b> rellenar el tanque y estabilizar el peso hacia 72-73 kg. Sobre un atleta en déficit, ningún plan de motor funciona.</p>
+  </div>
+
+  <div class="timeline card">
+    <div class="eyebrow" style="color:var(--red)">La secuencia</div>
+    <h2 style="margin-bottom:14px">Periodización a 6 meses</h2>
+    <div class="tl-track">
+      <div class="tl-seg tl-1" id="tlseg-1"><div class="ph">Fase 1 · sem 1-4</div><div class="nm">Rellenar & base aeróbica</div><div class="wk">5 clases + 2 Z2</div></div>
+      <div class="tl-seg tl-2" id="tlseg-2"><div class="ph">Fase 2 · mes 2-4</div><div class="nm">Capacidad de trabajo</div><div class="wk">intervalos float · testear</div></div>
+      <div class="tl-seg tl-3" id="tlseg-3"><div class="ph">Fase 3 · mes 5-6</div><div class="nm">Específico & pico</div><div class="wk">competición · test final</div></div>
+    </div>
+    <p style="font-size:14px;color:var(--muted)">El orden importa: primero se rellena y se pone cimiento aeróbico (fase 1), luego se construye intensidad estructurada sobre esa base (fase 2), y al final se afina para competición y se testean los marcadores (fase 3). Saltarse la fase 1 es el error que ahora mismo te rompe.</p>
+  </div>
+
+  <div class="card">
+    <h2>Por qué al revés de lo que harías</h2>
+    <p>La tentación es meter <b>más</b> intervalos y más "sufrir" para aguantar. Con tu perfil eso te hunde: ya haces 6 clases casi todas glicolíticas, entras a diario en la zona donde revientas. Lo que falta no es más intensidad, es la <span class="hl">base aeróbica por debajo</span> que te deja recuperar entre esfuerzos y dentro del propio WOD.</p>
+    <h3>Los tres limitantes reales</h3>
+    <ul class="clean">
+      <li><b>Combustible</b> — glucógeno bajo por infra-alimentación. Se arregla comiendo (ver Dieta).</li>
+      <li><b>Techo aeróbico</b> — perfil potente, fibra rápida dominante; generas mucho lactato y colapsas en rondas largas. Se sube con Z2 en bici (adaptación periférica muscular) y luego intervalos float.</li>
+      <li><b>Pacing y agarre</b> — copiar el ritmo del que va sin parar te revienta. Fraccionar desde la ronda 1 protege las rondas finales y da mejor tiempo total.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>La palanca táctica que cambia tus WODs hoy</h2>
+    <p>Tu WOD de ejemplo — <span class="mono">24 cal + 20 thrusters DB 22,5 + 400 m · 5 rondas · cap 2'</span> — se hace fraccionando <b>a propósito desde la ronda 1</b>, no esperando a que se caiga solo:</p>
+    <ul class="clean">
+      <li>Sal de la máquina al <b>80%</b>, no a tope. La caloría no es donde ganas la ronda.</li>
+      <li>Parte los thrusters <b>12 + 8 desde la ronda 1</b> (no 5+5+5 por fatiga en la 3).</li>
+      <li>Corre entero pero <b>controlado</b>. Objetivo: llegar a la ronda 4-5 pudiendo mantener, no sobrevivir.</li>
+    </ul>
+    <small class="note">Regla general: si tu techo aeróbico no sostiene el "unbroken", fracciona pronto. Casi siempre baja el tiempo total.</small>
+  </div>
+
+  <div class="card">
+    <h2>Ratios de fuerza · dónde estás de verdad</h2>
+    <small class="note" style="margin-top:0;margin-bottom:10px">Sobre 69,5 kg actuales. La fuerza no es tu limitante — con una excepción técnica que sí vamos a trabajar.</small>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Ejercicio</th><th class="num">1RM</th><th class="num">×BW</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td>Peso muerto</td><td class="num">150 kg</td><td class="num">2,16×</td><td><span class="tag rec">sobrado</span> no tocar</td></tr>
+        <tr><td>Sentadilla</td><td class="num">145 kg</td><td class="num">2,09×</td><td><span class="tag rec">sobrado</span> no tocar</td></tr>
+        <tr><td>Clean</td><td class="num">110 kg</td><td class="num">1,58×</td><td><span class="tag rec">potente</span> mantener</td></tr>
+        <tr><td>Press banca</td><td class="num">100 kg</td><td class="num">1,44×</td><td><span class="tag rec">sólido</span></td></tr>
+        <tr><td>Snatch</td><td class="num">70 kg</td><td class="num">1,01×</td><td><span class="tag mod">técnica</span> solo el 64% de tu clean (esperable 78–82%). No es fuerza: es arrancada. Hueco técnico en F2 → objetivo ≈ 82 kg</td></tr>
+        <tr><td>Press estricto</td><td class="num">60 kg</td><td class="num">0,86×</td><td><span class="tag hard">a corregir</span> clusters de lunes · objetivo 0,93–1,0×</td></tr>
+      </tbody>
+    </table></div>
+    <small class="note">Skills (MU, HSPU, butterfly, dobles): desbloqueados. El proyecto no es ganar fuerza ni skills — es motor, pacing y técnica de snatch.</small>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="k">Objetivo peso F1</div><div class="v good">72–73</div><div class="u">kg · estabilizar</div></div>
+    <div class="metric"><div class="k">Press estricto</div><div class="v">60→65</div><div class="u">kg · test cada 2 sem</div></div>
+    <div class="metric"><div class="k">Meta RX</div><div class="v">mayoría</div><div class="u">WODs en time cap</div></div>
+    <div class="metric"><div class="k">Marcador motor</div><div class="v">W / bpm</div><div class="u">Z2 subiendo</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Hitos de control</h2>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:8px">Lo que el sistema vigila en cada fase. Si un hito no llega, se ajusta el plan antes de pasar de fase.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Fase</th><th>Hito</th><th>Cómo se mide</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag rec">F1 · sem 4</span></td><td>Peso estable 72–73 kg</td><td>Pesajes de viernes, tendencia plana 2 semanas</td></tr>
+        <tr><td><span class="tag rec">F1 · sem 4</span></td><td>W/bpm baseline confirmado</td><td>Test Z2 de 50' con vatio sostenido</td></tr>
+        <tr><td><span class="tag z2">F2 · mes 3</span></td><td>Press 63–65 kg</td><td>Test 3RM quincenal → e1RM</td></tr>
+        <tr><td><span class="tag z2">F2 · mes 4</span></td><td>W/bpm +5–8% vs baseline</td><td>Gráfica Z2 en Registros</td></tr>
+        <tr><td><span class="tag z2">F2 · mes 4</span></td><td>Snatch ≥ 75% del clean (≈82 kg)</td><td>Registro en Otros levantamientos</td></tr>
+        <tr><td><span class="tag hard">F3 · mes 6</span></td><td>Mayoría de WODs RX cerrados</td><td>% cap cerrado últimos 30 días (Análisis)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+</section>
+
+<!-- ============ DIETA ============ -->
+<section class="panelpage" id="dieta">
+
+  <div class="card">
+    <h2>El arreglo: mismo hambre, más energía</h2>
+    <p>No añadimos comidas ni te hacemos pasar hambre. Metemos <span class="hl">carbohidrato denso</span> donde ahora hay hueco y subimos de ~2.600 a ~3.100 kcal. La proteína ya la tienes perfecta — <b>no se toca</b>.</p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="k">Objetivo día duro</div><div class="v">~3.100</div><div class="u">kcal</div></div>
+    <div class="metric"><div class="k">Proteína</div><div class="v good">180</div><div class="u">g · ~2,5/kg · mantener</div></div>
+    <div class="metric"><div class="k">Carbohidrato</div><div class="v warn">400</div><div class="u">g · el déficit real</div></div>
+    <div class="metric"><div class="k">Grasa</div><div class="v">90</div><div class="u">g · hormonal + densidad</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Menú diario · día duro (entreno 19:00)</h2>
+
+    <div class="meal">
+      <div class="t">08:00 · Desayuno</div>
+      <div class="n">3 huevos + 2 rebanadas pan integral + fruta</div>
+      <div class="d">Sube de 1 a <b>2 rebanadas</b>. Añade una pieza de fruta.</div>
+      <div class="kc">~420 kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="t">11:30 · Media mañana</div>
+      <div class="n">200 g yogur griego + 30 g nueces + miel/canela</div>
+      <div class="d">Perfecto como está.</div>
+      <div class="kc">~430 kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="t">14:00 · Comida</div>
+      <div class="n">120–130 g carbo seco + 200 g proteína + ensalada + 1 cda AOVE</div>
+      <div class="d">Sube el arroz/quinoa/pasta de 90 a <b>120–130 g en seco</b>. Añade el chorro de aceite que ahora te falta.</div>
+      <div class="kc">~780 kcal</div>
+    </div>
+
+    <div class="meal crit">
+      <div class="t">16:30 · Pre-entreno <span style="color:var(--red)">— la comida crítica</span></div>
+      <div class="n">60–80 g arroz (o 2 reb pan) + fruta densa (plátano / dátiles)</div>
+      <div class="d">Ahora llegas a las 19:00 solo con el plátano de media tarde. Esta comida es la que evita que te apagues en la segunda mitad.</div>
+      <div class="kc">~510–580 kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="t">20:15 · Post-entreno</div>
+      <div class="n">Whey 30 g + plátano + creatina 5 g</div>
+      <div class="d">Mantener. Creatina Creapure, constante.</div>
+      <div class="kc">~280 kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="t">21:15 · Cena</div>
+      <div class="n">120–130 g carbo seco + 200 g proteína + verdura + 1 cda AOVE</div>
+      <div class="d">Mismo ajuste que la comida: sube carbo, añade aceite.</div>
+      <div class="kc">~780 kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="t">22:45 · Pre-sueño</div>
+      <div class="n">Magnesio bisglicinato + ashwagandha (+ caseína opcional)</div>
+      <div class="d">Para descanso y recuperación.</div>
+      <div class="kc">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Periodización del carbohidrato</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Tipo de día</th><th class="num">Carbo</th><th class="num">Kcal aprox.</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag hard">Duro</span></td><td class="num">400 g</td><td class="num">~3.100</td><td>Clase + extra, o WOD intenso</td></tr>
+        <tr><td><span class="tag mod">Moderado</span></td><td class="num">350 g</td><td class="num">~2.900</td><td>Clase suave / técnica / Z2</td></tr>
+        <tr><td><span class="tag rec">Recuperación</span></td><td class="num">300 g</td><td class="num">~2.750</td><td>Domingo / descanso</td></tr>
+      </tbody>
+    </table></div>
+    <small class="note">Adherencia &gt; precisión. ±30 kcal o ±10 g de un macro es ruido estadístico. Sostener 6 semanas importa más que clavar el día. La pestaña Hoy te dice qué tipo de día toca.</small>
+  </div>
+
+  <div class="card">
+    <h2>Regla de ajuste · las 3.100 kcal son el punto de partida, no un dogma</h2>
+    <ul class="clean">
+      <li><b>Viernes de la semana 2:</b> si no marcas ≥ 71 kg → añade <b>+50 g de carbo/día</b> (+200 kcal): sube el pre-entreno a 100 g de arroz o añade 1 rebanada más al desayuno.</li>
+      <li><b>Si superas 73,5 kg:</b> recorta 25–30 g de carbo solo en los días de recuperación. No toques los días duros.</li>
+      <li><b>Si vuelve el aliento a amoníaco</b> en un WOD → el pre-entreno de ese tipo de día se queda corto: súbelo, no lo compenses cenando más tarde.</li>
+      <li><b>Si subes calorías 2-3 semanas y el peso sigue cayendo</b> sin razón → revisión médica. Una pérdida sostenida e inexplicada no se entrena, se estudia.</li>
+    </ul>
+    <small class="note">Los primeros 2-3 kg de recuperación son glucógeno + agua, no grasa. Es exactamente lo que quieres: es el tanque llenándose.</small>
+  </div>
+
+  <div class="card">
+    <h2>Hidratación, sodio y cafeína</h2>
+    <ul class="clean">
+      <li><b>Sodio:</b> entrenando a las 19:00 en verano sudas mucho más de lo que crees. Sala tu comida sin miedo y en dobles o WODs largos añade electrolitos (o una pizca de sal + limón en el agua del entreno).</li>
+      <li><b>Agua:</b> llega al box ya hidratado; 500-750 ml repartidos en las 2 h previas. Beber a lo bestia durante el WOD no arregla llegar seco.</li>
+      <li><b>Cafeína:</b> con entreno a las 19:00, nada de pre-workouts cafeinados después de las 15-16 h — te roban el sueño, y el sueño es el pilar del plan. Si compites por la mañana, ahí sí: ~3 mg/kg 45' antes.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Fijos del stack</h2>
+    <ul class="clean">
+      <li><b>Omega-3 EPA/DHA</b> ≥ 1–2 g/día — pescado azul 3×/sem mínimo o suplemento.</li>
+      <li><b>Creatina monohidrato</b> 5 g/día (Creapure) — palanca principal para el press.</li>
+      <li><b>Vitamina D3</b> — si la exposición solar es limitada.</li>
+      <li><b>Sin legumbres</b> (lentejas, garbanzos, alubias) — excluidas.</li>
+    </ul>
+    <small class="note">Control de peso: 1×/semana, viernes, en ayunas y post-evacuación. Tendencia, nunca el dato de un día. Si subes calorías 2-3 semanas y el peso sigue cayendo sin razón → revisión médica.</small>
+  </div>
+
+</section>
+
+<!-- ============ ENTRENOS ============ -->
+<section class="panelpage" id="entrenos">
+
+  <div class="card">
+    <h2>Fase 1 · Semanas 1–4</h2>
+    <p>No buscamos progresar en WODs todavía. El objetivo es <b>estabilizar peso y poner cimiento aeróbico</b>. Cambias un día de machaque por Z2 en bici: construye motor y encima recupera. Sigues yendo a clase casi todos los días.</p>
+    <small class="note">Asunción: duermes ~7-8 h de calidad decente. Si duermes 6 h o mal → quita un día duro más (pasa el sábado a Z2 suave o descanso). No recuperas lo que no duermes. El check-in diario vigila esto por ti.</small>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Semana tipo <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--faint)">· hoy marcado en rojo</span></h3>
+    <div class="week" id="weekgrid">
+      <div class="day" data-wd="1"><div class="dn">Lun</div><div class="body"><b>Clase</b>Pacing: fracciona desde ronda 1. <br>+ press estricto clusters 10-12'</div></div>
+      <div class="day" data-wd="2"><div class="dn">Mar</div><div class="body"><b>Clase</b>Normal</div></div>
+      <div class="day" data-wd="3"><div class="dn">Mié</div><div class="body"><b>Z2 bici</b><span id="z2-min-wk">35-40'</span> · ~140 bpm · resist. 15. <br>NO clase dura</div></div>
+      <div class="day" data-wd="4"><div class="dn">Jue</div><div class="body"><b>Clase</b>Normal</div></div>
+      <div class="day" data-wd="5"><div class="dn">Vie</div><div class="body"><b>Clase</b>Normal · pesaje AM</div></div>
+      <div class="day" data-wd="6"><div class="dn">Sáb</div><div class="body"><b>Clase</b>Partner WOD</div></div>
+      <div class="day rest" data-wd="0"><div class="dn">Dom</div><div class="body"><b>Z2 suave</b>30' o descanso total</div></div>
+    </div>
+    <small class="note">5 clases + 2 Z2 en vez de 6 clases a saco. Menos smashing mientras rellenas, base que empieza a subir.</small>
+  </div>
+
+  <div class="card">
+    <h2>Progresión semana a semana</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Sem</th><th>Z2 miércoles</th><th>Foco</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>35' constante ~140 bpm</td><td>Baseline W/bpm. Registrar.</td></tr>
+        <tr><td class="mono">2</td><td>40' mismo bpm</td><td>Aguantar el vatio en los últimos 10'.</td></tr>
+        <tr><td class="mono">3</td><td>45' · subir W manteniendo bpm</td><td>Si W/bpm sube → motor adaptando.</td></tr>
+        <tr><td class="mono">4</td><td>50' test completo</td><td>Confirmar si el +W se mantiene al final.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Playbook de pacing · tus fallos reales, con esquema</h2>
+    <small class="note" style="margin-top:0;margin-bottom:10px">La regla madre: si tu techo aeróbico no sostiene el "unbroken", fracciona ANTES de necesitarlo. Descanso corto y planificado &gt; parón largo por reventón.</small>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Modalidad</th><th>Esquema</th><th>Clave</th></tr></thead>
+      <tbody>
+        <tr><td><b>Wall balls</b> (tu muro: 100 de 9 kg)</td><td class="mono">25-20-20-20-15</td><td>Máx. 3 respiraciones de pie entre series, balón en el suelo. Nunca "hasta el fallo": rompe 3-5 reps antes de romperte tú.</td></tr>
+        <tr><td><b>Thrusters DB</b></td><td class="mono">12+8 desde la ronda 1</td><td>No 5+5+5 por fatiga en la ronda 3. La partición se decide antes del 3-2-1, no dentro.</td></tr>
+        <tr><td><b>Máquina (cal)</b></td><td class="mono">80% desde el arranque</td><td>La caloría no es donde ganas la ronda: es donde te vacías para el resto. Baja el ritmo 2-3 golpes/min respecto a tu instinto.</td></tr>
+        <tr><td><b>Carrera intra-WOD</b></td><td class="mono">400 m enteros, controlados</td><td>Los primeros 100 m marcan todo: sal andando-trotando 3-4 zancadas y asienta la respiración antes de subir.</td></tr>
+        <tr><td><b>Agarre</b> (barra, remo, KB)</td><td class="mono">romper al primer aviso</td><td>Suelta cuando el antebrazo avisa, no cuando falla. 5" de sacudida cuestan menos que un agarre muerto 3 rondas.</td></tr>
+        <tr><td><b>Respiración</b></td><td class="mono">exhala en el esfuerzo</td><td>Wall ball: sopla al lanzar. Thruster: sopla arriba. Si aparece la respiración turbulenta "tipo llanto", has cruzado el umbral: 5 respiraciones nasales caminando y reengancha un punto más lento.</td></tr>
+      </tbody>
+    </table></div>
+    <small class="note">Objetivo mental por WOD: llegar a la ronda 4-5 pudiendo mantener, no sobrevivir. El que fracciona a propósito casi siempre firma mejor tiempo total que el que aguanta y revienta.</small>
+  </div>
+
+  <div class="card">
+    <h2>Press estricto — el punto a corregir</h2>
+    <p>60 kg = 0,86× BW. Objetivo 0,93–1,0× (≈65 → 70 kg). Requiere clusters de fuerza, no trabajo tipo condición. Correlaciona con desarrollo de dorsal/trapecio medio.</p>
+    <ul class="clean">
+      <li>Lunes: <b>press estricto en clusters</b> (p. ej. 5×2 al 85-90%, 15-20" entre reps) + accesorio de hombro.</li>
+      <li>Test 3RM <b>cada 2 semanas</b> → registrar en la pestaña Registros. El sistema avisa cuando toca.</li>
+      <li>Objetivo corto: <b>63–65 kg</b>. Largo: 70–75 kg.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Fase 2 · mes 2-4 — sesiones concretas</h2>
+    <p style="font-size:14px">Solo se entra en F2 con los dos hitos de F1 cumplidos: <b>peso estable 72-73</b> y <b>baseline W/bpm confirmado</b>. Si falta uno, F1 se alarga 1-2 semanas — es la decisión correcta, no un fracaso.</p>
+    <h3>Intervalos float · 1×/semana (sustituye al Z2 del domingo, el miércoles se mantiene)</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Sem</th><th>Sesión (bici o remo)</th><th>Clave</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">5-8</td><td>4 × (3' fuerte + 2' suave) <b>sin bajarte</b></td><td>El "suave" es activo, no parado: ahí se entrena reciclar lactato en movimiento — tu déficit exacto.</td></tr>
+        <tr><td class="mono">9-12</td><td>5-6 × (3' fuerte + 2' suave)</td><td>Fuerte = ritmo que podrías sostener 20', no sprint. Si la última ronda cae &gt;5% de vatios, era demasiado.</td></tr>
+        <tr><td class="mono">13-17</td><td>Mixto: 4 × (2' máquina + 12 wall balls + 200 m) ritmo continuo</td><td>Transferencia directa al formato que te rompe: esfuerzo repetido con transiciones.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Técnica de snatch · 2×/semana antes de clase (10-12')</h3>
+    <p style="font-size:14px">EMOM 10' × 1-2 reps al <b>50-65%</b> (35-45 kg), grabándote 1 de cada 3 series. No se sube carga hasta que la barra vuele igual en la rep 1 que en la 10. Con tu clean de 110, el snatch debería vivir en ~82-88 kg: el margen está en la técnica, no en el tirón.</p>
+    <h3>Calendario de benchmarks (registrar con ese nombre exacto)</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Cuándo</th><th>Tests</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Sem 5-6</td><td><b>Karen</b> (150 WB 9 kg) · <b>Fran</b> · <b>Helen</b></td><td>Baseline. Uno por semana, nunca el mismo día que el test de press.</td></tr>
+        <tr><td class="mono">Sem 16-17</td><td>Retest de los tres</td><td>Karen es tu debilidad convertida en número: si el motor funciona, aquí se ve.</td></tr>
+        <tr><td class="mono">Sem 25-26</td><td>Test final + % RX cerrados 30 días</td><td>El veredicto del objetivo: mayoría de WODs RX en time cap.</td></tr>
+      </tbody>
+    </table></div>
+    <small class="note">La comparativa primera vs última se genera sola en Análisis si usas el mismo nombre.</small>
+  </div>
+
+  <div class="card">
+    <h2>Fase 3 · mes 5-6 (adelanto)</h2>
+    <p style="font-size:14px">Trabajo específico de competición sobre la base ya construida: WODs test a intensidad real 1×/sem, tolerancia al lactato afinada (intervalos más cortos y duros, recuperaciones incompletas), volumen Z2 de mantenimiento, y las 2 últimas semanas descarga progresiva hacia el <b>test final</b>. Se detalla al cerrar F2 con los datos reales de tus registros.</p>
+  </div>
+
+</section>
+
+<!-- ============ REGISTROS ============ -->
+<section class="panelpage" id="registros">
+
+  <div class="card">
+    <h2>Registros</h2>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:8px">Con Supabase configurado, tus registros viven en la nube y se sincronizan entre el móvil y el portátil. Sin configurar, funciona solo en este navegador.</p>
+    <div style="margin-bottom:12px"><span class="pill neutral" id="cloudStatus">● comprobando…</span></div>
+    <div class="datatools">
+      <button class="mini" id="exportBtn">↧ Exportar JSON</button>
+      <label class="mini" style="cursor:pointer">↥ Importar JSON<input type="file" id="importFile" accept="application/json" style="display:none"></label>
+      <span class="sp"></span>
+      <span class="mono" style="font-size:11px;color:var(--faint)" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <!-- CHECK-IN -->
+  <div class="card" id="card-checkin">
+    <h2>Check-in diario</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">2 minutos por la mañana. Alimenta el readiness y las alertas de la pestaña Hoy.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="ck-date"></div>
+      <div class="field w-sm"><label>Sueño (h)</label><input type="number" step="0.5" id="ck-sleep" placeholder="7.5"></div>
+      <div class="field w-sm"><label>Calidad sueño</label><select id="ck-sq"><option value="5">5 · top</option><option value="4" selected>4</option><option value="3">3</option><option value="2">2</option><option value="1">1 · mal</option></select></div>
+      <div class="field w-sm"><label>Energía</label><select id="ck-en"><option value="5">5 · top</option><option value="4" selected>4</option><option value="3">3</option><option value="2">2</option><option value="1">1 · vacío</option></select></div>
+      <div class="field w-sm"><label>Agujetas</label><select id="ck-so"><option value="1">1 · nada</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5 · roto</option></select></div>
+    </div>
+    <div class="logbar">
+      <div class="field w-md"><label>Dieta de ayer</label><select id="ck-diet"><option value="si">Cumplida</option><option value="parcial">Parcial</option><option value="no">No cumplida</option></select></div>
+      <div class="field grow"><label>Nota (dolores, sensaciones)</label><input type="text" id="ck-note" placeholder="hombro derecho cargado del lunes"></div>
+      <button class="add" data-add="checkin">Añadir</button>
+    </div>
+    <div class="chartwrap" id="ck-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th class="num">Sueño</th><th class="num">Energía</th><th class="num">Agujetas</th><th class="num">Score</th><th>Dieta</th><th></th></tr></thead><tbody id="ck-body"></tbody></table></div>
+  </div>
+
+  <!-- PESO -->
+  <div class="card" id="card-peso">
+    <h2>Peso semanal</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Viernes · ayunas · post-evacuación. Objetivo Fase 1: estabilizar hacia 72–73 kg.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="peso-date"></div>
+      <div class="field w-sm"><label>Peso (kg)</label><input type="number" step="0.1" id="peso-val" placeholder="72.0"></div>
+      <button class="add" data-add="peso">Añadir</button>
+    </div>
+    <div class="chartwrap" id="peso-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th class="num">Peso</th><th class="num">Δ</th><th></th></tr></thead><tbody id="peso-body"></tbody></table></div>
+  </div>
+
+  <!-- Z2 -->
+  <div class="card" id="card-z2">
+    <h2>Z2 · eficiencia aeróbica</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Life Fitness · resistencia 15. El ratio W/bpm es el marcador: si sube con el tiempo, el motor está adaptando.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="z2-date"></div>
+      <div class="field w-sm"><label>Min</label><input type="number" id="z2-min" placeholder="40"></div>
+      <div class="field w-sm"><label>Vatios</label><input type="number" id="z2-w" placeholder="137"></div>
+      <div class="field w-sm"><label>bpm</label><input type="number" id="z2-bpm" placeholder="140"></div>
+      <button class="add" data-add="z2">Añadir</button>
+    </div>
+    <div class="chartwrap" id="z2-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th class="num">Min</th><th class="num">W</th><th class="num">bpm</th><th class="num">W/bpm</th><th></th></tr></thead><tbody id="z2-body"></tbody></table></div>
+  </div>
+
+  <!-- PRESS -->
+  <div class="card" id="card-press">
+    <h2>Press estricto</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Test cada 2 semanas. Corto 63–65 kg · largo 70–75 kg. El e1RM (Epley) permite comparar tests con distintas reps.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="press-date"></div>
+      <div class="field w-sm"><label>kg</label><input type="number" step="0.5" id="press-val" placeholder="62"></div>
+      <div class="field w-sm"><label>Reps (RM)</label><input type="number" id="press-reps" placeholder="3"></div>
+      <button class="add" data-add="press">Añadir</button>
+    </div>
+    <div class="chartwrap" id="press-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th class="num">Carga</th><th class="num">RM</th><th class="num">e1RM</th><th class="num">×BW</th><th></th></tr></thead><tbody id="press-body"></tbody></table></div>
+  </div>
+
+  <!-- FUERZA (otros levantamientos) -->
+  <div class="card" id="card-fuerza">
+    <h2>Otros levantamientos</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Sentadilla, peso muerto, clean… Registra cualquier serie top y el sistema calcula e1RM y detecta PRs (tabla en Análisis).</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="fz-date"></div>
+      <div class="field w-md"><label>Ejercicio</label><select id="fz-lift">
+        <option>Sentadilla</option><option>Sentadilla frontal</option><option>Peso muerto</option>
+        <option>Clean</option><option>Clean &amp; jerk</option><option>Snatch</option>
+        <option>Push press</option><option>Banca</option><option>Otro</option>
+      </select></div>
+      <div class="field w-sm"><label>kg</label><input type="number" step="0.5" id="fz-val" placeholder="120"></div>
+      <div class="field w-sm"><label>Reps</label><input type="number" id="fz-reps" placeholder="3"></div>
+      <button class="add" data-add="fuerza">Añadir</button>
+    </div>
+    <div class="logbar" style="margin-bottom:6px">
+      <div class="field w-md"><label>Gráfica de</label><select id="fz-chart-lift"></select></div>
+    </div>
+    <div class="chartwrap" id="fz-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Ejercicio</th><th class="num">Serie</th><th class="num">e1RM</th><th class="num">×BW</th><th></th></tr></thead><tbody id="fz-body"></tbody></table></div>
+  </div>
+
+  <!-- WOD -->
+  <div class="card" id="card-wod">
+    <h2>WODs</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Registra formato, resultado y qué pasó. La nota vale tanto como el número. Si repites un WOD con el mismo nombre, aparece en la comparativa de benchmarks (Análisis).</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="wod-date"></div>
+      <div class="field grow"><label>WOD / formato</label><input type="text" id="wod-name" placeholder="24 cal + 20 thrusters + 400m ×5"></div>
+      <div class="field w-sm"><label>RX?</label><select id="wod-rx"><option value="RX">RX</option><option value="Scaled">Scaled</option></select></div>
+    </div>
+    <div class="logbar">
+      <div class="field grow"><label>Resultado</label><input type="text" id="wod-res" placeholder="4 rondas + 12 · o tiempo · o &quot;cap+3&quot;"></div>
+      <div class="field w-sm"><label>Time cap</label><select id="wod-cap"><option value="Sí">Cerrado</option><option value="No">No cerrado</option></select></div>
+    </div>
+    <div class="logbar">
+      <div class="field grow"><label>Nota (qué pasó / pacing / dónde colapsó)</label><textarea id="wod-note" placeholder="Salí a tope de las cal y me ahogué en thrusters. Probar 12+8 desde ronda 1."></textarea></div>
+      <button class="add" data-add="wod">Añadir</button>
+    </div>
+    <div id="wod-list"></div>
+  </div>
+
+</section>
+
+<!-- ============ ANÁLISIS ============ -->
+<section class="panelpage" id="analisis">
+
+  <div class="metrics" id="an-kpis">
+    <div class="metric"><div class="k">Sesiones / sem</div><div class="v" id="an-ses">—</div><div class="u">media últimas 4 sem</div></div>
+    <div class="metric"><div class="k">Adherencia dieta</div><div class="v" id="an-diet">—</div><div class="u">últimos 14 check-ins</div></div>
+    <div class="metric"><div class="k">Sueño medio</div><div class="v" id="an-sleep">—</div><div class="u">h · últimos 7 check-ins</div></div>
+    <div class="metric"><div class="k">Δ Peso 4 sem</div><div class="v" id="an-dpeso">—</div><div class="u">kg</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Adherencia · últimas 8 semanas</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Cada celda es un día. Claro = solo check-in · medio = sesión registrada · oscuro = sesión + check-in. La constancia es el plan.</small>
+    <div class="hmwrap">
+      <div class="hmlabels" id="hm-weeks"></div>
+      <div class="hm">
+        <div class="hmhead"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+        <div class="hmgrid" id="hm-grid" style="grid-template-rows:repeat(8,22px)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>PRs · mejores marcas por ejercicio</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">e1RM = carga × (1 + reps/30). Sirve para comparar un 3RM con un 5RM.</small>
+    <div class="tablewrap"><table><thead><tr><th>Ejercicio</th><th class="num">Mejor serie</th><th class="num">e1RM</th><th class="num">×BW</th><th class="num">Fecha</th></tr></thead><tbody id="pr-body"></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Benchmarks repetidos</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">WODs registrados 2+ veces con el mismo nombre. Primera vs última: aquí se ve si el motor está funcionando.</small>
+    <div class="tablewrap"><table><thead><tr><th>WOD</th><th class="num">Veces</th><th>Primera</th><th>Última</th><th>Cap</th></tr></thead><tbody id="bm-body"></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Motor y combustible · 4 semanas</h2>
+    <div class="tablewrap"><table><thead><tr><th>Marcador</th><th class="num">Hace 4 sem</th><th class="num">Ahora</th><th class="num">Δ</th><th>Lectura</th></tr></thead><tbody id="trend-body"></tbody></table></div>
+  </div>
+
+</section>
+
+<!-- ============ AJUSTES ============ -->
+<section class="panelpage" id="ajustes">
+
+  <div class="card">
+    <h2>Parámetros del plan</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">La fecha de inicio marca la semana y la fase actuales en toda la app. Con Supabase, estos parámetros también se sincronizan entre dispositivos.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Inicio del plan (lunes)</label><input type="date" id="cfg-start"></div>
+      <div class="field w-sm"><label>Peso ref ×BW</label><input type="number" step="0.5" id="cfg-bw" placeholder="72"></div>
+      <div class="field w-sm"><label>Banda peso mín</label><input type="number" step="0.5" id="cfg-pmin" placeholder="72"></div>
+      <div class="field w-sm"><label>Banda peso máx</label><input type="number" step="0.5" id="cfg-pmax" placeholder="73"></div>
+      <button class="add" id="cfg-save">Guardar</button>
+    </div>
+    <div><span class="mono" style="font-size:11px;color:var(--faint)" id="cfg-status"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>Datos</h2>
+    <p style="font-size:14px;color:var(--muted)">Exporta un respaldo JSON de todos los registros (también en Registros). La importación añade los registros del archivo a los existentes.</p>
+    <div class="datatools">
+      <button class="mini" id="exportBtn2">↧ Exportar JSON</button>
+      <span class="sp"></span>
+      <span class="mono" style="font-size:11px;color:var(--faint)" id="dataCounts"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Conexión</h2>
+    <div style="margin-bottom:10px"><span class="pill neutral" id="cloudStatus2">● comprobando…</span></div>
+    <p style="font-size:13.5px;color:var(--muted)">Las claves de Supabase se pegan en el propio <span class="mono">index.html</span> (bloque CONFIG al inicio del script). La tabla <span class="mono">entries</span> es genérica: los nuevos tipos de registro (check-in, levantamientos, parámetros) no requieren cambiar el SQL.</p>
+  </div>
+
+</section>
+
+<footer>
+  Protocolo personal · Carlos · Aranah CrossFit<br>
+  Con Supabase: datos en la nube y sincronizados · exporta JSON para respaldo extra
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   CONFIG · pega aquí tus 2 claves de Supabase
+   (Project Settings → API). Si las dejas vacías, la app
+   funciona en modo LOCAL, solo en este navegador.
+   ============================================================ */
+const SUPABASE_URL = "";        // ej: https://xxxx.supabase.co
+const SUPABASE_ANON_KEY = "";   // anon public key (empieza por eyJ...)
+
+/* ---------------- estado ---------------- */
+const TYPES=['peso','z2','press','fuerza','wod','checkin'];
+const KEY='rx_protocol_v1';
+const CFGKEY='rx_protocol_cfg_v1';
+let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73};
+let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[]};
+let sb=null, MODE='local';
+
+const uid=()=>Math.random().toString(36).slice(2,9);
+const fmtd=s=>{if(!s)return'';const[y,m,d]=s.split('-');return d+'/'+m+'/'+y.slice(2)};
+const byDate=(a,b)=>a.date<b.date?-1:1;
+const val=id=>document.getElementById(id).value.trim();
+const clr=id=>document.getElementById(id).value='';
+const $=id=>document.getElementById(id);
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const e1rm=(w,r)=>r>1?w*(1+r/30):w;
+function warn(id){const e=$(id);e.focus();e.style.borderColor='var(--red)';setTimeout(()=>e.style.borderColor='',900)}
+function esc(s){return(s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
+let fto;function flash(){const s=$('saveStatus');if(!s)return;s.textContent='guardado ✓';clearTimeout(fto);fto=setTimeout(()=>s.textContent='',1500)}
+
+/* ---------------- plan: fases, semana, día tipo ---------------- */
+const PHASES=[
+  null,
+  {n:1,name:'Rellenar & base aeróbica',cls:'f1',range:[1,4]},
+  {n:2,name:'Capacidad de trabajo',cls:'f2',range:[5,17]},
+  {n:3,name:'Específico & pico',cls:'f3',range:[18,26]}
+];
+const DIETDAYS={
+  duro:{label:'Duro',tag:'hard',kcal:'~3.100 kcal',carb:'400 g'},
+  mod:{label:'Moderado',tag:'mod',kcal:'~2.900 kcal',carb:'350 g'},
+  rec:{label:'Recuperación',tag:'rec',kcal:'~2.750 kcal',carb:'300 g'}
+};
+const DAYPLAN={
+  1:{n:'Clase + press estricto',d:'Clusters 5×2 al 85–90% (15–20" entre reps) además de la clase. Pacing: fracciona desde la ronda 1.',diet:'duro'},
+  2:{n:'Clase',d:'Normal. Máquina al 80%, fracciona pronto, corre controlado.',diet:'duro'},
+  3:{n:'Z2 en bici',d:'~140 bpm · resistencia 15 · NO clase dura. Al acabar, registra minutos, vatios y bpm.',diet:'mod'},
+  4:{n:'Clase',d:'Normal.',diet:'duro'},
+  5:{n:'Clase + pesaje AM',d:'Pesaje en ayunas y post-evacuación antes de desayunar. Después, clase normal.',diet:'duro'},
+  6:{n:'Clase · partner WOD',d:'Comparte trabajo, no ritmo: fracciona según TU plan, no el de tu pareja.',diet:'mod'},
+  0:{n:'Z2 suave o descanso',d:"30' muy suaves o descanso total. El día que construye la semana.",diet:'rec'}
+};
+const Z2MIN={1:"35'",2:"40'",3:"45'",4:"50' (test)"};
+const DAYNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function planWeek(){
+  const s=new Date(CFG.start+'T00:00:00');const now=new Date();now.setHours(0,0,0,0);
+  return Math.floor((now-s)/86400000/7)+1;
+}
+function phaseOf(w){if(w<1)return 0;if(w<=4)return 1;if(w<=17)return 2;if(w<=26)return 3;return 4}
+function readiness(c){
+  const s=Math.min((c.sleepH||0)/8,1)*40+((c.sleepQ||3)/5)*20+((c.energy||3)/5)*25+((5-(c.soreness||3))/5)*15;
+  return Math.round(s);
+}
+function isoWeekOf(dateStr){ // días desde inicio de plan → índice de semana (puede ser cualquier fecha)
+  const s=new Date(CFG.start+'T00:00:00');const d=new Date(dateStr+'T00:00:00');
+  return Math.floor((d-s)/86400000/7)+1;
+}
+function mondayOf(d){const x=new Date(d);const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);x.setHours(0,0,0,0);return x}
+function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
+
+/* ---------------- init ---------------- */
+(async function init(){
+  const today=todayISO();
+  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
+  bindTabs();bindAdders();bindTools();bindConfig();
+  loadLocalConfig();
+  await initStorage();
+  render();
+})();
+
+async function initStorage(){
+  if(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase){
+    try{
+      sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+      const {error}=await sb.from('entries').select('id').limit(1);
+      if(error) throw error;
+      MODE='cloud'; await reloadCloud(); status('cloud'); return;
+    }catch(e){ console.warn('Supabase no disponible → modo local:',e.message||e); status('error'); }
+  }else{ status('local'); }
+  MODE='local'; loadLocal();
+}
+function status(m){
+  const txt=m==='cloud'?'☁ Nube conectada · sincroniza entre dispositivos'
+    :m==='error'?'⚠ No conecta con Supabase · usando este navegador'
+    :'● Local · solo este navegador (Supabase sin configurar)';
+  const cls=m==='cloud'?'pill ok':m==='error'?'pill warn':'pill neutral';
+  ['cloudStatus','cloudStatus2','cloudStatusHoy'].forEach(id=>{const el=$(id);if(el){el.textContent=txt;el.className=cls}});
+}
+
+/* ---------------- local fallback ---------------- */
+function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[]}}
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY))||{};DB=seed();TYPES.forEach(t=>{if(Array.isArray(d[t]))DB[t]=d[t]})}catch(e){DB=seed()}}
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify(DB))}
+function loadLocalConfig(){try{const c=JSON.parse(localStorage.getItem(CFGKEY));if(c&&c.start)CFG={...CFG,...c}}catch(e){}}
+function saveLocalConfig(){localStorage.setItem(CFGKEY,JSON.stringify(CFG))}
+
+/* ---------------- cloud ---------------- */
+async function reloadCloud(){
+  const {data,error}=await sb.from('entries').select('*').order('entry_date',{ascending:true});
+  if(error){console.warn(error);return}
+  DB=seed();let cfgRow=null;
+  (data||[]).forEach(r=>{
+    if(r.type==='config'){cfgRow=r;return}
+    const item={...(r.payload||{}), id:r.id, date:r.entry_date||(r.payload&&r.payload.date)||''};
+    if(DB[r.type]) DB[r.type].push(item);
+  });
+  TYPES.forEach(t=>DB[t].sort(byDate));
+  if(cfgRow&&cfgRow.payload&&cfgRow.payload.start){CFG={...CFG,...cfgRow.payload};saveLocalConfig()}
+}
+async function saveCloudConfig(){
+  await sb.from('entries').delete().eq('type','config');
+  const {error}=await sb.from('entries').insert({type:'config',entry_date:todayISO(),payload:CFG});
+  if(error)throw error;
+}
+
+/* ---------------- add / delete ---------------- */
+async function addEntry(type,payload){
+  if(MODE==='cloud'){
+    const {error}=await sb.from('entries').insert({type,entry_date:payload.date||null,payload});
+    if(error){alert('Error guardando en la nube: '+error.message);return}
+    await reloadCloud();
+  }else{
+    payload.id=uid();DB[type].push(payload);DB[type].sort(byDate);saveLocal();
+  }
+  render();flash();
+}
+async function del(type,id){
+  if(MODE==='cloud'){
+    const {error}=await sb.from('entries').delete().eq('id',id);
+    if(error){alert('Error borrando: '+error.message);return}
+    await reloadCloud();
+  }else{
+    DB[type]=DB[type].filter(x=>x.id!==id);saveLocal();
+  }
+  render();flash();
+}
+
+/* ---------------- bindings ---------------- */
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===name?'true':'false'));
+  document.querySelectorAll('.panelpage').forEach(p=>p.classList.toggle('on',p.id===name));
+}
+function bindTabs(){
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+    showTab(t.dataset.t);window.scrollTo({top:0,behavior:'smooth'});
+  }));
+  document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{
+    const [tab,anchor]=b.dataset.goto.split(':');
+    showTab(tab);
+    setTimeout(()=>{const el=$(anchor);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);
+  }));
+}
+function bindAdders(){
+  document.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>{
+    const t=b.dataset.add;
+    if(t==='peso'){const v=parseFloat(val('peso-val'));if(!v)return warn('peso-val');
+      addEntry('peso',{date:val('peso-date'),v});clr('peso-val');}
+    else if(t==='z2'){const w=parseFloat(val('z2-w')),bpm=parseFloat(val('z2-bpm'));if(!w||!bpm)return warn('z2-w');
+      addEntry('z2',{date:val('z2-date'),min:parseFloat(val('z2-min'))||0,w,bpm});clr('z2-min');clr('z2-w');clr('z2-bpm');}
+    else if(t==='press'){const v=parseFloat(val('press-val'));if(!v)return warn('press-val');
+      addEntry('press',{date:val('press-date'),v,reps:parseInt(val('press-reps'))||1});clr('press-val');}
+    else if(t==='fuerza'){const v=parseFloat(val('fz-val'));if(!v)return warn('fz-val');
+      addEntry('fuerza',{date:val('fz-date'),lift:val('fz-lift'),v,reps:parseInt(val('fz-reps'))||1});clr('fz-val');}
+    else if(t==='wod'){const n=val('wod-name');if(!n)return warn('wod-name');
+      addEntry('wod',{date:val('wod-date'),name:n,rx:val('wod-rx'),res:val('wod-res'),cap:val('wod-cap'),note:val('wod-note')});
+      clr('wod-name');clr('wod-res');clr('wod-note');}
+    else if(t==='checkin'){const sl=parseFloat(val('ck-sleep'));if(!sl)return warn('ck-sleep');
+      addEntry('checkin',{date:val('ck-date'),sleepH:sl,sleepQ:parseInt(val('ck-sq')),energy:parseInt(val('ck-en')),
+        soreness:parseInt(val('ck-so')),diet:val('ck-diet'),note:val('ck-note')});clr('ck-sleep');clr('ck-note');}
+  }));
+}
+function bindTools(){
+  const exportar=()=>{
+    const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='protocolo-rx-'+todayISO()+'.json';a.click();
+  };
+  $('exportBtn').addEventListener('click',exportar);
+  $('exportBtn2').addEventListener('click',exportar);
+  $('importFile').addEventListener('change',e=>{
+    const f=e.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=async()=>{try{const d=JSON.parse(r.result);
+      if(MODE==='cloud'){
+        const rows=[];TYPES.forEach(t=>{(d[t]||[]).forEach(it=>{const p={...it};delete p.id;rows.push({type:t,entry_date:p.date||null,payload:p})})});
+        if(rows.length){const {error}=await sb.from('entries').insert(rows);if(error)throw error}
+        await reloadCloud();
+      }else{TYPES.forEach(t=>{if(Array.isArray(d[t]))DB[t]=DB[t].concat(d[t].map(x=>({...x,id:x.id||uid()}))).sort(byDate)});saveLocal();}
+      render();alert('Datos importados ✓');
+    }catch(err){alert('Archivo no válido: '+(err.message||err))}};
+    r.readAsText(f);
+    e.target.value='';
+  });
+  $('fz-chart-lift').addEventListener('change',renderFuerzaChart);
+}
+function bindConfig(){
+  $('cfg-save').addEventListener('click',async()=>{
+    const st=val('cfg-start');if(!st)return warn('cfg-start');
+    CFG={start:st,bw:parseFloat(val('cfg-bw'))||72,pmin:parseFloat(val('cfg-pmin'))||72,pmax:parseFloat(val('cfg-pmax'))||73};
+    saveLocalConfig();
+    const s=$('cfg-status');
+    if(MODE==='cloud'){try{await saveCloudConfig();s.textContent='guardado en la nube ✓'}catch(e){s.textContent='guardado solo en local (nube falló)'}}
+    else s.textContent='guardado en este navegador ✓';
+    setTimeout(()=>s.textContent='',2500);
+    render();
+  });
+}
+
+/* ---------------- render ---------------- */
+function render(){
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderWod();renderAnalisis();
+}
+
+function renderConfigForm(){
+  $('cfg-start').value=CFG.start;$('cfg-bw').value=CFG.bw;
+  $('cfg-pmin').value=CFG.pmin;$('cfg-pmax').value=CFG.pmax;
+  $('dataCounts').textContent=TYPES.map(t=>t+': '+DB[t].length).join(' · ');
+}
+
+/* ---- HOY ---- */
+function renderHoy(){
+  const wk=planWeek();const ph=phaseOf(wk);
+  // título + ribbon
+  let title;
+  if(ph===0){const days=Math.ceil((new Date(CFG.start)-new Date())/86400000);
+    title='El plan empieza el '+fmtd(CFG.start)+' · faltan '+Math.max(days,0)+' días';}
+  else if(ph===4){title='Plan de 26 semanas completado · toca retest y decidir el siguiente bloque';}
+  else{title='Semana '+wk+' de 26 · Fase '+ph+' · '+PHASES[ph].name;}
+  $('hoy-week-title').textContent=title;
+
+  const rb=$('ribbon');rb.innerHTML='';
+  for(let w=1;w<=26;w++){
+    const p=phaseOf(w);const el=document.createElement('div');
+    el.className='rw '+PHASES[p].cls+(w<wk?' past':'')+(w===wk?' now past':'');
+    if(w===wk)el.dataset.w=w;
+    el.title='Semana '+w+' · Fase '+p;
+    rb.appendChild(el);
+  }
+  // timeline "AHORA" en Plan
+  [1,2,3].forEach(n=>{const el=$('tlseg-'+n);if(el)el.dataset.now=(n===ph)?'1':'0'});
+  // Z2 minutos de la semana en Entrenos
+  const zm=$('z2-min-wk');if(zm)zm.textContent=(ph===1&&Z2MIN[wk])?Z2MIN[wk]:(ph===2?"45–60'":ph===3?"40–50'":"35–40'");
+  // día actual en semana tipo
+  const wd=new Date().getDay();
+  document.querySelectorAll('#weekgrid .day').forEach(d=>d.classList.toggle('today',parseInt(d.dataset.wd)===wd));
+
+  // sesión de hoy
+  const dp=DAYPLAN[wd];
+  $('hoy-dayname').textContent=DAYNAMES[wd];
+  $('hoy-session').textContent=dp.n;
+  $('hoy-session-desc').textContent=dp.d;
+  const phNote=$('hoy-session-phase');
+  if(ph===1&&wd===3)phNote.innerHTML='<b>Esta semana:</b> Z2 de '+(Z2MIN[wk]||"35'")+'.';
+  else if(ph===2)phNote.innerHTML='<b>Fase 2:</b> añade intervalos float 1×/semana y ve testeando benchmarks.';
+  else if(ph===3)phNote.innerHTML='<b>Fase 3:</b> trabajo específico de competición; protege el sueño.';
+  else phNote.textContent='';
+
+  // nutrición de hoy
+  const dd=DIETDAYS[dp.diet];
+  $('hoy-diet-label').textContent='Día '+dd.label.toLowerCase();
+  $('hoy-diet-tag').innerHTML='<span class="tag '+dd.tag+'">'+dd.label+'</span>';
+  $('hoy-kcal').textContent=dd.kcal;
+  $('hoy-carb').textContent=dd.carb;
+  $('hoy-diet-note').textContent=dp.diet==='duro'?'La comida crítica es el pre-entreno de las 16:30 (arroz + fruta densa).':
+    dp.diet==='mod'?'Día moderado: baja 50 g de carbo repartidos entre comida y cena.':
+    'Día de recuperación: 300 g de carbo bastan. Prioriza dormir.';
+
+  // readiness
+  const last=[...DB.checkin].sort(byDate).slice(-1)[0];
+  if(last){
+    const sc=readiness(last);
+    $('rd-num').textContent=sc;
+    $('rd-date').textContent='check-in del '+fmtd(last.date);
+    const bar=$('rd-bar');bar.style.width=sc+'%';
+    const pill=$('rd-pill');
+    if(sc>=75){pill.textContent='listo para día duro';pill.className='pill ok';bar.style.background='var(--green)';
+      $('rd-advice').textContent='Verde: ejecuta la sesión tal como está planificada.';}
+    else if(sc>=55){pill.textContent='modera la intensidad';pill.className='pill warn';bar.style.background='var(--amber)';
+      $('rd-advice').textContent='Ámbar: haz la sesión pero recorta el extra (sin clusters pesados, máquina al 75%).';}
+    else{pill.textContent='cambia a Z2 suave / descansa';pill.className='pill bad';bar.style.background='var(--red)';
+      $('rd-advice').textContent='Rojo: hoy no se aprieta. Z2 muy suave o descanso; el plan gana más con la recuperación.';}
+  }else{
+    $('rd-num').textContent='—';$('rd-pill').textContent='sin check-in';$('rd-pill').className='pill neutral';
+    $('rd-date').textContent='';$('rd-bar').style.width='0%';
+  }
+
+  // KPIs
+  const pesos=DB.peso;const lastP=pesos[pesos.length-1];
+  if(lastP){const prev=pesos[pesos.length-2];const d=prev?(lastP.v-prev.v):null;
+    $('kpi-peso').textContent=lastP.v.toFixed(1);
+    $('kpi-peso').className='v '+(lastP.v>=CFG.pmin-0.5&&lastP.v<=CFG.pmax+0.5?'good':'warn');
+    $('kpi-peso-u').textContent=(d===null?'':'Δ '+(d>0?'+':'')+d.toFixed(1)+' kg · ')+'banda '+CFG.pmin+'–'+CFG.pmax;
+  }else{$('kpi-peso').textContent='—';}
+  const z2s=DB.z2;const lastZ=z2s[z2s.length-1];
+  if(lastZ){const r=lastZ.w/lastZ.bpm;const prevZ=z2s[z2s.length-2];
+    $('kpi-z2').textContent=r.toFixed(3);
+    $('kpi-z2-u').textContent=prevZ?('Δ '+((r-prevZ.w/prevZ.bpm)>=0?'+':'')+(r-prevZ.w/prevZ.bpm).toFixed(3)+' vs anterior'):'último Z2';
+  }else{$('kpi-z2').textContent='—';}
+  const presses=DB.press;
+  if(presses.length){const best=Math.max(...presses.map(p=>e1rm(p.v,p.reps)));
+    $('kpi-press').textContent=best.toFixed(1);
+    $('kpi-press-u').textContent=(best/CFG.bw).toFixed(2)+'× BW · objetivo 63–65';
+  }else{$('kpi-press').textContent='—';}
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-30);const c30=iso(cutoff);
+  const rxW=DB.wod.filter(w=>w.date>=c30&&w.rx==='RX');
+  if(rxW.length){const pct=Math.round(100*rxW.filter(w=>w.cap==='Sí').length/rxW.length);
+    $('kpi-rx').textContent=pct+'%';
+    $('kpi-rx').className='v '+(pct>=60?'good':pct>=40?'':'warn');
+  }else{$('kpi-rx').textContent='—';}
+
+  renderAlerts(wk,ph);
+}
+
+function renderAlerts(wk,ph){
+  const A=[];const today=todayISO();const wd=new Date().getDay();
+  const push=(lv,t)=>A.push({lv,t});
+
+  // peso
+  const pesos=DB.peso;const lastP=pesos[pesos.length-1];
+  if(!lastP)push('info','<b>Sin pesajes.</b> Registra el primero un viernes en ayunas para tener línea base.');
+  else{
+    const daysSince=Math.floor((new Date(today)-new Date(lastP.date))/86400000);
+    if(daysSince>8)push('warn','<b>Pesaje atrasado.</b> Último hace '+daysSince+' días. Toca el viernes, en ayunas.');
+    if(lastP.v<CFG.pmin-0.5)push('bad','<b>Peso por debajo de banda</b> ('+lastP.v.toFixed(1)+' kg vs '+CFG.pmin+'–'+CFG.pmax+'). Añade una ración de carbo hoy mismo.');
+    if(lastP.v>CFG.pmax+1)push('warn','<b>Peso por encima de banda</b> ('+lastP.v.toFixed(1)+' kg). Revisa que los días rec sean realmente de 300 g de carbo.');
+    if(pesos.length>=3){const d3=lastP.v-pesos[pesos.length-3].v;
+      if(d3<=-1)push('bad','<b>El peso sigue cayendo</b> ('+d3.toFixed(1)+' kg en los últimos 3 pesajes). Sube +50 g de carbo/día. Si sigue 2 semanas más → revisión médica.');}
+  }
+  // press test
+  const presses=DB.press;
+  if(presses.length){
+    const daysSince=Math.floor((new Date(today)-new Date(presses[presses.length-1].date))/86400000);
+    if(daysSince>14)push('warn','<b>Test de press pendiente.</b> Último 3RM hace '+daysSince+' días; el protocolo es cada 14.');
+  }else if(ph>=1&&ph<=3)push('info','<b>Sin baseline de press.</b> Haz un 3RM el próximo lunes y regístralo.');
+  // z2 semana
+  if(ph>=1&&ph<=3&&wd>=4){
+    const mon=iso(mondayOf(new Date()));
+    if(!DB.z2.some(z=>z.date>=mon))push('warn','<b>Aún sin Z2 esta semana.</b> El miércoles era el hueco; recupéralo el domingo como muy tarde.');
+  }
+  // sueño
+  const cks=[...DB.checkin].sort(byDate);
+  if(cks.length>=3){
+    const avg=cks.slice(-3).reduce((s,c)=>s+(c.sleepH||0),0)/3;
+    if(avg<6.5)push('bad','<b>Sueño medio '+avg.toFixed(1)+' h (3 días).</b> Regla del plan: pasa el próximo día duro a Z2 suave. No recuperas lo que no duermes.');
+  }
+  // benchmarks según calendario
+  if(wk===5||wk===6)push('info','<b>Semana de baseline.</b> Testea Karen, Fran y Helen (uno por semana, con ese nombre exacto) para activar la comparativa de Análisis.');
+  else if(wk===16||wk===17)push('info','<b>Retest de benchmarks.</b> Repite Karen, Fran y Helen con el mismo nombre: en Análisis verás primera vs última.');
+  else if(wk===25||wk===26)push('info','<b>Test final del protocolo.</b> Benchmarks + revisar el % de RX cerrados en 30 días: es el veredicto del objetivo.');
+  // regla de ajuste de dieta (viernes de la semana 2)
+  if(wk===2&&lastP&&lastP.v<71&&lastP.date>=CFG.start)push('warn','<b>Regla de ajuste:</b> semana 2 y aún por debajo de 71 kg → añade +50 g de carbo/día (sube el pre-entreno a 100 g de arroz).');
+  // checkin hoy
+  if(!DB.checkin.some(c=>c.date===today))push('info','<b>Check-in de hoy sin rellenar.</b> 2 minutos y el readiness te dice cómo atacar el día.');
+  // adherencia dieta
+  const last7=cks.slice(-7);
+  if(last7.length>=5){
+    const bad=last7.filter(c=>c.diet==='no').length;
+    if(bad>=3)push('warn','<b>Dieta floja:</b> '+bad+' de los últimos '+last7.length+' días sin cumplir. El plan entero cuelga de las 3.100 kcal.');
+  }
+  if(!A.some(a=>a.lv==='bad'||a.lv==='warn'))push('ok','<b>Todo en orden.</b> Sin alertas: ejecuta el día tal como está planificado.');
+
+  $('alerts').innerHTML=A.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('');
+}
+
+/* ---- CHECK-IN ---- */
+function renderCheckin(){
+  const tb=$('ck-body');tb.innerHTML='';
+  const dietTag=d=>d==='si'?'<span class="tag rec">sí</span>':d==='parcial'?'<span class="tag mod">parcial</span>':'<span class="tag hard">no</span>';
+  DB.checkin.forEach(c=>{
+    const sc=readiness(c);
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(c.date)}</td><td class="num">${(c.sleepH||0).toFixed(1)} h</td><td class="num">${c.energy}/5</td><td class="num">${c.soreness}/5</td><td class="num" style="font-weight:700;color:${sc>=75?'var(--green)':sc>=55?'var(--amber)':'var(--red)'}">${sc}</td><td>${dietTag(c.diet)}</td><td class="num"><button class="del" onclick="del('checkin','${c.id}')">×</button></td></tr>`);
+  });
+  if(!DB.checkin.length)tb.innerHTML='<tr><td colspan="7" class="empty">Sin check-ins aún</td></tr>';
+  lineChart('ck-chart',DB.checkin.map(c=>({x:c.date,y:readiness(c)})),{color:'var(--amber)',unit:'',dec:0,band:[75,100],legend:'Readiness 0–100 · verde = listo para duro'});
+}
+
+/* ---- PESO / Z2 / PRESS ---- */
+function renderPeso(){
+  const tb=$('peso-body');tb.innerHTML='';
+  DB.peso.forEach((r,i)=>{
+    const prev=DB.peso[i-1];const d=prev?(r.v-prev.v):null;
+    const dtxt=d===null?'—':(d>0?'+':'')+d.toFixed(1);
+    const dcol=d===null?'var(--faint)':(d<0?'var(--green)':'var(--red)');
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td class="num">${r.v.toFixed(1)}</td><td class="num" style="color:${dcol}">${dtxt}</td><td class="num"><button class="del" onclick="del('peso','${r.id}')">×</button></td></tr>`);
+  });
+  if(!DB.peso.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin registros aún</td></tr>';
+  lineChart('peso-chart',DB.peso.map(r=>({x:r.date,y:r.v})),{color:'var(--ink)',unit:'kg',band:[CFG.pmin,CFG.pmax]});
+}
+function renderZ2(){
+  const tb=$('z2-body');tb.innerHTML='';
+  DB.z2.forEach(r=>{
+    const ratio=(r.w/r.bpm);
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td class="num">${r.min||'—'}</td><td class="num">${r.w}</td><td class="num">${r.bpm}</td><td class="num" style="color:var(--blue);font-weight:700">${ratio.toFixed(3)}</td><td class="num"><button class="del" onclick="del('z2','${r.id}')">×</button></td></tr>`);
+  });
+  if(!DB.z2.length)tb.innerHTML='<tr><td colspan="6" class="empty">Sin registros aún</td></tr>';
+  lineChart('z2-chart',DB.z2.map(r=>({x:r.date,y:r.w/r.bpm})),{color:'var(--blue)',unit:'W/bpm',dec:3,legend:'Eficiencia W/bpm'});
+}
+function renderPress(){
+  const tb=$('press-body');tb.innerHTML='';
+  let best=0;
+  DB.press.forEach(r=>{const e=e1rm(r.v,r.reps);if(e>best)best=e});
+  DB.press.forEach(r=>{
+    const e=e1rm(r.v,r.reps);
+    const pr=(e===best&&DB.press.length>1)?' <span class="tag pr">PR</span>':'';
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td class="num">${r.v} kg × ${r.reps}${pr}</td><td class="num">${r.reps}RM</td><td class="num">${e.toFixed(1)}</td><td class="num">${(e/CFG.bw).toFixed(2)}×</td><td class="num"><button class="del" onclick="del('press','${r.id}')">×</button></td></tr>`);
+  });
+  if(!DB.press.length)tb.innerHTML='<tr><td colspan="6" class="empty">Sin registros aún</td></tr>';
+  lineChart('press-chart',DB.press.map(r=>({x:r.date,y:e1rm(r.v,r.reps)})),{color:'var(--red)',unit:'kg',band:[63,65],legend:'e1RM estimado · banda = objetivo corto'});
+}
+
+/* ---- FUERZA ---- */
+function renderFuerza(){
+  const tb=$('fz-body');tb.innerHTML='';
+  DB.fuerza.forEach(r=>{
+    const e=e1rm(r.v,r.reps);
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td>${esc(r.lift)}</td><td class="num">${r.v} kg × ${r.reps}</td><td class="num">${e.toFixed(1)}</td><td class="num">${(e/CFG.bw).toFixed(2)}×</td><td class="num"><button class="del" onclick="del('fuerza','${r.id}')">×</button></td></tr>`);
+  });
+  if(!DB.fuerza.length)tb.innerHTML='<tr><td colspan="6" class="empty">Sin registros aún</td></tr>';
+  // opciones de gráfica
+  const sel=$('fz-chart-lift');const cur=sel.value;
+  const lifts=[...new Set(DB.fuerza.map(r=>r.lift))];
+  sel.innerHTML=lifts.length?lifts.map(l=>`<option${l===cur?' selected':''}>${esc(l)}</option>`).join(''):'<option>—</option>';
+  renderFuerzaChart();
+}
+function renderFuerzaChart(){
+  const lift=$('fz-chart-lift').value;
+  const data=DB.fuerza.filter(r=>r.lift===lift).map(r=>({x:r.date,y:e1rm(r.v,r.reps)}));
+  lineChart('fz-chart',data,{color:'var(--green)',unit:'kg',legend:lift?('e1RM · '+lift):''});
+}
+
+/* ---- WOD ---- */
+function renderWod(){
+  const box=$('wod-list');box.innerHTML='';
+  if(!DB.wod.length){box.innerHTML='<div class="empty">Sin WODs registrados aún</div>';return}
+  [...DB.wod].reverse().forEach(r=>{
+    const capTag=r.cap==='Sí'?'<span class="tag rec">cerrado</span>':'<span class="tag hard">no cerrado</span>';
+    const rxTag=r.rx==='RX'?'<span class="tag z2">RX</span>':'<span class="tag mod">scaled</span>';
+    box.insertAdjacentHTML('beforeend',`
+      <div class="meal" style="border-left-color:${r.cap==='Sí'?'var(--green)':'var(--red)'};margin-bottom:12px">
+        <div class="t">${fmtd(r.date)} &nbsp; ${rxTag} ${capTag}
+          <button class="del" style="float:right" onclick="del('wod','${r.id}')">×</button></div>
+        <div class="n">${esc(r.name)}</div>
+        ${r.res?`<div class="d"><b>Resultado:</b> ${esc(r.res)}</div>`:''}
+        ${r.note?`<div class="d" style="color:var(--muted);margin-top:3px">${esc(r.note)}</div>`:''}
+      </div>`);
+  });
+}
+
+/* ---- ANÁLISIS ---- */
+function renderAnalisis(){
+  const today=todayISO();
+  // sesiones/sem últimas 4 semanas
+  const cut28=new Date();cut28.setDate(cut28.getDate()-28);const c28=iso(cut28);
+  const sess=['z2','wod','press','fuerza'].reduce((s,t)=>s+DB[t].filter(r=>r.date>=c28&&r.date<=today).length,0);
+  $('an-ses').textContent=(sess/4).toFixed(1);
+  // adherencia dieta
+  const cks=[...DB.checkin].sort(byDate);const last14=cks.slice(-14);
+  if(last14.length){
+    const score=last14.reduce((s,c)=>s+(c.diet==='si'?1:c.diet==='parcial'?0.5:0),0)/last14.length;
+    const pct=Math.round(score*100);
+    $('an-diet').textContent=pct+'%';
+    $('an-diet').className='v '+(pct>=80?'good':pct>=60?'':'warn');
+  }else $('an-diet').textContent='—';
+  // sueño medio
+  const last7=cks.slice(-7);
+  if(last7.length){const avg=last7.reduce((s,c)=>s+(c.sleepH||0),0)/last7.length;
+    $('an-sleep').textContent=avg.toFixed(1);
+    $('an-sleep').className='v '+(avg>=7?'good':avg>=6.5?'':'warn');
+  }else $('an-sleep').textContent='—';
+  // delta peso 4 sem
+  const pOld=DB.peso.filter(p=>p.date<=c28).slice(-1)[0]||DB.peso[0];
+  const pNew=DB.peso[DB.peso.length-1];
+  if(pOld&&pNew&&pOld!==pNew){const d=pNew.v-pOld.v;
+    $('an-dpeso').textContent=(d>0?'+':'')+d.toFixed(1);
+    $('an-dpeso').className='v '+(Math.abs(d)<=0.7?'good':'warn');
+  }else $('an-dpeso').textContent='—';
+
+  renderHeatmap();renderPRs();renderBenchmarks();renderTrends(c28);
+}
+
+function renderHeatmap(){
+  const grid=$('hm-grid');const labs=$('hm-weeks');grid.innerHTML='';labs.innerHTML='';
+  const today=todayISO();
+  const thisMon=mondayOf(new Date());
+  const daySet=t=>new Set(DB[t].map(r=>r.date));
+  const sessDates=new Set();['z2','wod','press','fuerza'].forEach(t=>DB[t].forEach(r=>sessDates.add(r.date)));
+  const ckDates=daySet('checkin');
+  for(let w=7;w>=0;w--){
+    const mon=new Date(thisMon);mon.setDate(mon.getDate()-w*7);
+    const lab=document.createElement('span');lab.textContent=fmtd(iso(mon)).slice(0,5);labs.appendChild(lab);
+    for(let d=0;d<7;d++){
+      const day=new Date(mon);day.setDate(day.getDate()+d);const ds=iso(day);
+      const cell=document.createElement('div');cell.className='hmc';cell.title=fmtd(ds);
+      if(ds>today)cell.classList.add('future');
+      else{
+        const s=sessDates.has(ds),c=ckDates.has(ds);
+        if(s&&c)cell.classList.add('l3');else if(s)cell.classList.add('l2');else if(c)cell.classList.add('l1');
+      }
+      if(ds===today)cell.classList.add('today');
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function renderPRs(){
+  const tb=$('pr-body');tb.innerHTML='';
+  const rows=[];
+  if(DB.press.length){
+    let best=null;DB.press.forEach(r=>{const e=e1rm(r.v,r.reps);if(!best||e>best.e)best={lift:'Press estricto',set:r.v+' kg × '+r.reps,e,date:r.date}});
+    rows.push(best);
+  }
+  const byLift={};
+  DB.fuerza.forEach(r=>{const e=e1rm(r.v,r.reps);
+    if(!byLift[r.lift]||e>byLift[r.lift].e)byLift[r.lift]={lift:r.lift,set:r.v+' kg × '+r.reps,e,date:r.date}});
+  Object.values(byLift).sort((a,b)=>b.e-a.e).forEach(x=>rows.push(x));
+  if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="empty">Registra levantamientos para ver tus PRs</td></tr>';return}
+  rows.forEach(x=>tb.insertAdjacentHTML('beforeend',
+    `<tr><td>${esc(x.lift)}</td><td class="num">${x.set}</td><td class="num" style="font-weight:700">${x.e.toFixed(1)} kg</td><td class="num">${(x.e/CFG.bw).toFixed(2)}×</td><td class="num">${fmtd(x.date)}</td></tr>`));
+}
+
+function renderBenchmarks(){
+  const tb=$('bm-body');tb.innerHTML='';
+  const groups={};
+  DB.wod.forEach(w=>{const k=(w.name||'').toLowerCase().replace(/\s+/g,' ').trim();
+    if(!k)return;(groups[k]=groups[k]||[]).push(w)});
+  const rows=Object.values(groups).filter(g=>g.length>=2);
+  if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="empty">Repite un WOD (mismo nombre) para comparar</td></tr>';return}
+  rows.forEach(g=>{
+    g.sort(byDate);const f=g[0],l=g[g.length-1];
+    const cap=l.cap==='Sí'?'<span class="tag rec">cerrado</span>':'<span class="tag hard">no</span>';
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${esc(f.name)}</td><td class="num">${g.length}</td><td class="mono" style="font-size:12.5px">${fmtd(f.date)} · ${esc(f.res||'—')}</td><td class="mono" style="font-size:12.5px">${fmtd(l.date)} · ${esc(l.res||'—')}</td><td>${cap}</td></tr>`);
+  });
+}
+
+function renderTrends(c28){
+  const tb=$('trend-body');tb.innerHTML='';
+  const rows=[];
+  const first=(arr,map)=>{const old=arr.filter(r=>r.date<=c28).slice(-1)[0]||arr[0];return old?map(old):null};
+  const last=(arr,map)=>{const l=arr[arr.length-1];return l?map(l):null};
+  // W/bpm
+  const zo=first(DB.z2,r=>r.w/r.bpm),zn=last(DB.z2,r=>r.w/r.bpm);
+  if(zo!==null&&zn!==null)rows.push({m:'Z2 · W/bpm',o:zo.toFixed(3),n:zn.toFixed(3),d:zn-zo,good:zn-zo>0,
+    read:zn-zo>0.03?'Motor adaptando: sube W manteniendo bpm':zn-zo>0?'Ligera mejora, mantener volumen':'Sin mejora aún: normal las primeras 2-3 semanas'});
+  // peso
+  const po=first(DB.peso,r=>r.v),pn=last(DB.peso,r=>r.v);
+  if(po!==null&&pn!==null)rows.push({m:'Peso (kg)',o:po.toFixed(1),n:pn.toFixed(1),d:pn-po,good:Math.abs(pn-po)<=0.7&&pn>=CFG.pmin-0.5,
+    read:pn>=CFG.pmin&&pn<=CFG.pmax?'En banda: hito F1 en camino':pn<CFG.pmin?'Por debajo: sube carbo':'Por encima: revisa días rec'});
+  // press e1RM
+  const pro=first(DB.press,r=>e1rm(r.v,r.reps)),prn=last(DB.press,r=>e1rm(r.v,r.reps));
+  if(pro!==null&&prn!==null)rows.push({m:'Press e1RM (kg)',o:pro.toFixed(1),n:prn.toFixed(1),d:prn-pro,good:prn-pro>=0,
+    read:prn>=63?'Objetivo corto alcanzado':'Clusters de lunes + creatina: paciencia'});
+  // readiness medio
+  const cks=[...DB.checkin].sort(byDate);
+  const oldCk=cks.filter(c=>c.date<=c28);const newCk=cks.filter(c=>c.date>c28);
+  if(oldCk.length>=3&&newCk.length>=3){
+    const avg=a=>a.reduce((s,c)=>s+readiness(c),0)/a.length;
+    const o=avg(oldCk.slice(-7)),n=avg(newCk.slice(-7));
+    rows.push({m:'Readiness medio',o:o.toFixed(0),n:n.toFixed(0),d:n-o,good:n-o>=0,
+      read:n-o>=0?'Recuperación estable o mejorando':'Cargando fatiga: vigila sueño y días rec'});
+  }
+  if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="empty">Necesitas ~4 semanas de registros para ver tendencias</td></tr>';return}
+  rows.forEach(r=>{
+    const col=r.good?'var(--green)':'var(--red)';
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${r.m}</td><td class="num">${r.o}</td><td class="num">${r.n}</td><td class="num" style="color:${col};font-weight:700">${(r.d>0?'+':'')+r.d.toFixed(r.m.includes('W/bpm')?3:1)}</td><td style="font-size:13px;color:var(--muted)">${r.read}</td></tr>`);
+  });
+}
+
+/* ---------------- svg line chart ---------------- */
+function lineChart(elId,data,opt){
+  const el=$(elId);const o=opt||{};
+  if(!el)return;
+  if(data.length<2){el.innerHTML='<div class="chart-empty">Necesitas 2+ registros para ver la tendencia</div>';return}
+  const W=700,H=200,pl=44,pr=14,pt=16,pb=26;
+  const ys=data.map(d=>d.y);let mn=Math.min(...ys),mx=Math.max(...ys);
+  if(o.band){mn=Math.min(mn,o.band[0]);mx=Math.max(mx,o.band[1])}
+  const pad=(mx-mn)*.15||1;mn-=pad;mx+=pad;
+  const px=i=>pl+(W-pl-pr)*(i/(data.length-1));
+  const py=v=>pt+(H-pt-pb)*(1-(v-mn)/(mx-mn));
+  const dec=o.dec!==undefined?o.dec:(mx-mn<5?1:0);
+  let grid='',ticks=4;
+  for(let i=0;i<=ticks;i++){const v=mn+(mx-mn)*i/ticks;const y=py(v);
+    grid+=`<line x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}" stroke="var(--line2)" stroke-width="1"/>`;
+    grid+=`<text x="${pl-6}" y="${y+3}" text-anchor="end" font-family="var(--mono)" font-size="10" fill="var(--faint)">${v.toFixed(dec)}</text>`;
+  }
+  let band='';
+  if(o.band){const y1=py(Math.min(o.band[1],mx)),y2=py(Math.max(o.band[0],mn));band=`<rect x="${pl}" y="${y1}" width="${W-pl-pr}" height="${Math.max(y2-y1,0)}" fill="var(--green)" opacity="0.10"/>`;}
+  const pts=data.map((d,i)=>`${px(i)},${py(d.y)}`).join(' ');
+  const area=`${pl},${H-pb} `+pts+` ${W-pr},${H-pb}`;
+  let dots='';data.forEach((d,i)=>{dots+=`<circle cx="${px(i)}" cy="${py(d.y)}" r="3.5" fill="${o.color}"/>`;});
+  const lastD=data[data.length-1];
+  const lastLbl=`<text x="${px(data.length-1)}" y="${py(lastD.y)-9}" text-anchor="end" font-family="var(--mono)" font-size="11" font-weight="700" fill="${o.color}">${lastD.y.toFixed(dec)}</text>`;
+  const xl=`<text x="${pl}" y="${H-6}" font-family="var(--mono)" font-size="9.5" fill="var(--faint)">${fmtd(data[0].x)}</text>
+            <text x="${W-pr}" y="${H-6}" text-anchor="end" font-family="var(--mono)" font-size="9.5" fill="var(--faint)">${fmtd(data[data.length-1].x)}</text>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    ${grid}${band}
+    <polygon points="${area}" fill="${o.color}" opacity="0.07"/>
+    <polyline points="${pts}" fill="none" stroke="${o.color}" stroke-width="2.5" stroke-linejoin="round"/>
+    ${dots}${lastLbl}${xl}
+  </svg>`+(o.legend?`<div class="legend"><span><i style="background:${o.color}"></i>${o.legend}</span></div>`:o.band?`<div class="legend"><span><i style="background:var(--green);opacity:.4"></i>zona objetivo ${o.band[0]}–${o.band[1]} ${o.unit||''}</span></div>`:'');
+}
+</script>
+</body>
+</html>
