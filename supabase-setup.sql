@@ -5,7 +5,7 @@
 
 create table if not exists entries (
   id          uuid primary key default gen_random_uuid(),
-  type        text not null,          -- 'peso' | 'z2' | 'press' | 'wod'
+  type        text not null,          -- 'peso' | 'z2' | 'press' | 'fuerza' | 'wod' | 'checkin' | 'comida' | 'config'
   entry_date  date,
   payload     jsonb not null default '{}',
   created_at  timestamptz default now()

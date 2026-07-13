@@ -163,6 +163,7 @@ input,select,textarea{font-family:var(--mono);font-size:14px;background:#fff;bor
   border-radius:2px;padding:8px 9px;color:var(--ink);width:100%}
 textarea{font-family:var(--body);resize:vertical;min-height:38px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--red);outline-offset:-1px;border-color:var(--red)}
+input[type=checkbox]{width:auto;padding:0}
 .field.w-sm input,.field.w-sm select{width:88px}
 .field.w-md input,.field.w-md select{width:140px}
 .field.grow{flex:1;min-width:150px}
@@ -256,12 +257,18 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
         <tbody>
           <tr><td>Calorías</td><td class="num" id="hoy-kcal">—</td></tr>
           <tr><td>Carbohidrato</td><td class="num" id="hoy-carb">—</td></tr>
-          <tr><td>Proteína</td><td class="num">180 g</td></tr>
-          <tr><td>Grasa</td><td class="num">90 g</td></tr>
+          <tr><td>Proteína</td><td class="num" id="hoy-prot">—</td></tr>
+          <tr><td>Grasa</td><td class="num" id="hoy-fat">—</td></tr>
         </tbody>
       </table>
       <small class="note" id="hoy-diet-note">La comida crítica es el pre-entreno de las 16:30.</small>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Menú de hoy</div>
+    <h2 style="margin:4px 0 10px">Toca para registrar cada comida</h2>
+    <div id="hoy-meals"></div>
   </div>
 
   <div class="card">
@@ -291,6 +298,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
     <h2>Registrar rápido</h2>
     <div class="quick">
       <button data-goto="registros:card-checkin">+ Check-in de hoy</button>
+      <button data-goto="registros:card-comida">+ Comida</button>
       <button data-goto="registros:card-wod">+ WOD</button>
       <button data-goto="registros:card-z2">+ Sesión Z2</button>
       <button data-goto="registros:card-peso">+ Peso</button>
@@ -391,85 +399,192 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
 <section class="panelpage" id="dieta">
 
   <div class="card">
-    <h2>El arreglo: mismo hambre, más energía</h2>
-    <p>No añadimos comidas ni te hacemos pasar hambre. Metemos <span class="hl">carbohidrato denso</span> donde ahora hay hueco y subimos de ~2.600 a ~3.100 kcal. La proteína ya la tienes perfecta — <b>no se toca</b>.</p>
-  </div>
-
-  <div class="metrics">
-    <div class="metric"><div class="k">Objetivo día duro</div><div class="v">~3.100</div><div class="u">kcal</div></div>
-    <div class="metric"><div class="k">Proteína</div><div class="v good">180</div><div class="u">g · ~2,5/kg · mantener</div></div>
-    <div class="metric"><div class="k">Carbohidrato</div><div class="v warn">400</div><div class="u">g · el déficit real</div></div>
-    <div class="metric"><div class="k">Grasa</div><div class="v">90</div><div class="u">g · hormonal + densidad</div></div>
+    <div class="eyebrow">Dieta semanal cerrada · v2 · construida sobre lo que te gusta</div>
+    <h2 style="margin:4px 0 6px">Esto no es una dieta que tolerar. Es una dieta que te va a apetecer.</h2>
+    <p style="font-size:14px;color:var(--muted)">Gramajes en crudo/seco. Sin legumbres. Pescado azul 3×/semana. Media semanal: <b>~3.110 kcal/día</b> — tu mantenimiento real.</p>
   </div>
 
   <div class="card">
-    <h2>Menú diario · día duro (entreno 19:00)</h2>
+    <h3 style="margin-top:0">Tus alimentos, todos los días</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Alimento</th><th>Cuándo aparece</th></tr></thead>
+      <tbody>
+        <tr><td>🥛 Yogur griego</td><td>Todos los días · media mañana (fijo)</td></tr>
+        <tr><td>🥣 Avena</td><td>Todos los días · media mañana + desayunos</td></tr>
+        <tr><td>🥜 Crema de cacahuete</td><td>Todos los días · media mañana + desayunos</td></tr>
+        <tr><td>🍝 Pasta</td><td>Miércoles y sábado</td></tr>
+        <tr><td>🥟 Ñoquis</td><td>Lunes y viernes</td></tr>
+      </tbody>
+    </table></div>
+  </div>
 
-    <div class="meal">
-      <div class="t">08:00 · Desayuno</div>
-      <div class="n">3 huevos + 2 rebanadas pan integral + fruta</div>
-      <div class="d">Sube de 1 a <b>2 rebanadas</b>. Añade una pieza de fruta.</div>
-      <div class="kc">~420 kcal</div>
-    </div>
+  <div class="card">
+    <div class="eyebrow" style="color:var(--red)">🔒 Los 3 fijos</div>
+    <h2 style="margin:4px 0 12px">No se piensan. No se cambian. Media dieta resuelta.</h2>
 
-    <div class="meal">
-      <div class="t">11:30 · Media mañana</div>
-      <div class="n">200 g yogur griego + 30 g nueces + miel/canela</div>
-      <div class="d">Perfecto como está.</div>
-      <div class="kc">~430 kcal</div>
-    </div>
-
-    <div class="meal">
-      <div class="t">14:00 · Comida</div>
-      <div class="n">120–130 g carbo seco + 200 g proteína + ensalada + 1 cda AOVE</div>
-      <div class="d">Sube el arroz/quinoa/pasta de 90 a <b>120–130 g en seco</b>. Añade el chorro de aceite que ahora te falta.</div>
-      <div class="kc">~780 kcal</div>
+    <div class="meal crit">
+      <div class="t">11:30 · El Bowl (todos los días)</div>
+      <div class="n">200 g yogur griego 0% + 40 g avena integral + 15 g crema de cacahuete</div>
+      <div class="d">+ 15 g miel + 1 plátano (o frutos rojos) + canela. Mezcla la noche antes y déjalo en la nevera: overnight oats, cremoso.</div>
+      <div class="kc">≈ 640 kcal · 78 C · 28 P · 22 G</div>
     </div>
 
     <div class="meal crit">
-      <div class="t">16:30 · Pre-entreno <span style="color:var(--red)">— la comida crítica</span></div>
-      <div class="n">60–80 g arroz (o 2 reb pan) + fruta densa (plátano / dátiles)</div>
-      <div class="d">Ahora llegas a las 19:00 solo con el plátano de media tarde. Esta comida es la que evita que te apagues en la segunda mitad.</div>
-      <div class="kc">~510–580 kcal</div>
+      <div class="t">16:30 · Pre-entreno — la comida crítica</div>
+      <div class="n">La que decide si te apagas en la ronda 3. No se salta jamás. Rota entre estas 3, todas ~550 kcal:</div>
+      <div class="d">
+        <b>A · Bocadillo de pavo y queso</b> — 100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano<br>
+        <b>B · Arroz con atún</b> — 70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles<br>
+        <b>C · Tostadas de cacahuete y miel</b> — 80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%
+      </div>
     </div>
 
-    <div class="meal">
+    <div class="meal crit">
       <div class="t">20:15 · Post-entreno</div>
-      <div class="n">Whey 30 g + plátano + creatina 5 g</div>
-      <div class="d">Mantener. Creatina Creapure, constante.</div>
-      <div class="kc">~280 kcal</div>
-    </div>
-
-    <div class="meal">
-      <div class="t">21:15 · Cena</div>
-      <div class="n">120–130 g carbo seco + 200 g proteína + verdura + 1 cda AOVE</div>
-      <div class="d">Mismo ajuste que la comida: sube carbo, añade aceite.</div>
-      <div class="kc">~780 kcal</div>
+      <div class="n">30 g whey + 1 plátano + 5 g creatina</div>
+      <div class="kc">≈ 225 kcal · 30 C · 25 P</div>
     </div>
 
     <div class="meal">
       <div class="t">22:45 · Pre-sueño</div>
-      <div class="n">Magnesio bisglicinato + ashwagandha (+ caseína opcional)</div>
-      <div class="d">Para descanso y recuperación.</div>
-      <div class="kc">—</div>
+      <div class="n">Magnesio bisglicinato + ashwagandha</div>
+      <div class="d">Días duros (opcional): 150 g requesón con canela.</div>
     </div>
   </div>
 
   <div class="card">
-    <h2>Periodización del carbohidrato</h2>
+    <h2>Estructura de la semana</h2>
     <div class="tablewrap"><table>
-      <thead><tr><th>Tipo de día</th><th class="num">Carbo</th><th class="num">Kcal aprox.</th><th>Cuándo</th></tr></thead>
-      <tbody>
-        <tr><td><span class="tag hard">Duro</span></td><td class="num">400 g</td><td class="num">~3.100</td><td>Clase + extra, o WOD intenso</td></tr>
-        <tr><td><span class="tag mod">Moderado</span></td><td class="num">350 g</td><td class="num">~2.900</td><td>Clase suave / técnica / Z2</td></tr>
-        <tr><td><span class="tag rec">Recuperación</span></td><td class="num">300 g</td><td class="num">~2.750</td><td>Domingo / descanso</td></tr>
-      </tbody>
+      <thead><tr><th>Día</th><th>Tipo</th><th class="num">Kcal</th><th class="num">Carbo</th><th class="num">Prot</th><th class="num">Grasa</th></tr></thead>
+      <tbody id="dieta-week-body"></tbody>
     </table></div>
-    <small class="note">Adherencia &gt; precisión. ±30 kcal o ±10 g de un macro es ruido estadístico. Sostener 6 semanas importa más que clavar el día. La pestaña Hoy te dice qué tipo de día toca.</small>
+  </div>
+
+  <div class="card" style="padding-bottom:6px">
+    <div class="eyebrow">Menú día a día</div>
+    <h2 style="margin:4px 0 2px">Qué toca comer, comida por comida</h2>
+  </div>
+  <div id="dieta-days"></div>
+
+  <div class="card">
+    <h2>🍳 Batch cooking · domingo (~90 min)</h2>
+    <h3 style="margin-top:8px">Horno (todo junto, 200 °C, 35–40 min)</h3>
+    <ul class="clean">
+      <li><b>Patata:</b> 600 g en gajos → martes comida + viernes cena</li>
+      <li><b>Boniato:</b> 250 g en cubos → miércoles cena</li>
+      <li><b>Pimientos asados:</b> 300 g → miércoles + jueves cena</li>
+    </ul>
+    <h3>Olla</h3>
+    <ul class="clean">
+      <li><b>Arroz basmati:</b> cocer 420 g en seco → jueves comida (130) + lunes cena (70) + sábado cena (90) + pre-entrenos B (140)</li>
+      <li><b>Salsa boloñesa:</b> 130 g ternera + tomate + sofrito → lunes (ñoquis)</li>
+    </ul>
+    <h3>Sartén (a táper)</h3>
+    <ul class="clean">
+      <li><b>Pollo teriyaki:</b> 170 g → jueves</li>
+      <li><b>Pollo desmenuzado:</b> 150 g → lunes cena</li>
+    </ul>
+    <small class="note">Al momento (no aguanta): salmón · caballa · huevos · ñoquis · pasta · hamburguesa. Los ñoquis y la pasta se cuecen siempre frescos, 2–8 minutos.</small>
   </div>
 
   <div class="card">
-    <h2>Regla de ajuste · las 3.100 kcal son el punto de partida, no un dogma</h2>
+    <h2>🛒 Lista de la compra · Mercadona</h2>
+    <h3 style="margin-top:8px">⭐ Tus fijos (compra de sobra, no te quedes sin)</h3>
+    <ul class="clean" style="list-style:none;margin:0">
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Yogur griego 0% — 1.400 g</label></li>
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Avena integral — 1 kg</label></li>
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Crema de cacahuete — 1 bote grande</label></li>
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Ñoquis frescos — 600 g (2 paquetes)</label></li>
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Pasta integral — 500 g</label></li>
+      <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Plátanos — 15</label></li>
+    </ul>
+    <div class="two" style="margin-top:10px">
+      <div>
+        <h3>Proteína</h3>
+        <ul class="clean" style="list-style:none;margin:0">
+          <li style="padding-left:0"><label><input type="checkbox"> Pechuga de pollo — 1 kg</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Carne picada ternera 5% — 270 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Salmón fresco — 330 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Caballa o sardinas — 180 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Gambas peladas — 120 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Atún al natural — 2 latas</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Huevos M — 20</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Bacon de pavo — 120 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Jamón serrano — 120 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Pavo fiambre — 250 g</label></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Lácteos</h3>
+        <ul class="clean" style="list-style:none;margin:0">
+          <li style="padding-left:0"><label><input type="checkbox"> Queso batido 0% — 600 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Requesón (pre-sueño) — 500 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Leche semidesnatada — 1 L</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Parmesano — 150 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Queso havarti — 100 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Queso rallado — 100 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Cheddar lonchas — 1 paquete</label></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Carbos</h3>
+        <ul class="clean" style="list-style:none;margin:0">
+          <li style="padding-left:0"><label><input type="checkbox"> Arroz basmati — 1 kg</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Cuscús — 250 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Pan de masa madre — 2 hogazas (congela una en rebanadas)</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Pan de hamburguesa — 1 paquete</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Patata — 1,2 kg</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Boniato — 300 g</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Miel — 1 bote</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Dátiles — 1 paquete</label></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Fruta, verdura y despensa</h3>
+        <ul class="clean" style="list-style:none;margin:0">
+          <li style="padding-left:0"><label><input type="checkbox"> Manzanas (3) · naranjas (5) · pera (1)</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Aguacates (4) · mango (1)</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Frutos rojos congelados — 1 bolsa</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Brócoli (400 g) · pimientos (6) · calabacín (2)</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Cebolla (4) · zanahoria (500 g) · tomate (8) · cherry (200 g)</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Lechuga, rúcula, espárragos trigueros</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> Pesto genovés · tomate triturado (2) · teriyaki · soja</label></li>
+          <li style="padding-left:0"><label><input type="checkbox"> AOVE · maíz dulce · guacamole · piñones · especias</label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Reglas de intercambio</h2>
+    <h3 style="margin-top:8px">Cambia libre, sin recalcular</h3>
+    <ul class="clean">
+      <li>Ñoquis ↔ pasta ↔ arroz ↔ cuscús <i>(300 g de ñoquis ≈ 110 g de pasta seca ≈ 130 g de arroz seco)</i></li>
+      <li>Pollo ↔ pavo ↔ lomo de cerdo</li>
+      <li>Salmón ↔ caballa ↔ sardinas ↔ atún fresco — pero mantén 3 raciones/semana de pescado azul</li>
+      <li>Boniato ↔ patata</li>
+      <li>Yogur griego ↔ queso batido ↔ requesón</li>
+    </ul>
+    <h3>Innegociable</h3>
+    <ul class="clean">
+      <li>❌ <b>El Bowl de las 11:30.</b> Es tu ancla de yogur + avena + cacahuete. Si lo saltas, pierdes 640 kcal y 78 g de carbo que no recuperas.</li>
+      <li>❌ <b>El pre-entreno de las 16:30.</b> Es la comida que sostiene el WOD.</li>
+      <li>❌ <b>El post-entreno.</b> Whey + plátano + creatina, siempre.</li>
+      <li>❌ Recortar carbo en día duro. Si tienes que recortar algo, recorta grasa.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📋 Chuleta de nevera</h2>
+    <div class="tablewrap"><table id="dieta-cheat">
+      <thead><tr><th></th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr></thead>
+      <tbody id="dieta-cheat-body"></tbody>
+    </table></div>
+    <small class="note">Adherencia &gt; precisión. ±30 kcal o ±10 g de un macro es ruido. Sostener esto 6 semanas importa más que clavar un día.</small>
+  </div>
+
+  <div class="card">
+    <h2>Regla de ajuste · el punto de partida no es un dogma</h2>
     <ul class="clean">
       <li><b>Viernes de la semana 2:</b> si no marcas ≥ 71 kg → añade <b>+50 g de carbo/día</b> (+200 kcal): sube el pre-entreno a 100 g de arroz o añade 1 rebanada más al desayuno.</li>
       <li><b>Si superas 73,5 kg:</b> recorta 25–30 g de carbo solo en los días de recuperación. No toques los días duros.</li>
@@ -610,6 +725,24 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
       <span class="sp"></span>
       <span class="mono" style="font-size:11px;color:var(--faint)" id="saveStatus"></span>
     </div>
+  </div>
+
+  <!-- COMIDA -->
+  <div class="card" id="card-comida">
+    <h2>Comidas</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">En <b>Hoy</b> puedes marcar con un toque cada comida del menú del día tal como está planificada. Aquí añade cualquier otra cosa, o una comida distinta a la planificada.</small>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="comida-date"></div>
+      <div class="field w-md"><label>Momento</label><select id="comida-moment">
+        <option>Desayuno</option><option>El Bowl</option><option>Comida</option><option>Pre-entreno</option><option>Post-entreno</option><option>Cena</option><option>Merienda</option><option>Pre-sueño</option><option>Extra</option>
+      </select></div>
+      <div class="field w-sm"><label>Kcal (aprox)</label><input type="number" id="comida-kcal" placeholder="550"></div>
+    </div>
+    <div class="logbar">
+      <div class="field grow"><label>Qué has comido</label><input type="text" id="comida-desc" placeholder="Ñoquis a la boloñesa"></div>
+      <button class="add" data-add="comida">Añadir</button>
+    </div>
+    <div id="comida-list"></div>
   </div>
 
   <!-- CHECK-IN -->
@@ -811,11 +944,11 @@ const SUPABASE_URL = "https://uanoohzcfidizgvpxart.supabase.co";        // ej: h
 const SUPABASE_ANON_KEY = "sb_publishable_T-u0W3nT53yrynZwuYT1Jg_-V4ptQ7_";   // anon public key (empieza por eyJ...)
 
 /* ---------------- estado ---------------- */
-const TYPES=['peso','z2','press','fuerza','wod','checkin'];
+const TYPES=['peso','z2','press','fuerza','wod','checkin','comida'];
 const KEY='rx_protocol_v1';
 const CFGKEY='rx_protocol_cfg_v1';
 let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73};
-let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[]};
+let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[]};
 let sb=null, MODE='local';
 
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -837,19 +970,85 @@ const PHASES=[
   {n:2,name:'Capacidad de trabajo',cls:'f2',range:[5,17]},
   {n:3,name:'Específico & pico',cls:'f3',range:[18,26]}
 ];
-const DIETDAYS={
-  duro:{label:'Duro',tag:'hard',kcal:'~3.100 kcal',carb:'400 g'},
-  mod:{label:'Moderado',tag:'mod',kcal:'~2.900 kcal',carb:'350 g'},
-  rec:{label:'Recuperación',tag:'rec',kcal:'~2.750 kcal',carb:'300 g'}
-};
 const DAYPLAN={
-  1:{n:'Clase + press estricto',d:'Clusters 5×2 al 85–90% (15–20" entre reps) además de la clase. Pacing: fracciona desde la ronda 1.',diet:'duro'},
-  2:{n:'Clase',d:'Normal. Máquina al 80%, fracciona pronto, corre controlado.',diet:'duro'},
-  3:{n:'Z2 en bici',d:'~140 bpm · resistencia 15 · NO clase dura. Al acabar, registra minutos, vatios y bpm.',diet:'mod'},
-  4:{n:'Clase',d:'Normal.',diet:'duro'},
-  5:{n:'Clase + pesaje AM',d:'Pesaje en ayunas y post-evacuación antes de desayunar. Después, clase normal.',diet:'duro'},
-  6:{n:'Clase · partner WOD',d:'Comparte trabajo, no ritmo: fracciona según TU plan, no el de tu pareja.',diet:'mod'},
-  0:{n:'Z2 suave o descanso',d:"30' muy suaves o descanso total. El día que construye la semana.",diet:'rec'}
+  1:{n:'Clase + press estricto',d:'Clusters 5×2 al 85–90% (15–20" entre reps) además de la clase. Pacing: fracciona desde la ronda 1.'},
+  2:{n:'Clase',d:'Normal. Máquina al 80%, fracciona pronto, corre controlado.'},
+  3:{n:'Z2 en bici',d:'~140 bpm · resistencia 15 · NO clase dura. Al acabar, registra minutos, vatios y bpm.'},
+  4:{n:'Clase',d:'Normal.'},
+  5:{n:'Clase + pesaje AM',d:'Pesaje en ayunas y post-evacuación antes de desayunar. Después, clase normal.'},
+  6:{n:'Clase · partner WOD',d:'Comparte trabajo, no ritmo: fracciona según TU plan, no el de tu pareja.'},
+  0:{n:'Z2 suave o descanso',d:"30' muy suaves o descanso total. El día que construye la semana."}
+};
+/* ---------------- dieta semanal cerrada v2 ---------------- */
+const WEEKMENU={
+  1:{label:'Lunes',tag:'hard',dayTag:'Duro',kcal:3210,carb:424,prot:181,fat:91,
+    critical:'La comida crítica es el pre-entreno de las 16:30 (bocadillo de pavo y queso).',
+    meals:[
+      {time:'08:00',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café'},
+      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',name:'Ñoquis a la boloñesa',desc:'300 g ñoquis frescos + 130 g carne picada de ternera 5% + 200 g tomate triturado con cebolla y zanahoria + 20 g parmesano + 10 ml AOVE, albahaca y orégano (salsa hecha el domingo)'},
+      {time:'16:30',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
+      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',name:'Burrito bowl de pollo',desc:'70 g arroz basmati seco + 150 g pollo desmenuzado + 50 g maíz + 25 g queso rallado + 40 g guacamole + tomate, cilantro, lima, comino'}
+    ]},
+  2:{label:'Martes',tag:'hard',dayTag:'Duro',kcal:3190,carb:417,prot:178,fat:93,
+    critical:'La comida crítica es el pre-entreno de las 16:30 (arroz con atún).',
+    meals:[
+      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela'},
+      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',name:'Salmón al horno con patata y brócoli',desc:'180 g salmón fresco + 350 g patata en gajos al horno + 200 g brócoli al ajillo + 15 ml AOVE, limón, ajo, pimentón'},
+      {time:'16:30',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
+      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',name:'Tortilla de patatas con jamón',desc:'3 huevos M + 200 g patata + 40 g cebolla + 10 ml AOVE + 40 g jamón serrano + ensalada de tomate con AOVE'}
+    ]},
+  3:{label:'Miércoles',tag:'mod',dayTag:'Moderado',kcal:3020,carb:371,prot:177,fat:85,
+    critical:'La comida crítica es el pre-entreno de las 16:30 (tostadas de cacahuete y miel).',
+    meals:[
+      {time:'08:00',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café (como el lunes)'},
+      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',name:'Pasta carbonara fit',desc:'110 g pasta integral + 120 g bacon de pavo (o taquitos de jamón) + 2 huevos M + 1 yema + 30 g parmesano + pimienta negra. Sin nata: emulsión de huevo, queso y agua de cocción'},
+      {time:'16:30',name:'Pre-entreno C · tostadas de cacahuete y miel',desc:'80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%',kcal:550,locked:true},
+      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina (también en Z2)',kcal:225,locked:true},
+      {time:'21:15',name:'Pollo asado con boniato',desc:'170 g pechuga de pollo + 250 g boniato al horno + 150 g pimientos asados + 10 ml AOVE, pimentón, ajo, tomillo'}
+    ]},
+  4:{label:'Jueves',tag:'hard',dayTag:'Duro',kcal:3220,carb:421,prot:183,fat:92,
+    critical:'La comida crítica es el pre-entreno de las 16:30 (bocadillo de pavo y queso).',
+    meals:[
+      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (como el martes)'},
+      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',name:'Pollo teriyaki con arroz y verduras al wok',desc:'130 g arroz basmati seco + 170 g pechuga de pollo + 200 g verduras al wok (brócoli, pimiento, zanahoria, cebolleta) + 30 ml salsa teriyaki + 10 ml aceite de sésamo + semillas de sésamo (batch domingo)'},
+      {time:'16:30',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
+      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',name:'Caballa a la plancha con cuscús',desc:'180 g caballa (o sardinas) + 80 g cuscús seco + 150 g pimientos asados + 10 ml AOVE, limón, perejil'}
+    ]},
+  5:{label:'Viernes',tag:'hard',dayTag:'Duro',kcal:3230,carb:423,prot:182,fat:94,
+    critical:'La comida crítica es el pre-entreno de las 16:30 (arroz con atún). Pesaje AM en ayunas, post-evacuación.',
+    meals:[
+      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (después de pesarte)'},
+      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',name:'Ñoquis al pesto con pollo',desc:'300 g ñoquis frescos + 160 g pechuga de pollo a tiras + 30 g pesto genovés + 100 g tomates cherry + 20 g parmesano + piñones + albahaca fresca'},
+      {time:'16:30',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
+      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',name:'Hamburguesa casera con patatas gajo',desc:'140 g carne picada de ternera 5% (a mano, sal y pimienta) + 1 pan de hamburguesa + 30 g cheddar + lechuga, tomate, cebolla, pepinillo, mostaza + 250 g patata en gajos al horno. Día de premio, dentro de macros.'}
+    ]},
+  6:{label:'Sábado',tag:'hard',dayTag:'Duro',kcal:3200,carb:419,prot:180,fat:92,
+    critical:'Si entrenas por la mañana: desayuna 2 h antes y mete el post-entreno al salir.',
+    meals:[
+      {time:'09:00',name:'Tortitas de avena y plátano',desc:'70 g avena + 1 plátano + 2 huevos M + 25 g whey + 100 ml leche + levadura y canela. Encima: 150 g yogur griego 0% + 15 g miel + 15 g crema de cacahuete + frutos rojos'},
+      {time:'12:00',name:'Sándwich de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso + 1 manzana'},
+      {time:'14:30',name:'Pasta al pesto con pollo y cherry',desc:'120 g pasta integral + 170 g pechuga de pollo + 30 g pesto + 100 g tomates cherry + 20 g parmesano + rúcula'},
+      {time:'17:30',name:'Merienda',desc:'200 g queso batido 0% + 40 g avena + 15 g miel + 1 plátano'},
+      {time:'21:00',name:'Poke bowl de salmón',desc:'90 g arroz basmati seco + 150 g salmón fresco en dados + 60 g aguacate + 60 g mango + pepino, zanahoria, cebolleta + soja, sésamo, lima'}
+    ]},
+  0:{label:'Domingo',tag:'rec',dayTag:'Recuperación',kcal:2810,carb:301,prot:175,fat:86,
+    critical:'Día de recuperación y batch cooking. El Bowl se toma a mediodía.',
+    meals:[
+      {time:'10:00',name:'Brunch — huevos, aguacate y masa madre',desc:'100 g pan masa madre + 3 huevos (poché o revueltos) + 70 g aguacate + 40 g jamón serrano + tomate y AOVE + café y zumo natural'},
+      {time:'13:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela (hoy se toma a mediodía)',kcal:640,locked:true},
+      {time:'15:00',name:'Pollo asado al limón con patatas',desc:'200 g pollo + 300 g patata + 200 g verduras al horno (calabacín, pimiento, cebolla) + 15 ml AOVE, limón, romero, ajo'},
+      {time:'21:00',name:'Revuelto de gambas con tostada',desc:'3 huevos M + 120 g gambas peladas + 80 g pan masa madre + 100 g espárragos trigueros + 10 ml AOVE'},
+      {time:'22:45',name:'Pre-sueño',desc:'Magnesio bisglicinato + ashwagandha',locked:true}
+    ]}
 };
 const Z2MIN={1:"35'",2:"40'",3:"45'",4:"50' (test)"};
 const DAYNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
@@ -873,8 +1072,8 @@ function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+
 /* ---------------- init ---------------- */
 (async function init(){
   const today=todayISO();
-  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
-  bindTabs();bindAdders();bindTools();bindConfig();
+  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
+  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();
   loadLocalConfig();
   await initStorage();
   render();
@@ -900,7 +1099,7 @@ function status(m){
 }
 
 /* ---------------- local fallback ---------------- */
-function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[]}}
+function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[]}}
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY))||{};DB=seed();TYPES.forEach(t=>{if(Array.isArray(d[t]))DB[t]=d[t]})}catch(e){DB=seed()}}
 function saveLocal(){localStorage.setItem(KEY,JSON.stringify(DB))}
 function loadLocalConfig(){try{const c=JSON.parse(localStorage.getItem(CFGKEY));if(c&&c.start)CFG={...CFG,...c}}catch(e){}}
@@ -979,7 +1178,17 @@ function bindAdders(){
     else if(t==='checkin'){const sl=parseFloat(val('ck-sleep'));if(!sl)return warn('ck-sleep');
       addEntry('checkin',{date:val('ck-date'),sleepH:sl,sleepQ:parseInt(val('ck-sq')),energy:parseInt(val('ck-en')),
         soreness:parseInt(val('ck-so')),diet:val('ck-diet'),note:val('ck-note')});clr('ck-sleep');clr('ck-note');}
+    else if(t==='comida'){const d=val('comida-desc');if(!d)return warn('comida-desc');
+      addEntry('comida',{date:val('comida-date'),moment:val('comida-moment'),desc:d,kcal:parseFloat(val('comida-kcal'))||0});
+      clr('comida-desc');clr('comida-kcal');}
   }));
+}
+function bindMealQuickLog(){
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-meal-name]');
+    if(!b)return;
+    addEntry('comida',{date:todayISO(),moment:b.dataset.mealName,desc:b.dataset.mealDesc,kcal:parseFloat(b.dataset.mealKcal)||0});
+  });
 }
 function bindTools(){
   const exportar=()=>{
@@ -1019,7 +1228,7 @@ function bindConfig(){
 
 /* ---------------- render ---------------- */
 function render(){
-  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderWod();renderAnalisis();
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderWod();renderComida();renderDieta();renderAnalisis();
 }
 
 function renderConfigForm(){
@@ -1067,14 +1276,15 @@ function renderHoy(){
   else phNote.textContent='';
 
   // nutrición de hoy
-  const dd=DIETDAYS[dp.diet];
-  $('hoy-diet-label').textContent='Día '+dd.label.toLowerCase();
-  $('hoy-diet-tag').innerHTML='<span class="tag '+dd.tag+'">'+dd.label+'</span>';
-  $('hoy-kcal').textContent=dd.kcal;
-  $('hoy-carb').textContent=dd.carb;
-  $('hoy-diet-note').textContent=dp.diet==='duro'?'La comida crítica es el pre-entreno de las 16:30 (arroz + fruta densa).':
-    dp.diet==='mod'?'Día moderado: baja 50 g de carbo repartidos entre comida y cena.':
-    'Día de recuperación: 300 g de carbo bastan. Prioriza dormir.';
+  const dm=WEEKMENU[wd];
+  $('hoy-diet-label').textContent=dm.label;
+  $('hoy-diet-tag').innerHTML='<span class="tag '+dm.tag+'">'+dm.dayTag+'</span>';
+  $('hoy-kcal').textContent=dm.kcal+' kcal';
+  $('hoy-carb').textContent=dm.carb+' g';
+  $('hoy-prot').textContent=dm.prot+' g';
+  $('hoy-fat').textContent=dm.fat+' g';
+  $('hoy-diet-note').textContent=dm.critical;
+  renderHoyMeals(wd);
 
   // readiness
   const last=[...DB.checkin].sort(byDate).slice(-1)[0];
@@ -1173,6 +1383,31 @@ function renderAlerts(wk,ph){
   $('alerts').innerHTML=A.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('');
 }
 
+function renderHoyMeals(wd){
+  const box=$('hoy-meals');if(!box)return;
+  const dm=WEEKMENU[wd];const today=todayISO();
+  const logged=new Set(DB.comida.filter(c=>c.date===today).map(c=>(c.moment||'').toLowerCase()));
+  box.innerHTML='';
+  dm.meals.forEach(m=>{
+    const done=logged.has(m.name.toLowerCase());
+    const row=document.createElement('div');
+    row.className='meal'+(m.locked?' crit':'');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px';
+    const left=document.createElement('div');
+    left.innerHTML=`<div class="t">${esc(m.time)}</div><div class="n">${esc(m.name)}</div><div class="d">${esc(m.desc||'')}</div>`;
+    row.appendChild(left);
+    if(done){
+      const pill=document.createElement('span');pill.className='pill ok';pill.textContent='✓ registrado';
+      row.appendChild(pill);
+    }else{
+      const btn=document.createElement('button');btn.className='mini';btn.textContent='+ registrar';
+      btn.dataset.mealName=m.name;btn.dataset.mealDesc=m.desc||m.name;btn.dataset.mealKcal=m.kcal||0;
+      row.appendChild(btn);
+    }
+    box.appendChild(row);
+  });
+}
+
 /* ---- CHECK-IN ---- */
 function renderCheckin(){
   const tb=$('ck-body');tb.innerHTML='';
@@ -1255,6 +1490,65 @@ function renderWod(){
         ${r.note?`<div class="d" style="color:var(--muted);margin-top:3px">${esc(r.note)}</div>`:''}
       </div>`);
   });
+}
+
+/* ---- COMIDA ---- */
+function renderComida(){
+  const box=$('comida-list');if(!box)return;
+  if(!DB.comida.length){box.innerHTML='<div class="empty">Sin comidas registradas aún</div>';return}
+  box.innerHTML='';
+  [...DB.comida].reverse().forEach(c=>{
+    box.insertAdjacentHTML('beforeend',`<div class="meal" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+      <div><div class="t">${fmtd(c.date)} · ${esc(c.moment||'')}</div><div class="n">${esc(c.desc||'')}</div>${c.kcal?`<div class="kc">≈ ${c.kcal} kcal</div>`:''}</div>
+      <button class="del" onclick="del('comida','${c.id}')">×</button>
+    </div>`);
+  });
+}
+
+/* ---- DIETA (día a día) ---- */
+const DIETORDER=[1,2,3,4,5,6,0];
+function renderDieta(){
+  const wb=$('dieta-week-body');
+  if(wb){
+    wb.innerHTML=DIETORDER.map(wd=>{
+      const dm=WEEKMENU[wd];
+      return `<tr><td>${esc(dm.label)}</td><td><span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></td><td class="num">${dm.kcal}</td><td class="num">${dm.carb} g</td><td class="num">${dm.prot} g</td><td class="num">${dm.fat} g</td></tr>`;
+    }).join('');
+  }
+  const days=$('dieta-days');
+  if(days){
+    days.innerHTML=DIETORDER.map(wd=>{
+      const dm=WEEKMENU[wd];
+      const meals=dm.meals.map(m=>`
+        <div class="meal${m.locked?' crit':''}">
+          <div class="t">${esc(m.time)}${m.locked?' · 🔒':''}</div>
+          <div class="n">${esc(m.name)}</div>
+          <div class="d">${esc(m.desc||'')}</div>
+          ${m.kcal?`<div class="kc">≈ ${m.kcal} kcal</div>`:''}
+        </div>`).join('');
+      return `<div class="card">
+        <div class="eyebrow">${esc(dm.label)} · <span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></div>
+        <h2 style="margin:4px 0 12px">${dm.kcal} kcal · ${dm.carb} C · ${dm.prot} P · ${dm.fat} G</h2>
+        ${meals}
+      </div>`;
+    }).join('');
+  }
+  const cheat=$('dieta-cheat-body');
+  if(cheat){
+    // esquemático, como en el plan original: alinea por rol de comida, no por hora exacta (varía ligeramente sáb/dom)
+    const CHEAT=[
+      ['08:00',['Tostadas + huevo','Porridge','Tostadas + huevo','Porridge','Porridge','Tortitas 🥞','Brunch']],
+      ['11:30',['🔒 El Bowl','🔒 El Bowl','🔒 El Bowl','🔒 El Bowl','🔒 El Bowl','Sándwich','🔒 El Bowl']],
+      ['14:00',['Ñoquis boloñesa 🥟','Salmón + patata 🐟','Carbonara 🍝','Teriyaki + arroz','Ñoquis pesto 🥟','Pasta pesto 🍝','Pollo asado']],
+      ['16:30',['🔒 Pre A','🔒 Pre B','🔒 Pre C','🔒 Pre A','🔒 Pre B','Merienda','—']],
+      ['20:15',['🔒 Post','🔒 Post','🔒 Post','🔒 Post','🔒 Post','🔒 Post','—']],
+      ['21:15',['Burrito bowl','Tortilla patatas','Pollo + boniato','Caballa 🐟','Hamburguesa 🍔','Poke salmón 🐟','Revuelto gambas']]
+    ];
+    cheat.innerHTML=CHEAT.map(([label,vals])=>{
+      const cells=vals.map(v=>`<td>${esc(v)}</td>`).join('');
+      return `<tr><td>${esc(label)}</td>${cells}</tr>`;
+    }).join('');
+  }
 }
 
 /* ---- ANÁLISIS ---- */
