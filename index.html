@@ -157,6 +157,15 @@ tbody tr:last-child td{border-bottom:none}
 .mealrow .mr-right{flex:0 0 auto;text-align:right;padding-top:2px}
 .mealrow .mr-right .kc{font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap}
 .mealrow.crit{background:linear-gradient(90deg,#F6E2DF,transparent 40%);margin:0 -8px;padding-left:10px;padding-right:10px;border-radius:2px}
+.mealrow.done .mr-body .n{color:var(--muted)}
+.mealrow.done .mr-ic{opacity:.45}
+
+/* ---- meal day progress ---- */
+.mealprog{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.mealprog .bar{flex:1;height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.mealprog .bar i{display:block;height:100%;background:var(--green);width:0%;transition:width .25s}
+.mealprog .cnt{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+button.pill{border:none;cursor:pointer}
 
 /* ---- week grid ---- */
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:1.5px;background:var(--line);border:1.5px solid var(--line);border-radius:3px;overflow:hidden}
@@ -295,7 +304,12 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
 
   <div class="card">
     <div class="eyebrow">Menú de hoy</div>
-    <h2 style="margin:4px 0 10px">Toca para registrar cada comida</h2>
+    <h2 style="margin:4px 0 8px">Comidas de hoy</h2>
+    <div class="mealprog">
+      <div class="bar"><i id="hoy-meals-bar"></i></div>
+      <span class="cnt" id="hoy-meals-cnt">—</span>
+      <button class="mini" id="hoy-meals-all">✓ marcar todas</button>
+    </div>
     <div id="hoy-meals"></div>
   </div>
 
@@ -890,6 +904,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
     <div class="metric"><div class="k">Adherencia dieta</div><div class="v" id="an-diet">—</div><div class="u">últimos 14 check-ins</div></div>
     <div class="metric"><div class="k">Sueño medio</div><div class="v" id="an-sleep">—</div><div class="u">h · últimos 7 check-ins</div></div>
     <div class="metric"><div class="k">Δ Peso 4 sem</div><div class="v" id="an-dpeso">—</div><div class="u">kg</div></div>
+    <div class="metric"><div class="k">Comidas plan</div><div class="v" id="an-meals">—</div><div class="u">últimos 7 días</div></div>
   </div>
 
   <div class="card">
@@ -1216,9 +1231,20 @@ function bindAdders(){
 }
 function bindMealQuickLog(){
   document.addEventListener('click',e=>{
+    const u=e.target.closest('[data-meal-undo]');
+    if(u){del('comida',u.dataset.mealUndo);return}
     const b=e.target.closest('[data-meal-name]');
     if(!b)return;
     addEntry('comida',{date:todayISO(),moment:b.dataset.mealName,desc:b.dataset.mealDesc,kcal:parseFloat(b.dataset.mealKcal)||0});
+  });
+  const all=$('hoy-meals-all');
+  if(all)all.addEventListener('click',async()=>{
+    const dm=WEEKMENU[new Date().getDay()];const today=todayISO();
+    const logged=new Set(DB.comida.filter(c=>c.date===today).map(c=>(c.moment||'').toLowerCase()));
+    for(const m of dm.meals){
+      if(!logged.has(m.name.toLowerCase()))
+        await addEntry('comida',{date:today,moment:m.name,desc:m.desc||m.name,kcal:m.kcal||0});
+    }
   });
 }
 function bindTools(){
@@ -1409,6 +1435,17 @@ function renderAlerts(wk,ph){
     const bad=last7.filter(c=>c.diet==='no').length;
     if(bad>=3)push('warn','<b>Dieta floja:</b> '+bad+' de los últimos '+last7.length+' días sin cumplir. El plan entero cuelga de las 3.100 kcal.');
   }
+  // comidas de ayer (solo si ya usa el registro de comidas)
+  if(DB.comida.length){
+    const y=new Date();y.setDate(y.getDate()-1);const ys=iso(y);
+    const firstMeal=DB.comida.reduce((a,c)=>c.date<a?c.date:a,today);
+    if(ys>=firstMeal){
+      const dmY=WEEKMENU[y.getDay()];
+      const loggedY=new Set(DB.comida.filter(c=>c.date===ys).map(c=>(c.moment||'').toLowerCase()));
+      const hitY=dmY.meals.filter(m=>loggedY.has(m.name.toLowerCase())).length;
+      if(hitY<dmY.meals.length/2)push('warn','<b>Ayer registraste '+hitY+' de '+dmY.meals.length+' comidas del plan.</b> Si las hiciste, márcalas; si no, hoy vuelve al guion.');
+    }
+  }
   if(!A.some(a=>a.lv==='bad'||a.lv==='warn'))push('ok','<b>Todo en orden.</b> Sin alertas: ejecuta el día tal como está planificado.');
 
   $('alerts').innerHTML=A.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('');
@@ -1417,7 +1454,7 @@ function renderAlerts(wk,ph){
 function mealRow(m,opt){
   opt=opt||{};
   const row=document.createElement('div');
-  row.className='mealrow'+(m.locked?' crit':'');
+  row.className='mealrow'+(m.locked?' crit':'')+(opt.done?' done':'');
   const ic=document.createElement('div');ic.className='mr-ic';ic.textContent=m.icon||'🍽️';
   const time=document.createElement('div');time.className='mr-time';time.textContent=m.time;
   const body=document.createElement('div');body.className='mr-body';
@@ -1425,7 +1462,10 @@ function mealRow(m,opt){
   const right=document.createElement('div');right.className='mr-right';
   if(opt.action==='log'){
     if(opt.done){
-      right.innerHTML='<span class="pill ok">✓ hecho</span>';
+      const pill=document.createElement('button');
+      pill.className='pill ok';pill.textContent='✓ hecho';pill.title='Tocar para deshacer';
+      if(opt.undoId)pill.dataset.mealUndo=opt.undoId;
+      right.appendChild(pill);
     }else{
       const btn=document.createElement('button');btn.className='mini';btn.textContent='+ registrar';
       btn.dataset.mealName=m.name;btn.dataset.mealDesc=m.desc||m.name;btn.dataset.mealKcal=m.kcal||0;
@@ -1440,9 +1480,19 @@ function mealRow(m,opt){
 function renderHoyMeals(wd){
   const box=$('hoy-meals');if(!box)return;
   const dm=WEEKMENU[wd];const today=todayISO();
-  const logged=new Set(DB.comida.filter(c=>c.date===today).map(c=>(c.moment||'').toLowerCase()));
+  const byMoment={};
+  DB.comida.filter(c=>c.date===today).forEach(c=>{byMoment[(c.moment||'').toLowerCase()]=c});
   box.innerHTML='';
-  dm.meals.forEach(m=>box.appendChild(mealRow(m,{action:'log',done:logged.has(m.name.toLowerCase())})));
+  let done=0;
+  dm.meals.forEach(m=>{
+    const hit=byMoment[m.name.toLowerCase()];
+    if(hit)done++;
+    box.appendChild(mealRow(m,{action:'log',done:!!hit,undoId:hit&&hit.id}));
+  });
+  const total=dm.meals.length;
+  const bar=$('hoy-meals-bar');if(bar)bar.style.width=Math.round(100*done/total)+'%';
+  const cnt=$('hoy-meals-cnt');if(cnt)cnt.textContent=done+'/'+total+(done===total?' · día completo ✓':' comidas');
+  const all=$('hoy-meals-all');if(all)all.style.display=done===total?'none':'';
 }
 
 /* ---- CHECK-IN ---- */
@@ -1533,12 +1583,23 @@ function renderWod(){
 function renderComida(){
   const box=$('comida-list');if(!box)return;
   if(!DB.comida.length){box.innerHTML='<div class="empty">Sin comidas registradas aún</div>';return}
+  const groups={};
+  DB.comida.forEach(c=>{(groups[c.date]=groups[c.date]||[]).push(c)});
   box.innerHTML='';
-  [...DB.comida].reverse().forEach(c=>{
-    box.insertAdjacentHTML('beforeend',`<div class="meal" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-      <div><div class="t">${fmtd(c.date)} · ${esc(c.moment||'')}</div><div class="n">${esc(c.desc||'')}</div>${c.kcal?`<div class="kc">≈ ${c.kcal} kcal</div>`:''}</div>
-      <button class="del" onclick="del('comida','${c.id}')">×</button>
-    </div>`);
+  Object.keys(groups).sort().reverse().forEach(ds=>{
+    const items=groups[ds];
+    const kcal=items.reduce((s,c)=>s+(c.kcal||0),0);
+    const dm=WEEKMENU[new Date(ds+'T00:00:00').getDay()];
+    box.insertAdjacentHTML('beforeend',`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:5px;margin:18px 0 2px">
+      <span style="font-family:var(--display);font-weight:700;font-size:14px">${fmtd(ds)} · ${esc(dm.label)}</span>
+      <span class="mono" style="font-size:11px;color:var(--muted)">${items.length}/${dm.meals.length} del plan${kcal?' · ≈ '+kcal+' kcal':''}</span></div>`);
+    items.forEach(c=>{
+      box.insertAdjacentHTML('beforeend',`<div class="mealrow">
+        <div class="mr-body"><div class="n">${esc(c.moment||'')}</div><div class="d">${esc(c.desc||'')}</div></div>
+        <div class="mr-right">${c.kcal?`<div class="kc">≈ ${c.kcal} kcal</div>`:''}</div>
+        <button class="del" onclick="del('comida','${c.id}')">×</button>
+      </div>`);
+    });
   });
 }
 
@@ -1646,6 +1707,21 @@ function renderAnalisis(){
     $('an-dpeso').textContent=(d>0?'+':'')+d.toFixed(1);
     $('an-dpeso').className='v '+(Math.abs(d)<=0.7?'good':'warn');
   }else $('an-dpeso').textContent='—';
+  // adherencia de comidas del plan (desde el primer registro, máx 7 días)
+  if(DB.comida.length){
+    const first=DB.comida.reduce((a,c)=>c.date<a?c.date:a,today);
+    let plan=0,hit=0;
+    for(let i=0;i<7;i++){
+      const d=new Date();d.setDate(d.getDate()-i);const ds=iso(d);
+      if(ds<first)break;
+      const dm=WEEKMENU[d.getDay()];
+      const logged=new Set(DB.comida.filter(c=>c.date===ds).map(c=>(c.moment||'').toLowerCase()));
+      dm.meals.forEach(m=>{plan++;if(logged.has(m.name.toLowerCase()))hit++});
+    }
+    const pct=plan?Math.round(100*hit/plan):0;
+    $('an-meals').textContent=pct+'%';
+    $('an-meals').className='v '+(pct>=80?'good':pct>=50?'':'warn');
+  }else $('an-meals').textContent='—';
 
   renderHeatmap();renderPRs();renderBenchmarks();renderTrends(c28);
 }
