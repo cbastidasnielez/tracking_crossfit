@@ -121,6 +121,7 @@ tbody tr:last-child td{border-bottom:none}
 .tag.z2{background:#D3E2EA;color:#1E5670}
 .tag.pr{background:var(--ink);color:#fff}
 .tablewrap{overflow-x:auto}
+#dieta-week-table tbody tr:hover{background:var(--panel2)}
 
 /* ---- meal blocks ---- */
 .meal{border-left:3px solid var(--line);padding:2px 0 2px 14px;margin-bottom:14px}
@@ -129,6 +130,33 @@ tbody tr:last-child td{border-bottom:none}
 .meal .n{font-family:var(--display);font-weight:600;font-size:15px;margin:1px 0 3px}
 .meal .d{font-size:14px;color:var(--ink)}
 .meal .kc{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---- day picker (Dieta) ---- */
+.daypicker{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.daypicker::-webkit-scrollbar{display:none}
+.daypicker button{flex:1 0 56px;background:var(--panel2);border:1.5px solid var(--line);border-radius:3px;
+  padding:9px 4px 8px;cursor:pointer;text-align:center;transition:background .12s,border-color .12s,color .12s}
+.daypicker button .dn{display:block;font-family:var(--display);text-transform:uppercase;letter-spacing:.04em;font-size:12px;font-weight:700;color:var(--ink)}
+.daypicker button .dg{display:block;font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:3px;letter-spacing:.02em}
+.daypicker button:hover{border-color:var(--ink)}
+.daypicker button.istoday{border-color:var(--red)}
+.daypicker button.istoday .dg{color:var(--red)}
+.daypicker button.on{background:var(--ink);border-color:var(--ink)}
+.daypicker button.on .dn{color:#fff}
+.daypicker button.on .dg{color:#C7CCD2}
+
+/* ---- meal row (used in Dieta day panel and Hoy checklist) ---- */
+.mealrow{display:flex;gap:12px;align-items:flex-start;padding:12px 2px;border-bottom:1px solid var(--line2)}
+.mealrow:last-child{border-bottom:none}
+.mealrow .mr-ic{flex:0 0 26px;font-size:17px;line-height:1.3;text-align:center}
+.mealrow .mr-time{flex:0 0 48px;font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:3px}
+.mealrow .mr-body{flex:1;min-width:0}
+.mealrow .mr-body .n{font-family:var(--display);font-weight:600;font-size:14.5px;line-height:1.25}
+.mealrow .mr-body .n .lock{color:var(--red);font-size:11px;margin-left:4px;vertical-align:1px}
+.mealrow .mr-body .d{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+.mealrow .mr-right{flex:0 0 auto;text-align:right;padding-top:2px}
+.mealrow .mr-right .kc{font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap}
+.mealrow.crit{background:linear-gradient(90deg,#F6E2DF,transparent 40%);margin:0 -8px;padding-left:10px;padding-right:10px;border-radius:2px}
 
 /* ---- week grid ---- */
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:1.5px;background:var(--line);border:1.5px solid var(--line);border-radius:3px;overflow:hidden}
@@ -453,18 +481,21 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
   </div>
 
   <div class="card">
-    <h2>Estructura de la semana</h2>
-    <div class="tablewrap"><table>
+    <div class="eyebrow">Menú día a día</div>
+    <h2 style="margin:4px 0 14px">Qué toca comer, comida por comida</h2>
+    <div class="daypicker" id="dieta-daypicker" role="tablist"></div>
+    <div class="metrics" id="dieta-day-metrics" style="margin-top:16px"></div>
+    <div id="dieta-day-meals"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Estructura de la semana</h3>
+    <div class="tablewrap"><table id="dieta-week-table">
       <thead><tr><th>Día</th><th>Tipo</th><th class="num">Kcal</th><th class="num">Carbo</th><th class="num">Prot</th><th class="num">Grasa</th></tr></thead>
       <tbody id="dieta-week-body"></tbody>
     </table></div>
+    <small class="note">Toca una fila para ver ese día arriba.</small>
   </div>
-
-  <div class="card" style="padding-bottom:6px">
-    <div class="eyebrow">Menú día a día</div>
-    <h2 style="margin:4px 0 2px">Qué toca comer, comida por comida</h2>
-  </div>
-  <div id="dieta-days"></div>
 
   <div class="card">
     <h2>🍳 Batch cooking · domingo (~90 min)</h2>
@@ -984,70 +1015,70 @@ const WEEKMENU={
   1:{label:'Lunes',tag:'hard',dayTag:'Duro',kcal:3210,carb:424,prot:181,fat:91,
     critical:'La comida crítica es el pre-entreno de las 16:30 (bocadillo de pavo y queso).',
     meals:[
-      {time:'08:00',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café'},
-      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
-      {time:'14:00',name:'Ñoquis a la boloñesa',desc:'300 g ñoquis frescos + 130 g carne picada de ternera 5% + 200 g tomate triturado con cebolla y zanahoria + 20 g parmesano + 10 ml AOVE, albahaca y orégano (salsa hecha el domingo)'},
-      {time:'16:30',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
-      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
-      {time:'21:15',name:'Burrito bowl de pollo',desc:'70 g arroz basmati seco + 150 g pollo desmenuzado + 50 g maíz + 25 g queso rallado + 40 g guacamole + tomate, cilantro, lima, comino'}
+      {time:'08:00',icon:'🍳',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café'},
+      {time:'11:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',icon:'🥟',name:'Ñoquis a la boloñesa',desc:'300 g ñoquis frescos + 130 g carne picada de ternera 5% + 200 g tomate triturado con cebolla y zanahoria + 20 g parmesano + 10 ml AOVE, albahaca y orégano (salsa hecha el domingo)'},
+      {time:'16:30',icon:'⚡',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
+      {time:'20:15',icon:'🥤',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',icon:'🌯',name:'Burrito bowl de pollo',desc:'70 g arroz basmati seco + 150 g pollo desmenuzado + 50 g maíz + 25 g queso rallado + 40 g guacamole + tomate, cilantro, lima, comino'}
     ]},
   2:{label:'Martes',tag:'hard',dayTag:'Duro',kcal:3190,carb:417,prot:178,fat:93,
     critical:'La comida crítica es el pre-entreno de las 16:30 (arroz con atún).',
     meals:[
-      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela'},
-      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
-      {time:'14:00',name:'Salmón al horno con patata y brócoli',desc:'180 g salmón fresco + 350 g patata en gajos al horno + 200 g brócoli al ajillo + 15 ml AOVE, limón, ajo, pimentón'},
-      {time:'16:30',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
-      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
-      {time:'21:15',name:'Tortilla de patatas con jamón',desc:'3 huevos M + 200 g patata + 40 g cebolla + 10 ml AOVE + 40 g jamón serrano + ensalada de tomate con AOVE'}
+      {time:'08:00',icon:'🥣',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela'},
+      {time:'11:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',icon:'🐟',name:'Salmón al horno con patata y brócoli',desc:'180 g salmón fresco + 350 g patata en gajos al horno + 200 g brócoli al ajillo + 15 ml AOVE, limón, ajo, pimentón'},
+      {time:'16:30',icon:'⚡',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
+      {time:'20:15',icon:'🥤',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',icon:'🍳',name:'Tortilla de patatas con jamón',desc:'3 huevos M + 200 g patata + 40 g cebolla + 10 ml AOVE + 40 g jamón serrano + ensalada de tomate con AOVE'}
     ]},
   3:{label:'Miércoles',tag:'mod',dayTag:'Moderado',kcal:3020,carb:371,prot:177,fat:85,
     critical:'La comida crítica es el pre-entreno de las 16:30 (tostadas de cacahuete y miel).',
     meals:[
-      {time:'08:00',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café (como el lunes)'},
-      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
-      {time:'14:00',name:'Pasta carbonara fit',desc:'110 g pasta integral + 120 g bacon de pavo (o taquitos de jamón) + 2 huevos M + 1 yema + 30 g parmesano + pimienta negra. Sin nata: emulsión de huevo, queso y agua de cocción'},
-      {time:'16:30',name:'Pre-entreno C · tostadas de cacahuete y miel',desc:'80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%',kcal:550,locked:true},
-      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina (también en Z2)',kcal:225,locked:true},
-      {time:'21:15',name:'Pollo asado con boniato',desc:'170 g pechuga de pollo + 250 g boniato al horno + 150 g pimientos asados + 10 ml AOVE, pimentón, ajo, tomillo'}
+      {time:'08:00',icon:'🍳',name:'Tostadas con huevo y aguacate',desc:'100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café (como el lunes)'},
+      {time:'11:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',icon:'🍝',name:'Pasta carbonara fit',desc:'110 g pasta integral + 120 g bacon de pavo (o taquitos de jamón) + 2 huevos M + 1 yema + 30 g parmesano + pimienta negra. Sin nata: emulsión de huevo, queso y agua de cocción'},
+      {time:'16:30',icon:'⚡',name:'Pre-entreno C · tostadas de cacahuete y miel',desc:'80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%',kcal:550,locked:true},
+      {time:'20:15',icon:'🥤',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina (también en Z2)',kcal:225,locked:true},
+      {time:'21:15',icon:'🍗',name:'Pollo asado con boniato',desc:'170 g pechuga de pollo + 250 g boniato al horno + 150 g pimientos asados + 10 ml AOVE, pimentón, ajo, tomillo'}
     ]},
   4:{label:'Jueves',tag:'hard',dayTag:'Duro',kcal:3220,carb:421,prot:183,fat:92,
     critical:'La comida crítica es el pre-entreno de las 16:30 (bocadillo de pavo y queso).',
     meals:[
-      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (como el martes)'},
-      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
-      {time:'14:00',name:'Pollo teriyaki con arroz y verduras al wok',desc:'130 g arroz basmati seco + 170 g pechuga de pollo + 200 g verduras al wok (brócoli, pimiento, zanahoria, cebolleta) + 30 ml salsa teriyaki + 10 ml aceite de sésamo + semillas de sésamo (batch domingo)'},
-      {time:'16:30',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
-      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
-      {time:'21:15',name:'Caballa a la plancha con cuscús',desc:'180 g caballa (o sardinas) + 80 g cuscús seco + 150 g pimientos asados + 10 ml AOVE, limón, perejil'}
+      {time:'08:00',icon:'🥣',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena integral + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (como el martes)'},
+      {time:'11:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',icon:'🍗',name:'Pollo teriyaki con arroz y verduras al wok',desc:'130 g arroz basmati seco + 170 g pechuga de pollo + 200 g verduras al wok (brócoli, pimiento, zanahoria, cebolleta) + 30 ml salsa teriyaki + 10 ml aceite de sésamo + semillas de sésamo (batch domingo)'},
+      {time:'16:30',icon:'⚡',name:'Pre-entreno A · bocadillo de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano',kcal:550,locked:true},
+      {time:'20:15',icon:'🥤',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',icon:'🐟',name:'Caballa a la plancha con cuscús',desc:'180 g caballa (o sardinas) + 80 g cuscús seco + 150 g pimientos asados + 10 ml AOVE, limón, perejil'}
     ]},
   5:{label:'Viernes',tag:'hard',dayTag:'Duro',kcal:3230,carb:423,prot:182,fat:94,
     critical:'La comida crítica es el pre-entreno de las 16:30 (arroz con atún). Pesaje AM en ayunas, post-evacuación.',
     meals:[
-      {time:'08:00',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (después de pesarte)'},
-      {time:'11:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
-      {time:'14:00',name:'Ñoquis al pesto con pollo',desc:'300 g ñoquis frescos + 160 g pechuga de pollo a tiras + 30 g pesto genovés + 100 g tomates cherry + 20 g parmesano + piñones + albahaca fresca'},
-      {time:'16:30',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
-      {time:'20:15',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
-      {time:'21:15',name:'Hamburguesa casera con patatas gajo',desc:'140 g carne picada de ternera 5% (a mano, sal y pimienta) + 1 pan de hamburguesa + 30 g cheddar + lechuga, tomate, cebolla, pepinillo, mostaza + 250 g patata en gajos al horno. Día de premio, dentro de macros.'}
+      {time:'08:00',icon:'🥣',name:'Porridge de avena, plátano y cacahuete',desc:'70 g avena + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela (después de pesarte)'},
+      {time:'11:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela',kcal:640,locked:true},
+      {time:'14:00',icon:'🥟',name:'Ñoquis al pesto con pollo',desc:'300 g ñoquis frescos + 160 g pechuga de pollo a tiras + 30 g pesto genovés + 100 g tomates cherry + 20 g parmesano + piñones + albahaca fresca'},
+      {time:'16:30',icon:'⚡',name:'Pre-entreno B · arroz con atún',desc:'70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles',kcal:550,locked:true},
+      {time:'20:15',icon:'🥤',name:'Post-entreno',desc:'30 g whey + 1 plátano + 5 g creatina',kcal:225,locked:true},
+      {time:'21:15',icon:'🍔',name:'Hamburguesa casera con patatas gajo',desc:'140 g carne picada de ternera 5% (a mano, sal y pimienta) + 1 pan de hamburguesa + 30 g cheddar + lechuga, tomate, cebolla, pepinillo, mostaza + 250 g patata en gajos al horno. Día de premio, dentro de macros.'}
     ]},
   6:{label:'Sábado',tag:'hard',dayTag:'Duro',kcal:3200,carb:419,prot:180,fat:92,
     critical:'Si entrenas por la mañana: desayuna 2 h antes y mete el post-entreno al salir.',
     meals:[
-      {time:'09:00',name:'Tortitas de avena y plátano',desc:'70 g avena + 1 plátano + 2 huevos M + 25 g whey + 100 ml leche + levadura y canela. Encima: 150 g yogur griego 0% + 15 g miel + 15 g crema de cacahuete + frutos rojos'},
-      {time:'12:00',name:'Sándwich de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso + 1 manzana'},
-      {time:'14:30',name:'Pasta al pesto con pollo y cherry',desc:'120 g pasta integral + 170 g pechuga de pollo + 30 g pesto + 100 g tomates cherry + 20 g parmesano + rúcula'},
-      {time:'17:30',name:'Merienda',desc:'200 g queso batido 0% + 40 g avena + 15 g miel + 1 plátano'},
-      {time:'21:00',name:'Poke bowl de salmón',desc:'90 g arroz basmati seco + 150 g salmón fresco en dados + 60 g aguacate + 60 g mango + pepino, zanahoria, cebolleta + soja, sésamo, lima'}
+      {time:'09:00',icon:'🥞',name:'Tortitas de avena y plátano',desc:'70 g avena + 1 plátano + 2 huevos M + 25 g whey + 100 ml leche + levadura y canela. Encima: 150 g yogur griego 0% + 15 g miel + 15 g crema de cacahuete + frutos rojos'},
+      {time:'12:00',icon:'🥪',name:'Sándwich de pavo y queso',desc:'100 g pan masa madre + 80 g pavo + 30 g queso + 1 manzana'},
+      {time:'14:30',icon:'🍝',name:'Pasta al pesto con pollo y cherry',desc:'120 g pasta integral + 170 g pechuga de pollo + 30 g pesto + 100 g tomates cherry + 20 g parmesano + rúcula'},
+      {time:'17:30',icon:'🧀',name:'Merienda',desc:'200 g queso batido 0% + 40 g avena + 15 g miel + 1 plátano'},
+      {time:'21:00',icon:'🐟',name:'Poke bowl de salmón',desc:'90 g arroz basmati seco + 150 g salmón fresco en dados + 60 g aguacate + 60 g mango + pepino, zanahoria, cebolleta + soja, sésamo, lima'}
     ]},
   0:{label:'Domingo',tag:'rec',dayTag:'Recuperación',kcal:2810,carb:301,prot:175,fat:86,
     critical:'Día de recuperación y batch cooking. El Bowl se toma a mediodía.',
     meals:[
-      {time:'10:00',name:'Brunch — huevos, aguacate y masa madre',desc:'100 g pan masa madre + 3 huevos (poché o revueltos) + 70 g aguacate + 40 g jamón serrano + tomate y AOVE + café y zumo natural'},
-      {time:'13:30',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela (hoy se toma a mediodía)',kcal:640,locked:true},
-      {time:'15:00',name:'Pollo asado al limón con patatas',desc:'200 g pollo + 300 g patata + 200 g verduras al horno (calabacín, pimiento, cebolla) + 15 ml AOVE, limón, romero, ajo'},
-      {time:'21:00',name:'Revuelto de gambas con tostada',desc:'3 huevos M + 120 g gambas peladas + 80 g pan masa madre + 100 g espárragos trigueros + 10 ml AOVE'},
-      {time:'22:45',name:'Pre-sueño',desc:'Magnesio bisglicinato + ashwagandha',locked:true}
+      {time:'10:00',icon:'🥑',name:'Brunch — huevos, aguacate y masa madre',desc:'100 g pan masa madre + 3 huevos (poché o revueltos) + 70 g aguacate + 40 g jamón serrano + tomate y AOVE + café y zumo natural'},
+      {time:'13:30',icon:'🥣',name:'El Bowl',desc:'200 g yogur griego 0% + 40 g avena + 15 g crema de cacahuete + 15 g miel + 1 plátano + canela (hoy se toma a mediodía)',kcal:640,locked:true},
+      {time:'15:00',icon:'🍗',name:'Pollo asado al limón con patatas',desc:'200 g pollo + 300 g patata + 200 g verduras al horno (calabacín, pimiento, cebolla) + 15 ml AOVE, limón, romero, ajo'},
+      {time:'21:00',icon:'🍤',name:'Revuelto de gambas con tostada',desc:'3 huevos M + 120 g gambas peladas + 80 g pan masa madre + 100 g espárragos trigueros + 10 ml AOVE'},
+      {time:'22:45',icon:'🌙',name:'Pre-sueño',desc:'Magnesio bisglicinato + ashwagandha',locked:true}
     ]}
 };
 const Z2MIN={1:"35'",2:"40'",3:"45'",4:"50' (test)"};
@@ -1073,7 +1104,7 @@ function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+
 (async function init(){
   const today=todayISO();
   ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
-  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();
+  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();
   loadLocalConfig();
   await initStorage();
   render();
@@ -1383,29 +1414,35 @@ function renderAlerts(wk,ph){
   $('alerts').innerHTML=A.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('');
 }
 
+function mealRow(m,opt){
+  opt=opt||{};
+  const row=document.createElement('div');
+  row.className='mealrow'+(m.locked?' crit':'');
+  const ic=document.createElement('div');ic.className='mr-ic';ic.textContent=m.icon||'🍽️';
+  const time=document.createElement('div');time.className='mr-time';time.textContent=m.time;
+  const body=document.createElement('div');body.className='mr-body';
+  body.innerHTML=`<div class="n">${esc(m.name)}${m.locked?'<span class="lock">🔒</span>':''}</div><div class="d">${esc(m.desc||'')}</div>`;
+  const right=document.createElement('div');right.className='mr-right';
+  if(opt.action==='log'){
+    if(opt.done){
+      right.innerHTML='<span class="pill ok">✓ hecho</span>';
+    }else{
+      const btn=document.createElement('button');btn.className='mini';btn.textContent='+ registrar';
+      btn.dataset.mealName=m.name;btn.dataset.mealDesc=m.desc||m.name;btn.dataset.mealKcal=m.kcal||0;
+      right.appendChild(btn);
+    }
+  }else if(m.kcal){
+    right.innerHTML=`<div class="kc">≈ ${m.kcal} kcal</div>`;
+  }
+  row.appendChild(ic);row.appendChild(time);row.appendChild(body);row.appendChild(right);
+  return row;
+}
 function renderHoyMeals(wd){
   const box=$('hoy-meals');if(!box)return;
   const dm=WEEKMENU[wd];const today=todayISO();
   const logged=new Set(DB.comida.filter(c=>c.date===today).map(c=>(c.moment||'').toLowerCase()));
   box.innerHTML='';
-  dm.meals.forEach(m=>{
-    const done=logged.has(m.name.toLowerCase());
-    const row=document.createElement('div');
-    row.className='meal'+(m.locked?' crit':'');
-    row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px';
-    const left=document.createElement('div');
-    left.innerHTML=`<div class="t">${esc(m.time)}</div><div class="n">${esc(m.name)}</div><div class="d">${esc(m.desc||'')}</div>`;
-    row.appendChild(left);
-    if(done){
-      const pill=document.createElement('span');pill.className='pill ok';pill.textContent='✓ registrado';
-      row.appendChild(pill);
-    }else{
-      const btn=document.createElement('button');btn.className='mini';btn.textContent='+ registrar';
-      btn.dataset.mealName=m.name;btn.dataset.mealDesc=m.desc||m.name;btn.dataset.mealKcal=m.kcal||0;
-      row.appendChild(btn);
-    }
-    box.appendChild(row);
-  });
+  dm.meals.forEach(m=>box.appendChild(mealRow(m,{action:'log',done:logged.has(m.name.toLowerCase())})));
 }
 
 /* ---- CHECK-IN ---- */
@@ -1507,32 +1544,62 @@ function renderComida(){
 
 /* ---- DIETA (día a día) ---- */
 const DIETORDER=[1,2,3,4,5,6,0];
+let dietaDay=null;
+function selectDietaDay(wd){
+  dietaDay=wd;
+  renderDietaDayPicker();
+  renderDietaDayPanel();
+}
+function renderDietaDayPicker(){
+  const nav=$('dieta-daypicker');if(!nav)return;
+  const today=new Date().getDay();
+  if(dietaDay===null)dietaDay=today;
+  nav.innerHTML='';
+  DIETORDER.forEach(wd=>{
+    const dm=WEEKMENU[wd];
+    const cls=[];if(wd===dietaDay)cls.push('on');if(wd===today)cls.push('istoday');
+    const btn=document.createElement('button');
+    btn.type='button';btn.className=cls.join(' ');btn.dataset.wd=wd;
+    btn.innerHTML=`<span class="dn">${esc(dm.label.slice(0,3))}</span><span class="dg">${wd===today?'HOY':esc(dm.dayTag)}</span>`;
+    nav.appendChild(btn);
+  });
+}
+function renderDietaDayPanel(){
+  const dm=WEEKMENU[dietaDay];if(!dm)return;
+  const metrics=$('dieta-day-metrics');
+  if(metrics)metrics.innerHTML=
+    `<div class="metric"><div class="k">${esc(dm.label)}</div><div class="v"><span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></div></div>
+     <div class="metric"><div class="k">Calorías</div><div class="v">${dm.kcal}</div><div class="u">kcal</div></div>
+     <div class="metric"><div class="k">Carbohidrato</div><div class="v warn">${dm.carb}</div><div class="u">g</div></div>
+     <div class="metric"><div class="k">Proteína</div><div class="v good">${dm.prot}</div><div class="u">g</div></div>
+     <div class="metric"><div class="k">Grasa</div><div class="v">${dm.fat}</div><div class="u">g</div></div>`;
+  const box=$('dieta-day-meals');
+  if(box){box.innerHTML='';dm.meals.forEach(m=>box.appendChild(mealRow(m)));}
+}
+function bindDietaNav(){
+  const nav=$('dieta-daypicker');
+  if(nav)nav.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-wd]');if(!b)return;
+    selectDietaDay(parseInt(b.dataset.wd));
+  });
+  const tbl=$('dieta-week-body');
+  if(tbl)tbl.addEventListener('click',e=>{
+    const tr=e.target.closest('tr[data-wd]');if(!tr)return;
+    selectDietaDay(parseInt(tr.dataset.wd));
+    $('dieta-daypicker').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
 function renderDieta(){
   const wb=$('dieta-week-body');
   if(wb){
+    const today=new Date().getDay();
     wb.innerHTML=DIETORDER.map(wd=>{
       const dm=WEEKMENU[wd];
-      return `<tr><td>${esc(dm.label)}</td><td><span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></td><td class="num">${dm.kcal}</td><td class="num">${dm.carb} g</td><td class="num">${dm.prot} g</td><td class="num">${dm.fat} g</td></tr>`;
+      return `<tr data-wd="${wd}" style="cursor:pointer"><td>${esc(dm.label)}${wd===today?' <span class="pill ok" style="padding:2px 6px;font-size:9px">hoy</span>':''}</td><td><span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></td><td class="num">${dm.kcal}</td><td class="num">${dm.carb} g</td><td class="num">${dm.prot} g</td><td class="num">${dm.fat} g</td></tr>`;
     }).join('');
   }
-  const days=$('dieta-days');
-  if(days){
-    days.innerHTML=DIETORDER.map(wd=>{
-      const dm=WEEKMENU[wd];
-      const meals=dm.meals.map(m=>`
-        <div class="meal${m.locked?' crit':''}">
-          <div class="t">${esc(m.time)}${m.locked?' · 🔒':''}</div>
-          <div class="n">${esc(m.name)}</div>
-          <div class="d">${esc(m.desc||'')}</div>
-          ${m.kcal?`<div class="kc">≈ ${m.kcal} kcal</div>`:''}
-        </div>`).join('');
-      return `<div class="card">
-        <div class="eyebrow">${esc(dm.label)} · <span class="tag ${dm.tag}">${esc(dm.dayTag)}</span></div>
-        <h2 style="margin:4px 0 12px">${dm.kcal} kcal · ${dm.carb} C · ${dm.prot} P · ${dm.fat} G</h2>
-        ${meals}
-      </div>`;
-    }).join('');
-  }
+  renderDietaDayPicker();
+  renderDietaDayPanel();
   const cheat=$('dieta-cheat-body');
   if(cheat){
     // esquemático, como en el plan original: alinea por rol de comida, no por hora exacta (varía ligeramente sáb/dom)
