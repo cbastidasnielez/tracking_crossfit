@@ -165,7 +165,19 @@ tbody tr:last-child td{border-bottom:none}
 .mealprog .bar{flex:1;height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:2px;overflow:hidden}
 .mealprog .bar i{display:block;height:100%;background:var(--green);width:0%;transition:width .25s}
 .mealprog .cnt{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.mealprog .streak{font-family:var(--mono);font-size:11.5px;color:var(--amber);white-space:nowrap;font-weight:700}
 button.pill{border:none;cursor:pointer}
+
+/* ---- "ahora toca" ---- */
+.nowline{font-family:var(--mono);font-size:12px;color:var(--ink);margin:-4px 0 12px;display:flex;align-items:center;gap:8px}
+.nowline::before{content:"";flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.nowline::before{animation:none}}
+.mealrow.now{background:var(--panel2);outline:2px solid var(--ink);outline-offset:-2px;border-radius:3px;margin:0 -8px;padding-left:10px;padding-right:10px}
+
+/* ---- shopping list ---- */
+#card-shop label{cursor:pointer}
+#card-shop label:has(input:checked){text-decoration:line-through;color:var(--faint)}
 
 /* ---- week grid ---- */
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:1.5px;background:var(--line);border:1.5px solid var(--line);border-radius:3px;overflow:hidden}
@@ -308,8 +320,10 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
     <div class="mealprog">
       <div class="bar"><i id="hoy-meals-bar"></i></div>
       <span class="cnt" id="hoy-meals-cnt">—</span>
+      <span class="streak" id="hoy-streak"></span>
       <button class="mini" id="hoy-meals-all">✓ marcar todas</button>
     </div>
+    <div class="nowline" id="hoy-meals-now" style="display:none"></div>
     <div id="hoy-meals"></div>
   </div>
 
@@ -532,9 +546,16 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
     <small class="note">Al momento (no aguanta): salmón · caballa · huevos · ñoquis · pasta · hamburguesa. Los ñoquis y la pasta se cuecen siempre frescos, 2–8 minutos.</small>
   </div>
 
-  <div class="card">
-    <h2>🛒 Lista de la compra · Mercadona</h2>
-    <h3 style="margin-top:8px">⭐ Tus fijos (compra de sobra, no te quedes sin)</h3>
+  <div class="card" id="card-shop">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+      <h2>🛒 Lista de la compra · Mercadona</h2>
+      <span style="display:flex;align-items:baseline;gap:10px">
+        <span class="mono" id="shop-count" style="font-size:12px;color:var(--muted)"></span>
+        <button class="mini" id="shop-reset">reiniciar semana</button>
+      </span>
+    </div>
+    <small class="note" style="margin-top:2px">Lo marcado se guarda en este dispositivo: llévala al súper en el móvil. Al empezar semana, reinicia.</small>
+    <h3 style="margin-top:12px">⭐ Tus fijos (compra de sobra, no te quedes sin)</h3>
     <ul class="clean" style="list-style:none;margin:0">
       <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Yogur griego 0% — 1.400 g</label></li>
       <li style="padding-left:0"><label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox"> Avena integral — 1 kg</label></li>
@@ -1119,19 +1140,20 @@ function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+
 (async function init(){
   const today=todayISO();
   ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
-  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();
+  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();bindShoplist();
   loadLocalConfig();
   await initStorage();
   render();
 })();
 
+function withTimeout(p,ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('sin respuesta en '+ms+' ms')),ms))])}
 async function initStorage(){
   if(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase){
     try{
       sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-      const {error}=await sb.from('entries').select('id').limit(1);
+      const {error}=await withTimeout(sb.from('entries').select('id').limit(1),5000);
       if(error) throw error;
-      MODE='cloud'; await reloadCloud(); status('cloud'); return;
+      MODE='cloud'; await withTimeout(reloadCloud(),10000); status('cloud'); return;
     }catch(e){ console.warn('Supabase no disponible → modo local:',e.message||e); status('error'); }
   }else{ status('local'); }
   MODE='local'; loadLocal();
@@ -1246,6 +1268,25 @@ function bindMealQuickLog(){
         await addEntry('comida',{date:today,moment:m.name,desc:m.desc||m.name,kcal:m.kcal||0});
     }
   });
+}
+/* ---------------- lista de la compra (persistente en este dispositivo) ---------------- */
+function bindShoplist(){
+  const SHOPKEY='rx_shop_v1';
+  const card=$('card-shop');if(!card)return;
+  const boxes=[...card.querySelectorAll('input[type=checkbox]')];
+  boxes.forEach((b,i)=>{b.dataset.k=((b.parentElement.textContent||'').trim().slice(0,40))||('item'+i)});
+  let saved=[];try{saved=JSON.parse(localStorage.getItem(SHOPKEY))||[]}catch(e){}
+  const set=new Set(saved);
+  boxes.forEach(b=>{b.checked=set.has(b.dataset.k)});
+  const upd=()=>{
+    const chk=boxes.filter(b=>b.checked);
+    localStorage.setItem(SHOPKEY,JSON.stringify(chk.map(b=>b.dataset.k)));
+    const c=$('shop-count');if(c)c.textContent=chk.length+'/'+boxes.length+' en el carro';
+  };
+  card.addEventListener('change',upd);
+  const rst=$('shop-reset');
+  if(rst)rst.addEventListener('click',()=>{boxes.forEach(b=>b.checked=false);upd()});
+  upd();
 }
 function bindTools(){
   const exportar=()=>{
@@ -1429,6 +1470,8 @@ function renderAlerts(wk,ph){
   if(wk===2&&lastP&&lastP.v<71&&lastP.date>=CFG.start)push('warn','<b>Regla de ajuste:</b> semana 2 y aún por debajo de 71 kg → añade +50 g de carbo/día (sube el pre-entreno a 100 g de arroz).');
   // checkin hoy
   if(!DB.checkin.some(c=>c.date===today))push('info','<b>Check-in de hoy sin rellenar.</b> 2 minutos y el readiness te dice cómo atacar el día.');
+  // domingo: batch cooking
+  if(wd===0)push('info','<b>Domingo de batch cooking (~90 min).</b> Horno 200°: patata 600 g + boniato 250 g + pimientos 300 g. Olla: arroz 420 g en seco + salsa boloñesa. Sartén: pollo teriyaki (170 g) y desmenuzado (150 g). El detalle está en Dieta.');
   // adherencia dieta
   const last7=cks.slice(-7);
   if(last7.length>=5){
@@ -1458,7 +1501,8 @@ function mealRow(m,opt){
   const ic=document.createElement('div');ic.className='mr-ic';ic.textContent=m.icon||'🍽️';
   const time=document.createElement('div');time.className='mr-time';time.textContent=m.time;
   const body=document.createElement('div');body.className='mr-body';
-  body.innerHTML=`<div class="n">${esc(m.name)}${m.locked?'<span class="lock">🔒</span>':''}</div><div class="d">${esc(m.desc||'')}</div>`;
+  body.innerHTML=`<div class="n">${esc(m.name)}${m.locked?'<span class="lock">🔒</span>':''}${opt.now?' <span class="tag pr">ahora</span>':''}</div><div class="d">${esc(m.desc||'')}</div>`;
+  if(opt.now)row.classList.add('now');
   const right=document.createElement('div');right.className='mr-right';
   if(opt.action==='log'){
     if(opt.done){
@@ -1477,22 +1521,56 @@ function mealRow(m,opt){
   row.appendChild(ic);row.appendChild(time);row.appendChild(body);row.appendChild(right);
   return row;
 }
+function dayMealsComplete(ds){
+  const dm=WEEKMENU[new Date(ds+'T00:00:00').getDay()];
+  const logged=new Set(DB.comida.filter(c=>c.date===ds).map(c=>(c.moment||'').toLowerCase()));
+  return dm.meals.every(m=>logged.has(m.name.toLowerCase()));
+}
+function mealStreak(){
+  if(!DB.comida.length)return 0;
+  let s=0;const d=new Date();
+  if(dayMealsComplete(iso(d)))s++;
+  d.setDate(d.getDate()-1);
+  while(dayMealsComplete(iso(d))){s++;d.setDate(d.getDate()-1)}
+  return s;
+}
 function renderHoyMeals(wd){
   const box=$('hoy-meals');if(!box)return;
   const dm=WEEKMENU[wd];const today=todayISO();
   const byMoment={};
   DB.comida.filter(c=>c.date===today).forEach(c=>{byMoment[(c.moment||'').toLowerCase()]=c});
+  // comida "actual" y "siguiente" según la hora
+  const t2m=t=>{const[h,mn]=t.split(':').map(Number);return h*60+mn};
+  const mins=new Date().getHours()*60+new Date().getMinutes();
+  let cur=null,nxt=null;
+  dm.meals.forEach(m=>{const t=t2m(m.time);if(t<=mins)cur=m;else if(!nxt)nxt=m});
+  const curPending=cur&&!byMoment[cur.name.toLowerCase()]?cur:null;
   box.innerHTML='';
   let done=0;
   dm.meals.forEach(m=>{
     const hit=byMoment[m.name.toLowerCase()];
     if(hit)done++;
-    box.appendChild(mealRow(m,{action:'log',done:!!hit,undoId:hit&&hit.id}));
+    box.appendChild(mealRow(m,{action:'log',done:!!hit,undoId:hit&&hit.id,now:m===curPending}));
   });
   const total=dm.meals.length;
   const bar=$('hoy-meals-bar');if(bar)bar.style.width=Math.round(100*done/total)+'%';
   const cnt=$('hoy-meals-cnt');if(cnt)cnt.textContent=done+'/'+total+(done===total?' · día completo ✓':' comidas');
   const all=$('hoy-meals-all');if(all)all.style.display=done===total?'none':'';
+  // racha de días con plan completo
+  const st=$('hoy-streak');
+  if(st){const s=mealStreak();st.textContent=s>=2?'🔥 '+s+' días':'';}
+  // línea "ahora toca / siguiente"
+  const nl=$('hoy-meals-now');
+  if(nl){
+    let txt='';
+    const eta=m=>{const df=t2m(m.time)-mins;if(df<=0)return'';const h=Math.floor(df/60),mm=df%60;
+      return ' · en '+(h?h+' h':'')+(h&&mm?' ':'')+(mm?mm+' min':'')};
+    if(done===total)txt='';
+    else if(curPending)txt='Ahora toca: '+curPending.name+' ('+curPending.time+')'+(nxt?' — siguiente a las '+nxt.time:'');
+    else if(nxt)txt='Siguiente: '+nxt.name+' a las '+nxt.time+eta(nxt);
+    nl.textContent=txt;
+    nl.style.display=txt?'':'none';
+  }
 }
 
 /* ---- CHECK-IN ---- */
