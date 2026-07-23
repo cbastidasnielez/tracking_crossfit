@@ -10,7 +10,8 @@ Robustez — si Supabase no responde en 5 s, la app arranca igualmente en modo l
 Check-in diario — sueño, energía, agujetas y adherencia a dieta → score de readiness 0–100 con gráfica y recomendación (verde: aprieta / ámbar: modera / rojo: Z2 suave).
 Otros levantamientos — sentadilla, peso muerto, clean, etc. con e1RM (Epley) para comparar series de distintas reps, gráfica por ejercicio y detección de PRs.
 ANÁLISIS — mapa de adherencia de 8 semanas (día a día), tabla de PRs, comparativa de benchmarks repetidos (primera vs última vez), y tabla de tendencias a 4 semanas con lectura automática de cada marcador.
-AJUSTES — fecha de inicio del plan (calcula fase y semana en toda la app), peso de referencia ×BW y banda de peso objetivo. Con Supabase, estos parámetros también se sincronizan entre dispositivos.
+TESTS DE ATLETA INTEGRAL — batería fija de 8 tests que cubre las áreas clave del CrossFit (fuerza máxima con el CrossFit Total, potencia con clean & jerk, motor aeróbico con remo 2k, anaeróbico con remo 500 m, metcón con Fran, gimnásticos de tracción y empuje, y core). Se repite cada X semanas (cadencia configurable en Ajustes): la tabla de Registros muestra última marca, delta y cuándo toca el retest, Hoy avisa cuando hay tests pendientes o sin baseline, y Análisis calcula el índice integral (mejora media % de todas las áreas) para saber si mejoras como atleta completo y no solo en tu punto fuerte.
+AJUSTES — fecha de inicio del plan (calcula fase y semana en toda la app), peso de referencia ×BW, banda de peso objetivo y cadencia de la batería de tests. Con Supabase, estos parámetros también se sincronizan entre dispositivos.
 Archivos
 index.html — la web entera (un solo archivo).
 supabase-setup.sql — crea la tabla de datos. Sin cambios respecto a v1: la tabla es genérica, así que los nuevos tipos de registro (check-in, levantamientos, parámetros) no requieren tocar el SQL. Si ya la creaste, no hagas nada.

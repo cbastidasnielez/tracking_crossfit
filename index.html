@@ -360,6 +360,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
       <button data-goto="registros:card-peso">+ Peso</button>
       <button data-goto="registros:card-press">+ Press</button>
       <button data-goto="registros:card-fuerza">+ Levantamiento</button>
+      <button data-goto="registros:card-test">+ Test atleta</button>
     </div>
   </div>
 
@@ -895,6 +896,29 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
     <div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Ejercicio</th><th class="num">Serie</th><th class="num">e1RM</th><th class="num">×BW</th><th></th></tr></thead><tbody id="fz-body"></tbody></table></div>
   </div>
 
+  <!-- TESTS · ATLETA INTEGRAL -->
+  <div class="card" id="card-test">
+    <h2>Tests de atleta integral</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Batería fija de 8 tests que cubre las áreas clave del CrossFit: fuerza, potencia, motor aeróbico, anaeróbico, metcón, gimnásticos y core. Repítela <b>cada <span id="test-freq-note">6</span> semanas</b> (cadencia en Ajustes) con el mismo protocolo y en condiciones parecidas: si la mayoría de áreas mejoran, estás progresando como atleta integral — no solo en tu punto fuerte. Reparte los tests en 1-2 semanas, nunca todos el mismo día.</small>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Área</th><th>Test</th><th class="num">Última marca</th><th class="num">Δ</th><th>Estado</th></tr></thead>
+      <tbody id="test-batt"></tbody>
+    </table></div>
+    <h3>Registrar resultado</h3>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="test-date"></div>
+      <div class="field grow"><label>Test</label><select id="test-name"></select></div>
+      <div class="field w-md"><label id="test-val-label">Marca</label><input type="text" id="test-val" placeholder=""></div>
+      <button class="add" data-add="test">Añadir</button>
+    </div>
+    <small class="note" id="test-proto" style="margin-top:2px;margin-bottom:10px"></small>
+    <div class="logbar" style="margin-bottom:6px">
+      <div class="field w-md"><label>Gráfica de</label><select id="test-chart-sel"></select></div>
+    </div>
+    <div class="chartwrap" id="test-chart"></div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Test</th><th class="num">Marca</th><th></th></tr></thead><tbody id="test-body"></tbody></table></div>
+  </div>
+
   <!-- WOD -->
   <div class="card" id="card-wod">
     <h2>WODs</h2>
@@ -953,6 +977,16 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
   </div>
 
   <div class="card">
+    <h2>Atleta integral · batería de tests</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Primera vs última marca de cada test de la batería (Registros → Tests). El índice integral es la mejora media (%) de todas las áreas: si sube, mejoras como atleta completo y no solo en tu punto fuerte. En los tests de tiempo, bajar tiempo cuenta como mejora.</small>
+    <div class="metrics" style="margin-bottom:14px">
+      <div class="metric"><div class="k">Índice integral</div><div class="v" id="ai-index">—</div><div class="u">mejora media vs 1ª marca</div></div>
+      <div class="metric"><div class="k">Áreas mejorando</div><div class="v" id="ai-count">—</div><div class="u">tests con progreso</div></div>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Área</th><th>Test</th><th class="num">Primera</th><th class="num">Última</th><th class="num">Δ%</th><th>Lectura</th></tr></thead><tbody id="ai-body"></tbody></table></div>
+  </div>
+
+  <div class="card">
     <h2>Motor y combustible · 4 semanas</h2>
     <div class="tablewrap"><table><thead><tr><th>Marcador</th><th class="num">Hace 4 sem</th><th class="num">Ahora</th><th class="num">Δ</th><th>Lectura</th></tr></thead><tbody id="trend-body"></tbody></table></div>
   </div>
@@ -970,6 +1004,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
       <div class="field w-sm"><label>Peso ref ×BW</label><input type="number" step="0.5" id="cfg-bw" placeholder="72"></div>
       <div class="field w-sm"><label>Banda peso mín</label><input type="number" step="0.5" id="cfg-pmin" placeholder="72"></div>
       <div class="field w-sm"><label>Banda peso máx</label><input type="number" step="0.5" id="cfg-pmax" placeholder="73"></div>
+      <div class="field w-sm"><label>Tests cada (sem)</label><input type="number" id="cfg-testw" placeholder="6"></div>
       <button class="add" id="cfg-save">Guardar</button>
     </div>
     <div><span class="mono" style="font-size:11px;color:var(--faint)" id="cfg-status"></span></div>
@@ -1011,11 +1046,11 @@ const SUPABASE_URL = "https://uanoohzcfidizgvpxart.supabase.co";        // ej: h
 const SUPABASE_ANON_KEY = "sb_publishable_T-u0W3nT53yrynZwuYT1Jg_-V4ptQ7_";   // anon public key (empieza por eyJ...)
 
 /* ---------------- estado ---------------- */
-const TYPES=['peso','z2','press','fuerza','wod','checkin','comida'];
+const TYPES=['peso','z2','press','fuerza','wod','checkin','comida','test'];
 const KEY='rx_protocol_v1';
 const CFGKEY='rx_protocol_cfg_v1';
-let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73};
-let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[]};
+let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73,testw:6};
+let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[]};
 let sb=null, MODE='local';
 
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -1120,6 +1155,40 @@ const WEEKMENU={
 const Z2MIN={1:"35'",2:"40'",3:"45'",4:"50' (test)"};
 const DAYNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
+/* ---------------- batería de tests · atleta integral ----------------
+   dir: 1 = más es mejor · -1 = menos es mejor (tiempos)
+   kind: 'num' (kg/reps/seg) · 'time' (mm:ss, se guarda en segundos) */
+const TESTS={
+  cft:{name:'CrossFit Total',area:'Fuerza máxima',unit:'kg',dir:1,kind:'num',ph:'355',
+    proto:'1RM de sentadilla + press estricto + peso muerto, el mismo día y en ese orden. Registra la suma de los tres.'},
+  cj:{name:'Clean & Jerk 1RM',area:'Potencia',unit:'kg',dir:1,kind:'num',ph:'110',
+    proto:'Sube a un 1RM del día con técnica sólida. Calienta bien y limita a 3-4 intentos pesados.'},
+  row2k:{name:'Remo 2.000 m',area:'Motor aeróbico',unit:'mm:ss',dir:-1,kind:'time',ph:'7:45',
+    proto:'2.000 m en remoerg por tiempo. Ritmo negativo: la segunda mitad igual o más rápida que la primera.'},
+  row500:{name:'Remo 500 m',area:'Potencia anaeróbica',unit:'mm:ss',dir:-1,kind:'time',ph:'1:35',
+    proto:'500 m a tope, en fresco (otro día que el 2k o con descanso completo).'},
+  fran:{name:'Fran',area:'Motor mixto · metcón',unit:'mm:ss',dir:-1,kind:'time',ph:'4:30',
+    proto:'21-15-9 thrusters (43 kg) + pull-ups, por tiempo. El benchmark glicolítico de referencia.'},
+  pullmax:{name:'Dominadas estrictas máx',area:'Gimnástico · tracción',unit:'reps',dir:1,kind:'num',ph:'15',
+    proto:'Una serie máxima de dominadas estrictas (sin kipping), en fresco, de brazos extendidos a barbilla sobre barra.'},
+  hspu:{name:'HSPU máx unbroken',area:'Gimnástico · empuje',unit:'reps',dir:1,kind:'num',ph:'12',
+    proto:'Una serie máxima de flexiones de pino contra pared sin bajarte, estándar de competición.'},
+  lsit:{name:'L-sit máx',area:'Core',unit:'seg',dir:1,kind:'num',ph:'25',
+    proto:'L-sit en paralelas o anillas con piernas extendidas: aguanta el máximo tiempo con buena postura.'}
+};
+function testArr(k){return DB.test.filter(x=>x.test===k)}
+function parseTimeStr(s){ // "7:45" o "465" → segundos
+  s=(s||'').trim();if(!s)return NaN;
+  if(s.includes(':')){const p=s.split(':').map(Number);if(p.some(isNaN))return NaN;return p[0]*60+p[1]}
+  return parseFloat(s);
+}
+function fmtTime(v){const m=Math.floor(v/60),s=Math.round(v%60);return m+':'+String(s).padStart(2,'0')}
+function fmtTestVal(T,v){return T.kind==='time'?fmtTime(v):String(Math.round(v*10)/10)}
+function fmtTestDelta(T,dv){
+  if(!dv)return '=';
+  return (dv>0?'+':'−')+(T.kind==='time'?fmtTime(Math.abs(dv)):String(Math.round(Math.abs(dv)*10)/10));
+}
+
 function planWeek(){
   const s=new Date(CFG.start+'T00:00:00');const now=new Date();now.setHours(0,0,0,0);
   return Math.floor((now-s)/86400000/7)+1;
@@ -1139,8 +1208,8 @@ function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+
 /* ---------------- init ---------------- */
 (async function init(){
   const today=todayISO();
-  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
-  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();bindShoplist();
+  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date','test-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
+  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();bindShoplist();bindTests();
   loadLocalConfig();
   await initStorage();
   render();
@@ -1167,7 +1236,7 @@ function status(m){
 }
 
 /* ---------------- local fallback ---------------- */
-function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[]}}
+function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[]}}
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY))||{};DB=seed();TYPES.forEach(t=>{if(Array.isArray(d[t]))DB[t]=d[t]})}catch(e){DB=seed()}}
 function saveLocal(){localStorage.setItem(KEY,JSON.stringify(DB))}
 function loadLocalConfig(){try{const c=JSON.parse(localStorage.getItem(CFGKEY));if(c&&c.start)CFG={...CFG,...c}}catch(e){}}
@@ -1249,6 +1318,10 @@ function bindAdders(){
     else if(t==='comida'){const d=val('comida-desc');if(!d)return warn('comida-desc');
       addEntry('comida',{date:val('comida-date'),moment:val('comida-moment'),desc:d,kcal:parseFloat(val('comida-kcal'))||0});
       clr('comida-desc');clr('comida-kcal');}
+    else if(t==='test'){const k=val('test-name');const T=TESTS[k];if(!T)return;
+      const v=T.kind==='time'?parseTimeStr(val('test-val')):parseFloat(val('test-val'));
+      if(!v||isNaN(v)||v<=0)return warn('test-val');
+      addEntry('test',{date:val('test-date'),test:k,v});clr('test-val');}
   }));
 }
 function bindMealQuickLog(){
@@ -1311,10 +1384,20 @@ function bindTools(){
   });
   $('fz-chart-lift').addEventListener('change',renderFuerzaChart);
 }
+function bindTests(){
+  const sel=$('test-name');if(!sel)return;
+  sel.innerHTML=Object.entries(TESTS).map(([k,T])=>`<option value="${k}">${T.name} · ${T.area}</option>`).join('');
+  const upd=()=>{const T=TESTS[sel.value];if(!T)return;
+    $('test-val-label').textContent='Marca ('+T.unit+')';
+    $('test-val').placeholder=T.ph;
+    $('test-proto').textContent='Protocolo: '+T.proto;};
+  sel.addEventListener('change',upd);upd();
+  $('test-chart-sel').addEventListener('change',renderTestChart);
+}
 function bindConfig(){
   $('cfg-save').addEventListener('click',async()=>{
     const st=val('cfg-start');if(!st)return warn('cfg-start');
-    CFG={start:st,bw:parseFloat(val('cfg-bw'))||72,pmin:parseFloat(val('cfg-pmin'))||72,pmax:parseFloat(val('cfg-pmax'))||73};
+    CFG={start:st,bw:parseFloat(val('cfg-bw'))||72,pmin:parseFloat(val('cfg-pmin'))||72,pmax:parseFloat(val('cfg-pmax'))||73,testw:parseInt(val('cfg-testw'))||6};
     saveLocalConfig();
     const s=$('cfg-status');
     if(MODE==='cloud'){try{await saveCloudConfig();s.textContent='guardado en la nube ✓'}catch(e){s.textContent='guardado solo en local (nube falló)'}}
@@ -1326,12 +1409,13 @@ function bindConfig(){
 
 /* ---------------- render ---------------- */
 function render(){
-  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderWod();renderComida();renderDieta();renderAnalisis();
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderDieta();renderAnalisis();
 }
 
 function renderConfigForm(){
   $('cfg-start').value=CFG.start;$('cfg-bw').value=CFG.bw;
   $('cfg-pmin').value=CFG.pmin;$('cfg-pmax').value=CFG.pmax;
+  $('cfg-testw').value=CFG.testw||6;
   $('dataCounts').textContent=TYPES.map(t=>t+': '+DB[t].length).join(' · ');
 }
 
@@ -1451,6 +1535,19 @@ function renderAlerts(wk,ph){
     const daysSince=Math.floor((new Date(today)-new Date(presses[presses.length-1].date))/86400000);
     if(daysSince>14)push('warn','<b>Test de press pendiente.</b> Último 3RM hace '+daysSince+' días; el protocolo es cada 14.');
   }else if(ph>=1&&ph<=3)push('info','<b>Sin baseline de press.</b> Haz un 3RM el próximo lunes y regístralo.');
+  // batería de tests de atleta integral
+  if(ph>=1&&ph<=3){
+    const twDays=(CFG.testw||6)*7;
+    const tkeys=Object.keys(TESTS);
+    const withData=tkeys.filter(k=>testArr(k).length);
+    if(!withData.length)push('info','<b>Batería de atleta integral sin baseline.</b> Haz los 8 tests (Registros → Tests) repartidos en 1-2 semanas: sin primera marca no hay progreso que medir.');
+    else{
+      const overdue=withData.filter(k=>{const a=testArr(k);
+        return Math.floor((new Date(today)-new Date(a[a.length-1].date))/86400000)>twDays});
+      if(overdue.length)push('warn','<b>Retest pendiente:</b> '+overdue.map(k=>TESTS[k].name).join(' · ')+'. El protocolo es cada '+(CFG.testw||6)+' semanas.');
+      if(withData.length<tkeys.length)push('info','<b>Batería incompleta:</b> sin baseline aún → '+tkeys.filter(k=>!testArr(k).length).map(k=>TESTS[k].name).join(' · ')+'.');
+    }
+  }
   // z2 semana
   if(ph>=1&&ph<=3&&wd>=4){
     const mon=iso(mondayOf(new Date()));
@@ -1639,6 +1736,47 @@ function renderFuerzaChart(){
   lineChart('fz-chart',data,{color:'var(--green)',unit:'kg',legend:lift?('e1RM · '+lift):''});
 }
 
+/* ---- TESTS · ATLETA INTEGRAL ---- */
+function renderTest(){
+  const bt=$('test-batt');if(!bt)return;
+  const today=todayISO();const twDays=(CFG.testw||6)*7;
+  const fn=$('test-freq-note');if(fn)fn.textContent=CFG.testw||6;
+  bt.innerHTML=Object.entries(TESTS).map(([k,T])=>{
+    const arr=testArr(k);const last=arr[arr.length-1],prev=arr[arr.length-2];
+    let lastTxt='—',dTxt='—',dCol='var(--faint)',estado;
+    if(!last){estado='<span class="pill neutral">sin baseline</span>';}
+    else{
+      lastTxt=fmtTestVal(T,last.v)+' <span style="color:var(--faint);font-weight:400;font-size:11px">'+fmtd(last.date)+'</span>';
+      if(prev){const dv=last.v-prev.v;const imp=T.dir*dv;
+        dTxt=fmtTestDelta(T,dv);
+        dCol=imp>0?'var(--green)':imp<0?'var(--red)':'var(--faint)';}
+      const days=Math.floor((new Date(today)-new Date(last.date))/86400000);
+      if(days>twDays)estado='<span class="pill warn">toca retest</span>';
+      else{const nxt=new Date(last.date+'T00:00:00');nxt.setDate(nxt.getDate()+twDays);
+        estado='<span class="pill ok">al día</span> <span style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">próximo '+fmtd(iso(nxt))+'</span>';}
+    }
+    return `<tr title="${esc(T.proto)}"><td style="font-size:12.5px;color:var(--muted)">${T.area}</td><td><b>${T.name}</b></td><td class="num">${lastTxt}</td><td class="num" style="color:${dCol};font-weight:700">${dTxt}</td><td>${estado}</td></tr>`;
+  }).join('');
+  // historial
+  const tb=$('test-body');tb.innerHTML='';
+  [...DB.test].reverse().forEach(r=>{
+    const T=TESTS[r.test];if(!T)return;
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td>${T.name}</td><td class="num">${fmtTestVal(T,r.v)} ${T.kind==='time'?'':T.unit}</td><td class="num"><button class="del" onclick="del('test','${r.id}')">×</button></td></tr>`);
+  });
+  if(!DB.test.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin tests registrados aún · empieza por la baseline de los 8</td></tr>';
+  // opciones de gráfica (solo tests con datos)
+  const sel=$('test-chart-sel');const cur=sel.value;
+  const keys=Object.keys(TESTS).filter(k=>testArr(k).length);
+  sel.innerHTML=keys.length?keys.map(k=>`<option value="${k}"${k===cur?' selected':''}>${TESTS[k].name}</option>`).join(''):'<option value="">—</option>';
+  renderTestChart();
+}
+function renderTestChart(){
+  const k=$('test-chart-sel').value;const T=TESTS[k];
+  const data=T?testArr(k).map(r=>({x:r.date,y:r.v})):[];
+  lineChart('test-chart',data,{color:'var(--red)',unit:T?T.unit:'',dec:T&&T.kind==='num'&&T.unit==='kg'?1:0,
+    legend:T?(T.name+(T.kind==='time'?' · segundos · menos es mejor':' · '+T.unit+' · más es mejor')):''});
+}
+
 /* ---- WOD ---- */
 function renderWod(){
   const box=$('wod-list');box.innerHTML='';
@@ -1762,7 +1900,7 @@ function renderAnalisis(){
   const today=todayISO();
   // sesiones/sem últimas 4 semanas
   const cut28=new Date();cut28.setDate(cut28.getDate()-28);const c28=iso(cut28);
-  const sess=['z2','wod','press','fuerza'].reduce((s,t)=>s+DB[t].filter(r=>r.date>=c28&&r.date<=today).length,0);
+  const sess=['z2','wod','press','fuerza','test'].reduce((s,t)=>s+DB[t].filter(r=>r.date>=c28&&r.date<=today).length,0);
   $('an-ses').textContent=(sess/4).toFixed(1);
   // adherencia dieta
   const cks=[...DB.checkin].sort(byDate);const last14=cks.slice(-14);
@@ -1801,7 +1939,32 @@ function renderAnalisis(){
     $('an-meals').className='v '+(pct>=80?'good':pct>=50?'':'warn');
   }else $('an-meals').textContent='—';
 
-  renderHeatmap();renderPRs();renderBenchmarks();renderTrends(c28);
+  renderHeatmap();renderPRs();renderBenchmarks();renderTestTrends();renderTrends(c28);
+}
+
+function renderTestTrends(){
+  const tb=$('ai-body');if(!tb)return;
+  const rows=[];
+  Object.entries(TESTS).forEach(([k,T])=>{
+    const arr=testArr(k);if(arr.length<2)return;
+    const f=arr[0],l=arr[arr.length-1];
+    const pct=T.dir*(l.v-f.v)/f.v*100;
+    rows.push({T,f,l,pct});
+  });
+  const idx=$('ai-index'),cnt=$('ai-count');
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="6" class="empty">Repite la batería (2+ marcas por test) para ver tu evolución como atleta integral</td></tr>';
+    if(idx){idx.textContent='—';idx.className='v'}if(cnt)cnt.textContent='—';return;
+  }
+  const mean=rows.reduce((s,r)=>s+r.pct,0)/rows.length;
+  if(idx){idx.textContent=(mean>0?'+':'')+mean.toFixed(1)+'%';idx.className='v '+(mean>1?'good':mean<-1?'warn':'')}
+  const up=rows.filter(r=>r.pct>0.5).length;
+  if(cnt){cnt.textContent=up+'/'+rows.length;cnt.className='v '+(up>=rows.length*0.7?'good':up<rows.length*0.4?'warn':'')}
+  tb.innerHTML=rows.map(r=>{
+    const col=r.pct>0.5?'var(--green)':r.pct<-0.5?'var(--red)':'var(--muted)';
+    const read=r.pct>0.5?'Mejorando':r.pct<-0.5?'Retrocede: dale prioridad a esta área':'Estable';
+    return `<tr><td style="font-size:12.5px;color:var(--muted)">${r.T.area}</td><td><b>${r.T.name}</b></td><td class="num">${fmtTestVal(r.T,r.f.v)}</td><td class="num">${fmtTestVal(r.T,r.l.v)}</td><td class="num" style="color:${col};font-weight:700">${(r.pct>0?'+':'')+r.pct.toFixed(1)}%</td><td style="font-size:13px;color:var(--muted)">${read}</td></tr>`;
+  }).join('');
 }
 
 function renderHeatmap(){
@@ -1809,7 +1972,7 @@ function renderHeatmap(){
   const today=todayISO();
   const thisMon=mondayOf(new Date());
   const daySet=t=>new Set(DB[t].map(r=>r.date));
-  const sessDates=new Set();['z2','wod','press','fuerza'].forEach(t=>DB[t].forEach(r=>sessDates.add(r.date)));
+  const sessDates=new Set();['z2','wod','press','fuerza','test'].forEach(t=>DB[t].forEach(r=>sessDates.add(r.date)));
   const ckDates=daySet('checkin');
   for(let w=7;w>=0;w--){
     const mon=new Date(thisMon);mon.setDate(mon.getDate()-w*7);
