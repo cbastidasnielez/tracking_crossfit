@@ -276,6 +276,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
   <button class="tab" role="tab" aria-selected="false" data-t="plan">Plan</button>
   <button class="tab" role="tab" aria-selected="false" data-t="dieta">Dieta</button>
   <button class="tab" role="tab" aria-selected="false" data-t="entrenos">Entrenos</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="wodcelona">Wodcelona</button>
   <button class="tab" role="tab" aria-selected="false" data-t="registros">Registros</button>
   <button class="tab" role="tab" aria-selected="false" data-t="analisis">Análisis</button>
   <button class="tab" role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
@@ -779,6 +780,108 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
 
 </section>
 
+<!-- ============ WODCELONA ============ -->
+<section class="panelpage" id="wodcelona">
+
+  <div class="diag">
+    <div class="eyebrow">El objetivo de la temporada</div>
+    <h2>Wodcelona 2027</h2>
+    <p>Todo lo que hay en <b>Plan</b> y <b>Entrenos</b> — rellenar el tanque, subir el techo aeróbico, corregir el press, afinar el snatch — está construido para llegar a esta cita con el motor que ahora te falta. El plan de 6 meses es la base; este bloque es la puntería final.</p>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Cuenta atrás</div>
+    <div class="gauge" style="margin-top:8px">
+      <div class="num" id="wod-days">—</div>
+      <div style="min-width:170px">
+        <span class="pill neutral" id="wod-pill">fecha sin confirmar</span>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:5px" id="wod-sub"></div>
+      </div>
+    </div>
+    <small class="note" id="wod-note">Wodcelona todavía no ha publicado fecha para 2027. En cuanto la sepas, indícala en Ajustes y aquí verás la cuenta atrás real.</small>
+  </div>
+
+  <div class="card">
+    <h2>Cómo se monta el bloque</h2>
+    <p style="font-size:14px;color:var(--muted)">Sin fecha aún, estas semanas son relativas al día D. En cuanto la confirmes en Ajustes, cada fase se ubica sola en el calendario y el aviso de arriba te dice en cuál estás.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Cuándo</th><th>Bloque</th><th>Foco</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Todo el plan de 6 meses</td><td><span class="tag rec">Base</span></td><td>Motor aeróbico, peso estable, press corregido, técnica de snatch — lo que ya tienes en Plan y Entrenos.</td></tr>
+        <tr><td class="mono">12-8 sem antes</td><td><span class="tag z2">Específico</span></td><td>WODs formato competición (varias pruebas al día, transiciones cortas, calentamientos repetibles entre heats). Benchmarks de referencia.</td></tr>
+        <tr><td class="mono">8-2 sem antes</td><td><span class="tag mod">Pico</span></td><td>Intensidad real 1×/semana sobre movimientos y formatos probables. Mantener fuerza, no perseguir PRs nuevos.</td></tr>
+        <tr><td class="mono">Últimas 2 sem</td><td><span class="tag hard">Taper</span></td><td>Bajar volumen 40-50%, mantener intensidad. Prioridad absoluta: sueño y carga de carbohidrato.</td></tr>
+        <tr><td class="mono">Semana D</td><td><span class="tag pr">Competición</span></td><td>Ejecutar. La preparación ya está hecha — aquí solo se gestiona.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Semana de taper</h2>
+    <ul class="clean">
+      <li><b>Volumen −40/50%</b>, la intensidad se mantiene: series cortas y explosivas, nada de acumular fatiga nueva.</li>
+      <li><b>Sueño primero.</b> Es la palanca de recuperación más potente que tienes en 14 días — no se negocia.</li>
+      <li><b>Carga de carbohidrato</b> los 2-3 días previos: sube ración de arroz/pasta/patata en comida y cena, sin tocar proteína ni grasa.</li>
+      <li><b>Nada nuevo.</b> Ni calzado, ni suplemento, ni comida que no hayas probado ya en entreno.</li>
+      <li><b>Último entreno duro</b> 3-4 días antes, no en la propia semana de competición.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Checklist de competición</h2>
+    <div class="two">
+      <div>
+        <h3 style="margin-top:0">Logística</h3>
+        <ul class="clean">
+          <li>Inscripción confirmada y categoría elegida</li>
+          <li>Horarios de heats revisados el día antes</li>
+          <li>Desplazamiento y alojamiento cerrados</li>
+          <li>Reglamento y estándares de movimientos leídos</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Material</h3>
+        <ul class="clean">
+          <li>Cuerda de saltar propia, cinturón, muñequeras</li>
+          <li>Calzado probado en entreno, no estrenado</li>
+          <li>Magnesio, cinta, kinesiotape</li>
+          <li>Ropa de cambio y capas para esperar entre heats</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Nutrición día D</h3>
+        <ul class="clean">
+          <li>Desayuno probado ya en semanas previas, nada nuevo</li>
+          <li>Carbo de rápida absorción entre pruebas (plátano, dátiles, geles)</li>
+          <li>Botella con electrolitos siempre a mano</li>
+          <li>Cafeína cronometrada, no de golpe antes del primer heat</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Estrategia</h3>
+        <ul class="clean">
+          <li>Repasa el pacing: fraccionar desde el minuto 1, como en el playbook de Entrenos</li>
+          <li>Calentamiento corto y repetible entre pruebas</li>
+          <li>Un plan por WOD, no improvisar en la línea de salida</li>
+          <li>Objetivo del día: ejecutar el plan, no perseguir el resultado de otro</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Lo que falta por decidir</h2>
+    <ul class="clean">
+      <li>Fecha exacta — en cuanto se publique, añádela en Ajustes</li>
+      <li>Categoría (Rx individual / Scaled / Team)</li>
+      <li>Si es por equipos, quién es el compañero/a</li>
+      <li>WODs y estándares del evento, en cuanto los publiquen</li>
+    </ul>
+    <small class="note">En cuanto tengas alguno de estos datos, dímelo y afino el bloque específico con detalle real en vez de genérico.</small>
+  </div>
+
+</section>
+
 <!-- ============ REGISTROS ============ -->
 <section class="panelpage" id="registros">
 
@@ -1005,6 +1108,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
       <div class="field w-sm"><label>Banda peso mín</label><input type="number" step="0.5" id="cfg-pmin" placeholder="72"></div>
       <div class="field w-sm"><label>Banda peso máx</label><input type="number" step="0.5" id="cfg-pmax" placeholder="73"></div>
       <div class="field w-sm"><label>Tests cada (sem)</label><input type="number" id="cfg-testw" placeholder="6"></div>
+      <div class="field w-md"><label>Fecha Wodcelona 2027</label><input type="date" id="cfg-wod"></div>
       <button class="add" id="cfg-save">Guardar</button>
     </div>
     <div><span class="mono" style="font-size:11px;color:var(--faint)" id="cfg-status"></span></div>
@@ -1049,7 +1153,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_T-u0W3nT53yrynZwuYT1Jg_-V4ptQ7_";   //
 const TYPES=['peso','z2','press','fuerza','wod','checkin','comida','test'];
 const KEY='rx_protocol_v1';
 const CFGKEY='rx_protocol_cfg_v1';
-let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73,testw:6};
+let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73,testw:6,wodDate:''};
 let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[]};
 let sb=null, MODE='local';
 
@@ -1397,7 +1501,7 @@ function bindTests(){
 function bindConfig(){
   $('cfg-save').addEventListener('click',async()=>{
     const st=val('cfg-start');if(!st)return warn('cfg-start');
-    CFG={start:st,bw:parseFloat(val('cfg-bw'))||72,pmin:parseFloat(val('cfg-pmin'))||72,pmax:parseFloat(val('cfg-pmax'))||73,testw:parseInt(val('cfg-testw'))||6};
+    CFG={start:st,bw:parseFloat(val('cfg-bw'))||72,pmin:parseFloat(val('cfg-pmin'))||72,pmax:parseFloat(val('cfg-pmax'))||73,testw:parseInt(val('cfg-testw'))||6,wodDate:val('cfg-wod')||''};
     saveLocalConfig();
     const s=$('cfg-status');
     if(MODE==='cloud'){try{await saveCloudConfig();s.textContent='guardado en la nube ✓'}catch(e){s.textContent='guardado solo en local (nube falló)'}}
@@ -1409,14 +1513,44 @@ function bindConfig(){
 
 /* ---------------- render ---------------- */
 function render(){
-  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderDieta();renderAnalisis();
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderDieta();renderWodcelona();renderAnalisis();
 }
 
 function renderConfigForm(){
   $('cfg-start').value=CFG.start;$('cfg-bw').value=CFG.bw;
   $('cfg-pmin').value=CFG.pmin;$('cfg-pmax').value=CFG.pmax;
   $('cfg-testw').value=CFG.testw||6;
+  $('cfg-wod').value=CFG.wodDate||'';
   $('dataCounts').textContent=TYPES.map(t=>t+': '+DB[t].length).join(' · ');
+}
+
+/* ---- WODCELONA ---- */
+function renderWodcelona(){
+  const el=$('wod-days');if(!el)return;
+  const pill=$('wod-pill'),sub=$('wod-sub'),note=$('wod-note');
+  if(CFG.wodDate){
+    const d=new Date(CFG.wodDate+'T00:00:00');const now=new Date();now.setHours(0,0,0,0);
+    const days=Math.round((d-now)/86400000);
+    sub.textContent=fmtd(CFG.wodDate);
+    if(days>0){
+      el.textContent=days;
+      pill.textContent=Math.ceil(days/7)+' semanas';pill.className='pill ok';
+      note.textContent=days<=14?'Estás en semana de taper: baja volumen, mantén intensidad, cuida el sueño y carga carbohidrato.':
+        days<=56?'Bloque de pico: intensidad real 1×/semana sobre formatos probables, sin perseguir PRs nuevos.':
+        days<=84?'Bloque específico: mete WODs formato competición y benchmarks de referencia.':
+        'Sigue construyendo la base en Plan y Entrenos — el bloque específico empieza 12 semanas antes del día D.';
+    }else if(days===0){
+      el.textContent='HOY';pill.textContent='es hoy';pill.className='pill ok';
+      note.textContent='Confía en la preparación. Ejecuta el plan, no lo improvises.';
+    }else{
+      el.textContent='—';pill.textContent='ya pasó';pill.className='pill neutral';
+      note.textContent='Esta fecha ya pasó. Actualízala en Ajustes cuando tengas la de 2027.';
+    }
+  }else{
+    el.textContent='—';pill.textContent='fecha sin confirmar';pill.className='pill neutral';
+    sub.textContent='';
+    note.textContent='Wodcelona todavía no ha publicado fecha para 2027. En cuanto la sepas, indícala en Ajustes y aquí verás la cuenta atrás real.';
+  }
 }
 
 /* ---- HOY ---- */
