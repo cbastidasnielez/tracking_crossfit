@@ -255,6 +255,9 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
 .pill.warn{background:#F3E6CB;color:#7A5410}
 .pill.bad{background:#F6D9D5;color:#9A2A20}
 .pill.neutral{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.pill.rx{background:var(--ink);color:#fff}
+tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;
+  font-size:11px;color:var(--ink);font-weight:700;padding-top:11px;padding-bottom:7px}
 </style>
 </head>
 <body>
@@ -1046,9 +1049,10 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
   <!-- TESTS · ATLETA INTEGRAL -->
   <div class="card" id="card-test">
     <h2>Tests de atleta integral</h2>
-    <small class="note" style="margin-top:0;margin-bottom:12px">Batería fija de 8 tests que cubre las áreas clave del CrossFit: fuerza, potencia, motor aeróbico, anaeróbico, metcón, gimnásticos y core. Repítela <b>cada <span id="test-freq-note">6</span> semanas</b> (cadencia en Ajustes) con el mismo protocolo y en condiciones parecidas: si la mayoría de áreas mejoran, estás progresando como atleta integral — no solo en tu punto fuerte. Reparte los tests en 1-2 semanas, nunca todos el mismo día.</small>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Batería de benchmarks repartida en tres bloques — halterofilia, motor y metcón, y gimnásticos — para nivelar tu perfil completo y no solo tu punto fuerte. Cada marca se compara con umbrales de referencia (Intermedio · Avanzado · RX competitivo) y el nivel por área lo ves en <b>Análisis</b>. Retest <b>cada <span id="test-freq-note">6</span> semanas</b> (cadencia en Ajustes), los 1RM cada 8-12. Reparte los tests en 1-2 semanas, nunca todos el mismo día, y siempre con el mismo protocolo.</small>
+    <ul class="alerts" id="test-prio" style="margin-bottom:12px"></ul>
     <div class="tablewrap"><table>
-      <thead><tr><th>Área</th><th>Test</th><th class="num">Última marca</th><th class="num">Δ</th><th>Estado</th></tr></thead>
+      <thead><tr><th>Test</th><th class="num">Última marca</th><th class="num">Δ</th><th>Nivel</th><th class="num">Siguiente</th><th>Estado</th></tr></thead>
       <tbody id="test-batt"></tbody>
     </table></div>
     <h3>Registrar resultado</h3>
@@ -1131,6 +1135,24 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
       <div class="metric"><div class="k">Áreas mejorando</div><div class="v" id="ai-count">—</div><div class="u">tests con progreso</div></div>
     </div>
     <div class="tablewrap"><table><thead><tr><th>Área</th><th>Test</th><th class="num">Primera</th><th class="num">Última</th><th class="num">Δ%</th><th>Lectura</th></tr></thead><tbody id="ai-body"></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Nivel de atleta · dónde estás</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Cada mejor marca de la batería contra umbrales de referencia masculinos de Intermedio, Avanzado y RX competitivo. Los de fuerza van en múltiplos de tu peso de referencia (<span id="lv-bw">72</span> kg, editable en Ajustes). Son referencias de orientación para ver qué área te frena, no estándares oficiales de la competición.</small>
+    <div class="metrics" style="margin-bottom:14px">
+      <div class="metric"><div class="k">Nivel global</div><div class="v" id="lv-global" style="font-size:19px">—</div><div class="u" id="lv-global-u">media de la batería</div></div>
+      <div class="metric"><div class="k">Tests con marca</div><div class="v" id="lv-done">—</div><div class="u">de la batería completa</div></div>
+      <div class="metric"><div class="k">Áreas que frenan</div><div class="v" id="lv-weak">—</div><div class="u">por debajo de avanzado</div></div>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Test</th><th class="num">Mejor marca</th><th>Nivel</th><th class="num">Intermedio</th><th class="num">Avanzado</th><th class="num">RX</th></tr></thead><tbody id="lv-body"></tbody></table></div>
+    <small class="note">Ordenado de más flojo a más fuerte: lo de arriba es donde más rinde invertir tiempo de entreno.</small>
+  </div>
+
+  <div class="card">
+    <h2>Ratios de fuerza · coherencia del perfil</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Se calculan solos con tus mejores marcas. Un ratio fuera de rango no es "malo": señala dónde está el cuello de botella real — si el snatch va corto respecto al back squat, el problema es técnico, no de fuerza.</small>
+    <div class="tablewrap"><table><thead><tr><th>Ratio</th><th class="num">Actual</th><th class="num">Rango sano</th><th>Lectura</th></tr></thead><tbody id="ratio-body"></tbody></table></div>
   </div>
 
   <div class="card">
@@ -1305,26 +1327,113 @@ const DAYNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sáb
 
 /* ---------------- batería de tests · atleta integral ----------------
    dir: 1 = más es mejor · -1 = menos es mejor (tiempos)
-   kind: 'num' (kg/reps/seg) · 'time' (mm:ss, se guarda en segundos) */
+   kind: 'num' (kg/reps/seg) · 'time' (mm:ss, se guarda en segundos)
+   cat: wl halterofilia · mc motor y metcón · gym gimnásticos
+   lv: umbrales [intermedio, avanzado, RX competitivo]
+   lvMode 'bw': los umbrales son múltiplos de peso corporal (CFG.bw)
+   prio: 1 = hueco prioritario del perfil, hazlo primero */
+const TESTCATS={wl:'Halterofilia y fuerza',mc:'Motor y metcón',gym:'Gimnásticos'};
+const LEVELS=['Iniciado','Intermedio','Avanzado','RX competitivo'];
+const LEVELCLS=['pill neutral','pill warn','pill ok','pill rx'];
 const TESTS={
-  cft:{name:'CrossFit Total',area:'Fuerza máxima',unit:'kg',dir:1,kind:'num',ph:'355',
-    proto:'1RM de sentadilla + press estricto + peso muerto, el mismo día y en ese orden. Registra la suma de los tres.'},
-  cj:{name:'Clean & Jerk 1RM',area:'Potencia',unit:'kg',dir:1,kind:'num',ph:'110',
+  /* --- halterofilia y fuerza --- */
+  bsq:{cat:'wl',name:'Back squat 1RM',area:'Fuerza · pierna',unit:'kg',dir:1,kind:'num',ph:'150',lvMode:'bw',lv:[1.5,1.85,2.2],
+    proto:'1RM con calentamiento progresivo y 3-4 intentos pesados como máximo. Profundidad completa, sin rebote. Retest cada 8-12 semanas.'},
+  fsq:{cat:'wl',name:'Front squat 1RM',area:'Fuerza · pierna',unit:'kg',dir:1,kind:'num',ph:'120',lvMode:'bw',lv:[1.25,1.55,1.85],prio:1,
+    proto:'1RM en sentadilla frontal. Dice si tu clean lo limita la recepción o el tirón: sano ≈ 82-88% del back squat.'},
+  dl:{cat:'wl',name:'Peso muerto 1RM',area:'Fuerza · cadena posterior',unit:'kg',dir:1,kind:'num',ph:'180',lvMode:'bw',lv:[1.9,2.35,2.75],prio:1,
+    proto:'1RM convencional, sin straps si vas a competir sin ellos. Máximo 3-4 intentos pesados.'},
+  squatclean:{cat:'wl',name:'Squat clean 1RM',area:'Potencia',unit:'kg',dir:1,kind:'num',ph:'110',lvMode:'bw',lv:[1.0,1.35,1.6],
+    proto:'1RM de cargada con recepción en sentadilla completa. Técnica sólida antes que kilo.'},
+  cj:{cat:'wl',name:'Clean & jerk 1RM',area:'Potencia',unit:'kg',dir:1,kind:'num',ph:'110',lvMode:'bw',lv:[1.0,1.3,1.55],
     proto:'Sube a un 1RM del día con técnica sólida. Calienta bien y limita a 3-4 intentos pesados.'},
-  row2k:{name:'Remo 2.000 m',area:'Motor aeróbico',unit:'mm:ss',dir:-1,kind:'time',ph:'7:45',
-    proto:'2.000 m en remoerg por tiempo. Ritmo negativo: la segunda mitad igual o más rápida que la primera.'},
-  row500:{name:'Remo 500 m',area:'Potencia anaeróbica',unit:'mm:ss',dir:-1,kind:'time',ph:'1:35',
-    proto:'500 m a tope, en fresco (otro día que el 2k o con descanso completo).'},
-  fran:{name:'Fran',area:'Motor mixto · metcón',unit:'mm:ss',dir:-1,kind:'time',ph:'4:30',
-    proto:'21-15-9 thrusters (43 kg) + pull-ups, por tiempo. El benchmark glicolítico de referencia.'},
-  pullmax:{name:'Dominadas estrictas máx',area:'Gimnástico · tracción',unit:'reps',dir:1,kind:'num',ph:'15',
+  snatch:{cat:'wl',name:'Snatch 1RM',area:'Potencia · técnica',unit:'kg',dir:1,kind:'num',ph:'72',lvMode:'bw',lv:[0.75,1.0,1.25],
+    proto:'1RM de arrancada. Si el ratio contra el back squat baja de 0,55 el problema es técnico-posicional, no de fuerza.'},
+  hangsnatch:{cat:'wl',name:'Snatch colgante 1RM',area:'Diagnóstico técnico',unit:'kg',dir:1,kind:'num',ph:'62',lvMode:'bw',lv:[0.65,0.85,1.05],prio:1,
+    proto:'Arrancada desde posición colgante, por encima de rodilla. Si aquí mueves casi lo mismo que en el snatch completo, lo que se rompe es el primer tirón desde el suelo.'},
+  sp:{cat:'wl',name:'Press estricto 1RM',area:'Fuerza · empuje vertical',unit:'kg',dir:1,kind:'num',ph:'58',lvMode:'bw',lv:[0.65,0.85,1.0],
+    proto:'1RM estricto, sin ayuda de pierna. El 3RM quincenal vive en su propia tarjeta; aquí registra solo el 1RM.'},
+  pp:{cat:'wl',name:'Push press 1RM',area:'Fuerza · empuje vertical',unit:'kg',dir:1,kind:'num',ph:'80',lvMode:'bw',lv:[0.85,1.05,1.25],prio:1,
+    proto:'1RM de push press: un solo impulso de pierna, sin recepción. Comparado con el press estricto dice cuánto aporta la pierna.'},
+  bench:{cat:'wl',name:'Press banca 1RM',area:'Fuerza · empuje horizontal',unit:'kg',dir:1,kind:'num',ph:'100',lvMode:'bw',lv:[1.0,1.25,1.5],
+    proto:'1RM en banca plana con pausa mínima en el pecho.'},
+  cft:{cat:'wl',name:'CrossFit Total',area:'Fuerza máxima',unit:'kg',dir:1,kind:'num',ph:'355',lvMode:'bw',lv:[3.6,4.7,5.6],
+    proto:'1RM de sentadilla + press estricto + peso muerto, el mismo día y en ese orden. Registra la suma de los tres.'},
+  /* --- motor y metcón --- */
+  row2k:{cat:'mc',name:'Remo 2.000 m',area:'Motor aeróbico',unit:'mm:ss',dir:-1,kind:'time',ph:'7:15',lv:[465,435,410],prio:1,
+    proto:'2.000 m en remoerg por tiempo, damper 3-4. Ritmo negativo: la segunda mitad igual o más rápida que la primera.'},
+  row500:{cat:'mc',name:'Remo 500 m',area:'Potencia anaeróbica',unit:'mm:ss',dir:-1,kind:'time',ph:'1:35',lv:[100,92,85],
+    proto:'500 m a tope, en fresco (otro día distinto al 2k, o con descanso completo).'},
+  row1cal:{cat:'mc',name:"Remo 1' calorías",area:'Potencia · remo',unit:'cal',dir:1,kind:'num',ph:'81',lv:[65,75,85],
+    proto:"1 minuto de remo a tope desde parado, calorías totales. Cada 3 semanas, siempre con el mismo damper."},
+  bike1cal:{cat:'mc',name:"BikeErg 1' calorías",area:'Potencia · bici',unit:'cal',dir:1,kind:'num',ph:'78',lv:[60,72,82],
+    proto:"1 minuto de BikeErg a tope desde parado, calorías totales. Cada 3 semanas."},
+  fran:{cat:'mc',name:'Fran',area:'Metcón corto · glucolítico',unit:'mm:ss',dir:-1,kind:'time',ph:'4:30',lv:[330,240,195],prio:1,
+    proto:'21-15-9 thrusters (43 kg) + pull-ups, por tiempo. El benchmark de referencia para posicionar nivel RX en metcón corto: tu perfil exacto.'},
+  grace:{cat:'mc',name:'Grace',area:'Metcón · ciclado de barra',unit:'mm:ss',dir:-1,kind:'time',ph:'3:30',lv:[300,210,160],
+    proto:'30 clean & jerk a 61 kg por tiempo. Con tu clean de 110 kg la carga es ligera: se decide en el ciclado, no en la fuerza.'},
+  dt:{cat:'mc',name:'DT',area:'Metcón · resistencia a barra',unit:'mm:ss',dir:-1,kind:'time',ph:'9:00',lv:[720,540,420],
+    proto:'5 rondas de 12 peso muerto + 9 hang power clean + 6 push jerk a 70 kg (carga RX masculina). Mide aguante bajo carga con el agarre comprometido.'},
+  /* --- gimnásticos --- */
+  pullmax:{cat:'gym',name:'Dominadas estrictas máx',area:'Gimnástico · tracción',unit:'reps',dir:1,kind:'num',ph:'15',lv:[10,18,25],
     proto:'Una serie máxima de dominadas estrictas (sin kipping), en fresco, de brazos extendidos a barbilla sobre barra.'},
-  hspu:{name:'HSPU máx unbroken',area:'Gimnástico · empuje',unit:'reps',dir:1,kind:'num',ph:'12',
-    proto:'Una serie máxima de flexiones de pino contra pared sin bajarte, estándar de competición.'},
-  lsit:{name:'L-sit máx',area:'Core',unit:'seg',dir:1,kind:'num',ph:'25',
+  c2b:{cat:'gym',name:'C2B butterfly máx',area:'Gimnástico · ciclado',unit:'reps',dir:1,kind:'num',ph:'15',lv:[8,15,25],
+    proto:'Serie máxima de chest-to-bar en butterfly sin soltar la barra. Ya lo trackeas semanalmente: registra aquí la mejor serie.'},
+  t2b:{cat:'gym',name:'Toes-to-bar máx',area:'Gimnástico · core',unit:'reps',dir:1,kind:'num',ph:'25',lv:[15,25,40],
+    proto:'Serie máxima de toes-to-bar sin soltar la barra, con estándar de competición: pies tocan la barra, brazos extendidos abajo.'},
+  hspustrict:{cat:'gym',name:'HSPU estrictas máx',area:'Gimnástico · empuje',unit:'reps',dir:1,kind:'num',ph:'8',lv:[5,12,20],
+    proto:'Serie máxima de flexiones de pino estrictas contra pared, sin kipping. Correlaciona directo con tu press estricto.'},
+  hspu:{cat:'gym',name:'HSPU kipping máx',area:'Gimnástico · empuje',unit:'reps',dir:1,kind:'num',ph:'12',lv:[10,20,35],
+    proto:'Una serie máxima de flexiones de pino con kipping contra pared sin bajarte, estándar de competición.'},
+  mustrict:{cat:'gym',name:'Muscle-up estricto máx',area:'Gimnástico · skill',unit:'reps',dir:1,kind:'num',ph:'2',lv:[1,4,8],
+    proto:'Serie máxima de muscle-ups estrictos en anillas. Si sigues en progresión por el hombro, déjalo sin marca hasta tener luz verde.'},
+  mukip:{cat:'gym',name:'Muscle-up kipping máx',area:'Gimnástico · skill',unit:'reps',dir:1,kind:'num',ph:'5',lv:[3,8,15],
+    proto:'Serie máxima de muscle-ups con kipping sin soltar, anotando si son anillas o barra (y manteniendo siempre el mismo para comparar).'},
+  du:{cat:'gym',name:'Dobles máx unbroken',area:'Gimnástico · salto',unit:'reps',dir:1,kind:'num',ph:'100',lv:[50,100,150],
+    proto:'Serie máxima de dobles sin fallo. Con el Aquiles recién resuelto: progresión controlada y nunca dos días seguidos de volumen alto de saltos.'},
+  hswalk:{cat:'gym',name:'Handstand walk máx',area:'Gimnástico · equilibrio',unit:'m',dir:1,kind:'num',ph:'15',lv:[10,25,50],
+    proto:'Distancia máxima caminando de manos sin caer, en metros.'},
+  lsit:{cat:'gym',name:'L-sit máx',area:'Core',unit:'seg',dir:1,kind:'num',ph:'25',lv:[20,35,50],
     proto:'L-sit en paralelas o anillas con piernas extendidas: aguanta el máximo tiempo con buena postura.'}
 };
+/* ratios de coherencia del perfil · b:null = contra peso corporal */
+const RATIOS=[
+  {n:'Snatch / Back squat',a:'snatch',b:'bsq',lo:0.55,hi:0.65,
+    low:'Déficit técnico-posicional, no de fuerza: la pierna da de sobra. Haz el snatch colgante para aislar dónde se rompe.',
+    ok:'En rango: el snatch acompaña a tu fuerza de pierna.',
+    high:'Snatch alto para tu sentadilla: ahora el freno es la pierna, no la técnica.'},
+  {n:'Front squat / Back squat',a:'fsq',b:'bsq',lo:0.82,hi:0.88,
+    low:'Front squat corto: la recepción del clean te limita más que el tirón.',
+    ok:'Coherente: recepción y pierna van a la par.',
+    high:'Front squat muy alto: el back squat está por debajo de su potencial.'},
+  {n:'Squat clean / Back squat',a:'squatclean',b:'bsq',lo:0.70,hi:0.80,
+    low:'Tienes más pierna que técnica de cargada: margen claro en el clean.',
+    ok:'Coherente.',
+    high:'Clean muy cerca de tu sentadilla: toca subir fuerza de pierna.'},
+  {n:'Snatch / Clean',a:'snatch',b:'squatclean',lo:0.78,hi:0.82,
+    low:'El snatch va corto respecto al clean: hueco técnico de arrancada, no de fuerza.',
+    ok:'En rango.',
+    high:'Snatch muy alto respecto al clean: revisa la cargada.'},
+  {n:'Peso muerto / Back squat',a:'dl',b:'bsq',lo:1.15,hi:1.30,
+    low:'Cadena posterior por detrás de la pierna: peso muerto y bisagra de cadera.',
+    ok:'Equilibrado.',
+    high:'Mucha cadena posterior para tu sentadilla: prioriza cuádriceps.'},
+  {n:'Push press / Press estricto',a:'pp',b:'sp',lo:1.25,hi:1.40,
+    low:'Poco aporte de pierna al empuje: el dip-drive está por pulir.',
+    ok:'Transferencia normal de pierna al empuje.',
+    high:'Dependes mucho del impulso: el déficit real está en el empuje estricto.'},
+  {n:'Press estricto / Peso corporal',a:'sp',b:null,lo:0.93,hi:1.0,
+    low:'Tu limitante identificado: clusters de press y trabajo de dorsal y trapecio medio.',
+    ok:'Objetivo del plan alcanzado.',
+    high:'Empuje vertical sobrado para tu peso.'}
+];
 function testArr(k){return DB.test.filter(x=>x.test===k)}
+function testTargets(T){if(!T.lv)return null;const bw=CFG.bw||72;return T.lvMode==='bw'?T.lv.map(x=>x*bw):T.lv.slice()}
+function testLevel(T,v){const t=testTargets(T);if(!t||!isFinite(v))return null;
+  return T.dir===1?(v>=t[2]?3:v>=t[1]?2:v>=t[0]?1:0):(v<=t[2]?3:v<=t[1]?2:v<=t[0]?1:0)}
+function nextTarget(T,lv){const t=testTargets(T);if(!t||lv===null||lv>=3)return null;return t[lv]}
+function bestTest(k){const T=TESTS[k],a=testArr(k);if(!a.length)return null;
+  return a.reduce((b,r)=>(b&&T.dir*(r.v-b.v)<=0)?b:r,null)}
 function parseTimeStr(s){ // "7:45" o "465" → segundos
   s=(s||'').trim();if(!s)return NaN;
   if(s.includes(':')){const p=s.split(':').map(Number);if(p.some(isNaN))return NaN;return p[0]*60+p[1]}
@@ -1332,6 +1441,7 @@ function parseTimeStr(s){ // "7:45" o "465" → segundos
 }
 function fmtTime(v){const m=Math.floor(v/60),s=Math.round(v%60);return m+':'+String(s).padStart(2,'0')}
 function fmtTestVal(T,v){return T.kind==='time'?fmtTime(v):String(Math.round(v*10)/10)}
+function fmtTarget(T,v){return T.kind==='time'?fmtTime(v):String(Math.round(v))}
 function fmtTestDelta(T,dv){
   if(!dv)return '=';
   return (dv>0?'+':'−')+(T.kind==='time'?fmtTime(Math.abs(dv)):String(Math.round(Math.abs(dv)*10)/10));
@@ -1534,7 +1644,11 @@ function bindTools(){
 }
 function bindTests(){
   const sel=$('test-name');if(!sel)return;
-  sel.innerHTML=Object.entries(TESTS).map(([k,T])=>`<option value="${k}">${T.name} · ${T.area}</option>`).join('');
+  sel.innerHTML=Object.entries(TESTCATS).map(([cat,label])=>{
+    const opts=Object.entries(TESTS).filter(([,T])=>T.cat===cat)
+      .map(([k,T])=>`<option value="${k}">${T.name}</option>`).join('');
+    return `<optgroup label="${label}">${opts}</optgroup>`;
+  }).join('');
   const upd=()=>{const T=TESTS[sel.value];if(!T)return;
     $('test-val-label').textContent='Marca ('+T.unit+')';
     $('test-val').placeholder=T.ph;
@@ -1718,12 +1832,16 @@ function renderAlerts(wk,ph){
     const twDays=(CFG.testw||6)*7;
     const tkeys=Object.keys(TESTS);
     const withData=tkeys.filter(k=>testArr(k).length);
-    if(!withData.length)push('info','<b>Batería de atleta integral sin baseline.</b> Haz los 8 tests (Registros → Tests) repartidos en 1-2 semanas: sin primera marca no hay progreso que medir.');
+    const prioPend=tkeys.filter(k=>TESTS[k].prio&&!testArr(k).length);
+    const short=a=>a.length<=4?a.map(k=>TESTS[k].name).join(' · '):a.slice(0,4).map(k=>TESTS[k].name).join(' · ')+' y '+(a.length-4)+' más';
+    if(prioPend.length)push('warn','<b>Huecos del perfil sin medir:</b> '+short(prioPend)+'. Son los tests que faltan para nivelar tu nivel de atleta (Registros → Tests).');
+    if(!withData.length)push('info','<b>Batería de atleta integral sin baseline.</b> Empieza por los huecos prioritarios (Registros → Tests) repartidos en 1-2 semanas: sin primera marca no hay progreso que medir.');
     else{
       const overdue=withData.filter(k=>{const a=testArr(k);
         return Math.floor((new Date(today)-new Date(a[a.length-1].date))/86400000)>twDays});
-      if(overdue.length)push('warn','<b>Retest pendiente:</b> '+overdue.map(k=>TESTS[k].name).join(' · ')+'. El protocolo es cada '+(CFG.testw||6)+' semanas.');
-      if(withData.length<tkeys.length)push('info','<b>Batería incompleta:</b> sin baseline aún → '+tkeys.filter(k=>!testArr(k).length).map(k=>TESTS[k].name).join(' · ')+'.');
+      if(overdue.length)push('warn','<b>Retest pendiente:</b> '+short(overdue)+'. El protocolo es cada '+(CFG.testw||6)+' semanas.');
+      const sinBase=tkeys.filter(k=>!testArr(k).length&&!TESTS[k].prio);
+      if(sinBase.length)push('info','<b>Batería incompleta:</b> '+withData.length+'/'+tkeys.length+' tests con marca. Sin baseline aún → '+short(sinBase)+'.');
     }
   }
   // z2 semana
@@ -1925,29 +2043,55 @@ function renderTest(){
   const bt=$('test-batt');if(!bt)return;
   const today=todayISO();const twDays=(CFG.testw||6)*7;
   const fn=$('test-freq-note');if(fn)fn.textContent=CFG.testw||6;
-  bt.innerHTML=Object.entries(TESTS).map(([k,T])=>{
-    const arr=testArr(k);const last=arr[arr.length-1],prev=arr[arr.length-2];
-    let lastTxt='—',dTxt='—',dCol='var(--faint)',estado;
-    if(!last){estado='<span class="pill neutral">sin baseline</span>';}
-    else{
-      lastTxt=fmtTestVal(T,last.v)+' <span style="color:var(--faint);font-weight:400;font-size:11px">'+fmtd(last.date)+'</span>';
-      if(prev){const dv=last.v-prev.v;const imp=T.dir*dv;
-        dTxt=fmtTestDelta(T,dv);
-        dCol=imp>0?'var(--green)':imp<0?'var(--red)':'var(--faint)';}
-      const days=Math.floor((new Date(today)-new Date(last.date))/86400000);
-      if(days>twDays)estado='<span class="pill warn">toca retest</span>';
-      else{const nxt=new Date(last.date+'T00:00:00');nxt.setDate(nxt.getDate()+twDays);
-        estado='<span class="pill ok">al día</span> <span style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">próximo '+fmtd(iso(nxt))+'</span>';}
-    }
-    return `<tr title="${esc(T.proto)}"><td style="font-size:12.5px;color:var(--muted)">${T.area}</td><td><b>${T.name}</b></td><td class="num">${lastTxt}</td><td class="num" style="color:${dCol};font-weight:700">${dTxt}</td><td>${estado}</td></tr>`;
-  }).join('');
+  let html='';
+  Object.entries(TESTCATS).forEach(([cat,label])=>{
+    const keys=Object.keys(TESTS).filter(k=>TESTS[k].cat===cat);
+    if(!keys.length)return;
+    const done=keys.filter(k=>testArr(k).length).length;
+    html+=`<tr class="catrow"><td colspan="6">${label} <span style="font-family:var(--mono);text-transform:none;letter-spacing:0;color:var(--faint)">· ${done}/${keys.length} con marca</span></td></tr>`;
+    html+=keys.map(k=>{
+      const T=TESTS[k];const arr=testArr(k);const last=arr[arr.length-1],prev=arr[arr.length-2];
+      const tg=testTargets(T);
+      let lastTxt='—',dTxt='—',dCol='var(--faint)',estado,nivel='—',next='—';
+      if(!last){
+        estado='<span class="pill neutral">sin baseline</span>';
+        if(T.prio)nivel='<span class="tag hard">prioridad</span>';
+        if(tg)next=fmtTarget(T,tg[0])+' <span style="font-size:10.5px;color:var(--faint)">intermedio</span>';
+      }else{
+        lastTxt=fmtTestVal(T,last.v)+' <span style="color:var(--faint);font-weight:400;font-size:11px">'+fmtd(last.date)+'</span>';
+        if(prev){const dv=last.v-prev.v;const imp=T.dir*dv;
+          dTxt=fmtTestDelta(T,dv);
+          dCol=imp>0?'var(--green)':imp<0?'var(--red)':'var(--faint)';}
+        const b=bestTest(k);const lv=testLevel(T,b.v);
+        if(lv!==null){
+          nivel=`<span class="${LEVELCLS[lv]}">${LEVELS[lv]}</span>`;
+          const nt=nextTarget(T,lv);
+          next=nt?fmtTarget(T,nt)+' <span style="font-size:10.5px;color:var(--faint)">'+LEVELS[lv+1].toLowerCase()+'</span>':'<span style="color:var(--green)">techo de la tabla</span>';
+        }
+        const days=Math.floor((new Date(today)-new Date(last.date))/86400000);
+        if(days>twDays)estado='<span class="pill warn">toca retest</span>';
+        else{const nxt=new Date(last.date+'T00:00:00');nxt.setDate(nxt.getDate()+twDays);
+          estado='<span class="pill ok">al día</span> <span style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">próximo '+fmtd(iso(nxt))+'</span>';}
+      }
+      return `<tr title="${esc(T.proto)}"><td><b>${T.name}</b><div style="font-size:11.5px;color:var(--faint)">${T.area}</div></td><td class="num">${lastTxt}</td><td class="num" style="color:${dCol};font-weight:700">${dTxt}</td><td>${nivel}</td><td class="num">${next}</td><td>${estado}</td></tr>`;
+    }).join('');
+  });
+  bt.innerHTML=html;
+  // huecos prioritarios
+  const pr=$('test-prio');
+  if(pr){
+    const pend=Object.keys(TESTS).filter(k=>TESTS[k].prio&&!testArr(k).length);
+    pr.innerHTML=pend.length
+      ? '<li class="warn"><b>Empieza por estos '+pend.length+':</b> '+pend.map(k=>TESTS[k].name).join(' · ')+'. Son los huecos que ahora mismo impiden nivelar tu perfil.</li>'
+      : '<li class="ok"><b>Huecos prioritarios cubiertos.</b> Mantén la cadencia de retest y ve completando el resto de la batería.</li>';
+  }
   // historial
   const tb=$('test-body');tb.innerHTML='';
   [...DB.test].reverse().forEach(r=>{
     const T=TESTS[r.test];if(!T)return;
     tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td>${T.name}</td><td class="num">${fmtTestVal(T,r.v)} ${T.kind==='time'?'':T.unit}</td><td class="num"><button class="del" onclick="del('test','${r.id}')">×</button></td></tr>`);
   });
-  if(!DB.test.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin tests registrados aún · empieza por la baseline de los 8</td></tr>';
+  if(!DB.test.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin tests registrados aún · empieza por los huecos prioritarios de arriba</td></tr>';
   // opciones de gráfica (solo tests con datos)
   const sel=$('test-chart-sel');const cur=sel.value;
   const keys=Object.keys(TESTS).filter(k=>testArr(k).length);
@@ -2123,7 +2267,7 @@ function renderAnalisis(){
     $('an-meals').className='v '+(pct>=80?'good':pct>=50?'':'warn');
   }else $('an-meals').textContent='—';
 
-  renderHeatmap();renderPRs();renderBenchmarks();renderTestTrends();renderTrends(c28);
+  renderHeatmap();renderPRs();renderBenchmarks();renderTestTrends();renderLevels();renderRatios();renderTrends(c28);
 }
 
 function renderTestTrends(){
@@ -2148,6 +2292,57 @@ function renderTestTrends(){
     const col=r.pct>0.5?'var(--green)':r.pct<-0.5?'var(--red)':'var(--muted)';
     const read=r.pct>0.5?'Mejorando':r.pct<-0.5?'Retrocede: dale prioridad a esta área':'Estable';
     return `<tr><td style="font-size:12.5px;color:var(--muted)">${r.T.area}</td><td><b>${r.T.name}</b></td><td class="num">${fmtTestVal(r.T,r.f.v)}</td><td class="num">${fmtTestVal(r.T,r.l.v)}</td><td class="num" style="color:${col};font-weight:700">${(r.pct>0?'+':'')+r.pct.toFixed(1)}%</td><td style="font-size:13px;color:var(--muted)">${read}</td></tr>`;
+  }).join('');
+}
+
+function renderLevels(){
+  const tb=$('lv-body');if(!tb)return;
+  const bwEl=$('lv-bw');if(bwEl)bwEl.textContent=CFG.bw||72;
+  const keys=Object.keys(TESTS);
+  const done=keys.filter(k=>testArr(k).length).length;
+  $('lv-done').textContent=done+'/'+keys.length;
+  const rows=[];
+  keys.forEach(k=>{const T=TESTS[k];const b=bestTest(k);if(!b)return;
+    const lv=testLevel(T,b.v);if(lv===null)return;rows.push({T,b,lv})});
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="6" class="empty">Registra marcas en la batería (Registros → Tests) para ver tu nivel por área</td></tr>';
+    $('lv-global').textContent='—';$('lv-global').className='v';$('lv-weak').textContent='—';$('lv-weak').className='v';return;
+  }
+  rows.sort((a,b)=>a.lv-b.lv);
+  const mean=rows.reduce((s,r)=>s+r.lv,0)/rows.length;
+  const gi=Math.round(mean);
+  $('lv-global').textContent=LEVELS[gi];
+  $('lv-global').className='v '+(gi>=3?'good':gi>=2?'':'warn');
+  $('lv-global-u').textContent=mean.toFixed(1)+'/3 · '+rows.length+' tests valorados';
+  const weak=rows.filter(r=>r.lv<2).length;
+  $('lv-weak').textContent=weak;
+  $('lv-weak').className='v '+(weak===0?'good':weak<=2?'':'warn');
+  tb.innerHTML=rows.map(r=>{
+    const t=testTargets(r.T);
+    return `<tr><td><b>${r.T.name}</b><div style="font-size:11.5px;color:var(--faint)">${r.T.area}</div></td>
+      <td class="num">${fmtTestVal(r.T,r.b.v)} <span style="color:var(--faint);font-weight:400;font-size:11px">${fmtd(r.b.date)}</span></td>
+      <td><span class="${LEVELCLS[r.lv]}">${LEVELS[r.lv]}</span></td>
+      <td class="num">${fmtTarget(r.T,t[0])}</td><td class="num">${fmtTarget(r.T,t[1])}</td><td class="num">${fmtTarget(r.T,t[2])}</td></tr>`;
+  }).join('');
+}
+
+function renderRatios(){
+  const tb=$('ratio-body');if(!tb)return;
+  const rows=[];
+  RATIOS.forEach(R=>{
+    const A=bestTest(R.a);if(!A)return;
+    let den;
+    if(R.b){const B=bestTest(R.b);if(!B)return;den=B.v}
+    else den=CFG.bw||72;
+    if(!den)return;
+    const v=A.v/den;
+    rows.push({R,v,st:v<R.lo?'low':v>R.hi?'high':'ok'});
+  });
+  if(!rows.length){tb.innerHTML='<tr><td colspan="4" class="empty">Necesitas las dos marcas de un ratio (por ejemplo snatch y back squat) para calcularlo</td></tr>';return}
+  tb.innerHTML=rows.map(r=>{
+    const col=r.st==='ok'?'var(--green)':r.st==='low'?'var(--red)':'var(--amber)';
+    const tag=r.st==='ok'?'<span class="tag rec">en rango</span>':r.st==='low'?'<span class="tag hard">bajo</span>':'<span class="tag mod">alto</span>';
+    return `<tr><td><b>${r.R.n}</b></td><td class="num" style="color:${col};font-weight:700">${r.v.toFixed(2)}</td><td class="num">${r.R.lo.toFixed(2)}–${r.R.hi.toFixed(2)}</td><td style="font-size:13px;color:var(--muted)">${tag} ${r.R[r.st]}</td></tr>`;
   }).join('');
 }
 
