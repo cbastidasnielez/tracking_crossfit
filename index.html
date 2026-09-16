@@ -167,6 +167,9 @@ tbody tr:last-child td{border-bottom:none}
 .mealprog .cnt{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
 .mealprog .streak{font-family:var(--mono);font-size:11.5px;color:var(--amber);white-space:nowrap;font-weight:700}
 button.pill{border:none;cursor:pointer}
+.saludline{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--line2);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.saludline b{font-family:var(--display);font-weight:600;color:var(--ink)}
 
 /* ---- "ahora toca" ---- */
 .nowline{font-family:var(--mono);font-size:12px;color:var(--ink);margin:-4px 0 12px;display:flex;align-items:center;gap:8px}
@@ -302,6 +305,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
       <h2 id="hoy-session" style="margin:4px 0 6px">—</h2>
       <p id="hoy-session-desc" style="font-size:14px;color:var(--muted)">—</p>
       <p id="hoy-session-phase" style="font-size:13px;margin-top:8px"></p>
+      <div class="saludline" id="hoy-salud"></div>
     </div>
     <div class="card">
       <div class="eyebrow">Nutrición de hoy</div>
@@ -359,6 +363,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="quick">
       <button data-goto="registros:card-checkin">+ Check-in de hoy</button>
       <button data-goto="registros:card-comida">+ Comida</button>
+      <button data-goto="registros:card-salud">+ Salud articular</button>
       <button data-goto="registros:card-wod">+ WOD</button>
       <button data-goto="registros:card-z2">+ Sesión Z2</button>
       <button data-goto="registros:card-peso">+ Peso</button>
@@ -750,6 +755,22 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </ul>
   </div>
 
+  <div class="card" id="hombros">
+    <h2>🛡️ Hombros blindados · salud articular</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px"><b>3×/semana después del WOD</b> · 8-10 min · intensidad ligera o moderada: debes terminar sintiendo que has trabajado, no destruido. Manguito rotador, escápula, serrato, estabilidad overhead y capacidad de los tendones — justo lo que sostiene el press estricto, el snatch y los muscle-ups.</small>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Ejercicio</th><th>Series</th><th>Clave de ejecución</th></tr></thead>
+      <tbody>
+        <tr><td><b>🔥 Y-T-W</b></td><td class="mono">2 rondas<br>8 + 8 + 8</td><td>Mancuernas muy ligeras. Movimiento lento y limpio: aquí manda la posición, no el peso.</td></tr>
+        <tr><td><b>🛡️ Rotación externa</b><div style="font-size:11.5px;color:var(--faint)">cable o banda</div></td><td class="mono">2 × 15-20<br>por brazo</td><td>Codo pegado al cuerpo. Controla especialmente la vuelta: la excéntrica es donde se construye el manguito.</td></tr>
+        <tr><td><b>🪽 Scapular pull-ups</b></td><td class="mono">2 × 8-12</td><td>Brazos prácticamente estirados; mueve solo las escápulas. Sin convertirlo en una dominada.</td></tr>
+        <tr><td><b>💪 Push-up plus</b></td><td class="mono">2 × 12-15</td><td>Al final de cada repetición empuja el suelo separando las escápulas. Ese es el trabajo de serrato.</td></tr>
+        <tr><td><b>🏋️ Overhead carry</b></td><td class="mono">2 × 30-40"<br>por brazo</td><td>Kettlebell o mancuerna. Costillas abajo, brazo estable y hombro controlado todo el recorrido.</td></tr>
+      </tbody>
+    </table></div>
+    <small class="note">Márcala en Registros → Salud articular, o con el botón de la pestaña Hoy: el sistema vigila que caigan las tres semanales.</small>
+  </div>
+
   <div class="card">
     <h2>Fase 2 · mes 2-4 — sesiones concretas</h2>
     <p style="font-size:14px">Solo se entra en F2 con los dos hitos de F1 cumplidos: <b>peso estable 72-73</b> y <b>baseline W/bpm confirmado</b>. Si falta uno, F1 se alarga 1-2 semanas — es la decisión correcta, no un fracaso.</p>
@@ -982,6 +1003,24 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="tablewrap"><table><thead><tr><th>Fecha</th><th class="num">Sueño</th><th class="num">Energía</th><th class="num">Agujetas</th><th class="num">Score</th><th>Dieta</th><th></th></tr></thead><tbody id="ck-body"></tbody></table></div>
   </div>
 
+  <!-- SALUD ARTICULAR -->
+  <div class="card" id="card-salud">
+    <h2>Salud articular</h2>
+    <small class="note" style="margin-top:0;margin-bottom:12px">Rutina <b>Hombros blindados</b>: 3×/semana después del WOD, 8-10 min. Los 5 ejercicios y su ejecución están en <b>Entrenos</b>. Marca aquí cada sesión y el sistema vigila que caigan las tres.</small>
+    <div class="mealprog">
+      <div class="bar"><i id="salud-bar"></i></div>
+      <span class="cnt" id="salud-cnt">—</span>
+      <button class="mini" data-salud-log>✓ Hecha hoy</button>
+    </div>
+    <div class="logbar">
+      <div class="field w-md"><label>Fecha</label><input type="date" id="salud-date"></div>
+      <div class="field w-md"><label>Rutina</label><select id="salud-rutina"><option>Hombros blindados</option><option>Otra</option></select></div>
+      <div class="field grow"><label>Nota (sensaciones, molestias)</label><input type="text" id="salud-note" placeholder="hombro derecho sin pinzamiento en el overhead carry"></div>
+      <button class="add" data-add="salud">Añadir</button>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Rutina</th><th>Nota</th><th></th></tr></thead><tbody id="salud-body"></tbody></table></div>
+  </div>
+
   <!-- PESO -->
   <div class="card" id="card-peso">
     <h2>Peso semanal</h2>
@@ -1101,6 +1140,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="metric"><div class="k">Sueño medio</div><div class="v" id="an-sleep">—</div><div class="u">h · últimos 7 check-ins</div></div>
     <div class="metric"><div class="k">Δ Peso 4 sem</div><div class="v" id="an-dpeso">—</div><div class="u">kg</div></div>
     <div class="metric"><div class="k">Comidas plan</div><div class="v" id="an-meals">—</div><div class="u">últimos 7 días</div></div>
+    <div class="metric"><div class="k">Hombros / sem</div><div class="v" id="an-salud">—</div><div class="u">media 4 sem · objetivo 3</div></div>
   </div>
 
   <div class="card">
@@ -1216,11 +1256,11 @@ const SUPABASE_URL = "https://uanoohzcfidizgvpxart.supabase.co";        // ej: h
 const SUPABASE_ANON_KEY = "sb_publishable_T-u0W3nT53yrynZwuYT1Jg_-V4ptQ7_";   // anon public key (empieza por eyJ...)
 
 /* ---------------- estado ---------------- */
-const TYPES=['peso','z2','press','fuerza','wod','checkin','comida','test'];
+const TYPES=['peso','z2','press','fuerza','wod','checkin','comida','test','salud'];
 const KEY='rx_protocol_v1';
 const CFGKEY='rx_protocol_cfg_v1';
 let CFG={start:'2026-07-06',bw:72,pmin:72,pmax:73,testw:6,wodDate:'2026-12-16'};
-let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[]};
+let DB={peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[],salud:[]};
 let sb=null, MODE='local';
 
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -1466,8 +1506,8 @@ function iso(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+
 /* ---------------- init ---------------- */
 (async function init(){
   const today=todayISO();
-  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date','test-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
-  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();bindShoplist();bindTests();
+  ['peso-date','z2-date','press-date','wod-date','ck-date','fz-date','comida-date','test-date','salud-date'].forEach(id=>{const el=$(id);if(el)el.value=today});
+  bindTabs();bindAdders();bindTools();bindConfig();bindMealQuickLog();bindDietaNav();bindShoplist();bindTests();bindSalud();
   loadLocalConfig();
   await initStorage();
   render();
@@ -1494,7 +1534,7 @@ function status(m){
 }
 
 /* ---------------- local fallback ---------------- */
-function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[]}}
+function seed(){return{peso:[],z2:[],press:[],fuerza:[],wod:[],checkin:[],comida:[],test:[],salud:[]}}
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY))||{};DB=seed();TYPES.forEach(t=>{if(Array.isArray(d[t]))DB[t]=d[t]})}catch(e){DB=seed()}}
 function saveLocal(){localStorage.setItem(KEY,JSON.stringify(DB))}
 function loadLocalConfig(){try{const c=JSON.parse(localStorage.getItem(CFGKEY));if(c&&c.start)CFG={...CFG,...c}}catch(e){}}
@@ -1576,12 +1616,55 @@ function bindAdders(){
     else if(t==='comida'){const d=val('comida-desc');if(!d)return warn('comida-desc');
       addEntry('comida',{date:val('comida-date'),moment:val('comida-moment'),desc:d,kcal:parseFloat(val('comida-kcal'))||0});
       clr('comida-desc');clr('comida-kcal');}
+    else if(t==='salud'){addEntry('salud',{date:val('salud-date'),rutina:val('salud-rutina'),note:val('salud-note')});clr('salud-note');}
     else if(t==='test'){const k=val('test-name');const T=TESTS[k];if(!T)return;
       const v=T.kind==='time'?parseTimeStr(val('test-val')):parseFloat(val('test-val'));
       if(!v||isNaN(v)||v<=0)return warn('test-val');
       addEntry('test',{date:val('test-date'),test:k,v});clr('test-val');}
   }));
 }
+/* ---- salud articular · rutina hombros blindados ---- */
+const SALUD_RUT='Hombros blindados';
+const SALUD_TARGET=3;
+function saludWeekCount(){const mon=iso(mondayOf(new Date()));const t=todayISO();
+  return DB.salud.filter(r=>r.date>=mon&&r.date<=t).length}
+function saludToday(){const t=todayISO();return DB.salud.find(r=>r.date===t)||null}
+function bindSalud(){
+  document.addEventListener('click',e=>{
+    const u=e.target.closest('[data-salud-undo]');
+    if(u){del('salud',u.dataset.saludUndo);return}
+    const b=e.target.closest('[data-salud-log]');
+    if(!b)return;
+    if(saludToday())return;
+    addEntry('salud',{date:todayISO(),rutina:SALUD_RUT,note:''});
+  });
+}
+function renderSalud(){
+  const done=saludWeekCount();
+  const bar=$('salud-bar'),cnt=$('salud-cnt');
+  if(bar)bar.style.width=Math.min(100,done/SALUD_TARGET*100)+'%';
+  if(cnt)cnt.textContent=done+'/'+SALUD_TARGET+' esta semana';
+  const tb=$('salud-body');
+  if(tb){
+    tb.innerHTML='';
+    [...DB.salud].reverse().forEach(r=>{
+      tb.insertAdjacentHTML('beforeend',`<tr><td>${fmtd(r.date)}</td><td>${esc(r.rutina||SALUD_RUT)}</td><td style="font-size:13px;color:var(--muted)">${esc(r.note||'')}</td><td class="num"><button class="del" onclick="del('salud','${r.id}')">×</button></td></tr>`);
+    });
+    if(!DB.salud.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin sesiones registradas aún · 3 por semana, después del WOD</td></tr>';
+  }
+  // línea en Hoy
+  const hs=$('hoy-salud');
+  if(hs){
+    const hoy=saludToday();
+    const falta=Math.max(SALUD_TARGET-done,0);
+    const estado=hoy
+      ? '<span class="pill ok">hecha hoy</span> <button class="mini" data-salud-undo="'+hoy.id+'">deshacer</button>'
+      : '<button class="mini" data-salud-log>✓ marcar hecha</button>';
+    hs.innerHTML='<b>🛡️ Hombros blindados</b> <span>'+done+'/'+SALUD_TARGET+' esta semana'
+      +(falta?(falta>1?' · faltan '+falta:' · falta 1'):' · semana completa')+'</span> '+estado;
+  }
+}
+
 function bindMealQuickLog(){
   document.addEventListener('click',e=>{
     const u=e.target.closest('[data-meal-undo]');
@@ -1671,7 +1754,7 @@ function bindConfig(){
 
 /* ---------------- render ---------------- */
 function render(){
-  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderDieta();renderWodcelona();renderAnalisis();
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderSalud();renderDieta();renderWodcelona();renderAnalisis();
 }
 
 function renderConfigForm(){
@@ -1843,6 +1926,13 @@ function renderAlerts(wk,ph){
       const sinBase=tkeys.filter(k=>!testArr(k).length&&!TESTS[k].prio);
       if(sinBase.length)push('info','<b>Batería incompleta:</b> '+withData.length+'/'+tkeys.length+' tests con marca. Sin baseline aún → '+short(sinBase)+'.');
     }
+  }
+  // salud articular · 3 sesiones de hombros por semana
+  {
+    const sw=saludWeekCount();
+    if(!DB.salud.length)push('info','<b>Rutina de hombros sin estrenar.</b> 8-10 min después del WOD, 3×/semana: es lo que sostiene el press estricto, el snatch y los muscle-ups (Entrenos → Hombros blindados).');
+    else if(sw>=SALUD_TARGET)push('ok','<b>Hombros blindados: '+sw+'/'+SALUD_TARGET+' esta semana.</b> Objetivo semanal cubierto.');
+    else if(wd===5||wd===6||wd===0)push('warn','<b>Hombros blindados: '+sw+'/'+SALUD_TARGET+' esta semana.</b> Te falta'+(SALUD_TARGET-sw>1?'n '+(SALUD_TARGET-sw)+' sesiones':' 1 sesión')+' y la semana se acaba. Son 8-10 min después del WOD.');
   }
   // z2 semana
   if(ph>=1&&ph<=3&&wd>=4){
@@ -2266,6 +2356,12 @@ function renderAnalisis(){
     $('an-meals').textContent=pct+'%';
     $('an-meals').className='v '+(pct>=80?'good':pct>=50?'':'warn');
   }else $('an-meals').textContent='—';
+  // hombros blindados · media semanal últimas 4 semanas
+  const sal4=DB.salud.filter(r=>r.date>=c28&&r.date<=today).length;
+  if(DB.salud.length){const avg=sal4/4;
+    $('an-salud').textContent=avg.toFixed(1);
+    $('an-salud').className='v '+(avg>=2.5?'good':avg>=1.5?'':'warn');
+  }else $('an-salud').textContent='—';
 
   renderHeatmap();renderPRs();renderBenchmarks();renderTestTrends();renderLevels();renderRatios();renderTrends(c28);
 }
