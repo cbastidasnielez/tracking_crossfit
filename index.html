@@ -381,7 +381,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
   <div class="diag">
     <div class="eyebrow">Diagnóstico</div>
     <h2>No es un problema de motor. Es un problema de gasolina.</h2>
-    <p>Tu fuerza sobra para tu peso (sentadilla 2,09×BW · peso muerto 2,16× · clean 1,58×). Lo que te frena no es fuerza: es que llegas a los WODs con el tanque medio vacío.</p>
+    <p>Tu fuerza sobra para tu peso <span id="diag-ratios">(ver ratios más abajo)</span>. Lo que te frena no es fuerza: es que llegas a los WODs con el tanque medio vacío.</p>
     <p>Bajaste de <b>74,8 → 69,5 kg en 24 días</b> sin buscarlo. Comes mucho <b>volumen</b> pero pocas <b>calorías</b> (~2.600 kcal frente a ~3.100 de mantenimiento) y sobre todo pocos carbohidratos (~260 g cuando necesitas 380-420). El glucógeno vacío explica pieza por pieza lo que te pasa en el box: thrusters a 5+5+5, 300 m en vez de 400, aliento a amoníaco, mandíbula caída en la segunda mitad.</p>
     <p><b>Paso 0 antes de cualquier progreso:</b> rellenar el tanque y estabilizar el peso hacia 72-73 kg. Sobre un atleta en déficit, ningún plan de motor funciona.</p>
   </div>
@@ -421,19 +421,12 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 
   <div class="card">
     <h2>Ratios de fuerza · dónde estás de verdad</h2>
-    <small class="note" style="margin-top:0;margin-bottom:10px">Sobre 69,5 kg actuales. La fuerza no es tu limitante — con una excepción técnica que sí vamos a trabajar.</small>
+    <small class="note" style="margin-top:0;margin-bottom:10px">Sale solo de tus mejores marcas de la batería (Registros → Tests), sobre un peso de referencia de <span id="planratio-bw">72</span> kg. La fuerza no es tu limitante — con una excepción técnica que sí vamos a trabajar.</small>
     <div class="tablewrap"><table>
       <thead><tr><th>Ejercicio</th><th class="num">1RM</th><th class="num">×BW</th><th>Lectura</th></tr></thead>
-      <tbody>
-        <tr><td>Peso muerto</td><td class="num">150 kg</td><td class="num">2,16×</td><td><span class="tag rec">sobrado</span> no tocar</td></tr>
-        <tr><td>Sentadilla</td><td class="num">145 kg</td><td class="num">2,09×</td><td><span class="tag rec">sobrado</span> no tocar</td></tr>
-        <tr><td>Clean</td><td class="num">110 kg</td><td class="num">1,58×</td><td><span class="tag rec">potente</span> mantener</td></tr>
-        <tr><td>Press banca</td><td class="num">100 kg</td><td class="num">1,44×</td><td><span class="tag rec">sólido</span></td></tr>
-        <tr><td>Snatch</td><td class="num">70 kg</td><td class="num">1,01×</td><td><span class="tag mod">técnica</span> solo el 64% de tu clean (esperable 78–82%). No es fuerza: es arrancada. Hueco técnico en F2 → objetivo ≈ 82 kg</td></tr>
-        <tr><td>Press estricto</td><td class="num">60 kg</td><td class="num">0,86×</td><td><span class="tag hard">a corregir</span> clusters de lunes · objetivo 0,93–1,0×</td></tr>
-      </tbody>
+      <tbody id="planratio-body"></tbody>
     </table></div>
-    <small class="note">Skills (MU, HSPU, butterfly, dobles): desbloqueados. El proyecto no es ganar fuerza ni skills — es motor, pacing y técnica de snatch.</small>
+    <small class="note">Los skills (MU, HSPU, butterfly, dobles) se miden en el bloque de gimnásticos de la batería: sin marca registrada no hay nivel que leer. El proyecto no es ganar fuerza ni skills — es motor, pacing y técnica de snatch.</small>
   </div>
 
   <div class="metrics">
@@ -1754,7 +1747,7 @@ function bindConfig(){
 
 /* ---------------- render ---------------- */
 function render(){
-  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderSalud();renderDieta();renderWodcelona();renderAnalisis();
+  renderConfigForm();renderHoy();renderCheckin();renderPeso();renderZ2();renderPress();renderFuerza();renderTest();renderWod();renderComida();renderSalud();renderDieta();renderWodcelona();renderPlanRatios();renderAnalisis();
 }
 
 function renderConfigForm(){
@@ -2389,6 +2382,48 @@ function renderTestTrends(){
     const read=r.pct>0.5?'Mejorando':r.pct<-0.5?'Retrocede: dale prioridad a esta área':'Estable';
     return `<tr><td style="font-size:12.5px;color:var(--muted)">${r.T.area}</td><td><b>${r.T.name}</b></td><td class="num">${fmtTestVal(r.T,r.f.v)}</td><td class="num">${fmtTestVal(r.T,r.l.v)}</td><td class="num" style="color:${col};font-weight:700">${(r.pct>0?'+':'')+r.pct.toFixed(1)}%</td><td style="font-size:13px;color:var(--muted)">${read}</td></tr>`;
   }).join('');
+}
+
+/* ---- PLAN · ratios de fuerza, calculados desde la batería ---- */
+const PLANLIFTS=[
+  {k:'dl',n:'Peso muerto'},{k:'bsq',n:'Back squat'},{k:'squatclean',n:'Squat clean'},
+  {k:'bench',n:'Press banca'},{k:'snatch',n:'Snatch'},{k:'sp',n:'Press estricto'}
+];
+const xbw=v=>(v).toFixed(2).replace('.',',')+'×';
+function planRead(k,v,lv){
+  if(k==='snatch'){
+    const c=bestTest('squatclean');
+    if(c){const pct=Math.round(v/c.v*100);
+      return pct<78
+        ? '<span class="tag mod">técnica</span> solo el '+pct+'% de tu clean (esperable 78-82%). No es fuerza: es arrancada → objetivo ≈ '+Math.round(c.v*0.8)+' kg'
+        : '<span class="tag rec">en rango</span> '+pct+'% de tu clean (esperable 78-82%)';}
+  }
+  if(k==='sp'){const bw=CFG.bw||72;
+    return v/bw<0.93
+      ? '<span class="tag hard">a corregir</span> clusters de lunes · objetivo 0,93-1,0× ('+Math.round(bw*0.93)+'-'+Math.round(bw)+' kg)'
+      : '<span class="tag rec">objetivo cumplido</span> mantener';}
+  return lv>=3?'<span class="tag rec">sobrado</span> no tocar'
+    :lv===2?'<span class="tag rec">sólido</span> mantener'
+    :lv===1?'<span class="tag mod">margen</span> hay recorrido si hiciera falta'
+    :'<span class="tag hard">flojo</span> prioridad de fuerza';
+}
+function renderPlanRatios(){
+  const tb=$('planratio-body');if(!tb)return;
+  const bw=CFG.bw||72;
+  const bwEl=$('planratio-bw');if(bwEl)bwEl.textContent=bw;
+  tb.innerHTML=PLANLIFTS.map(L=>{
+    const T=TESTS[L.k];const b=bestTest(L.k);
+    if(!b)return `<tr><td>${L.n}</td><td class="num">—</td><td class="num">—</td><td><span class="tag hard">sin registrar</span> hueco del perfil: mídelo en Registros → Tests</td></tr>`;
+    const lv=testLevel(T,b.v);
+    return `<tr><td>${L.n}</td><td class="num">${fmtTestVal(T,b.v)} kg</td><td class="num">${xbw(b.v/bw)}</td><td>${planRead(L.k,b.v,lv)}</td></tr>`;
+  }).join('');
+  // resumen del diagnóstico
+  const dr=$('diag-ratios');
+  if(dr){
+    const top=PLANLIFTS.map(L=>({L,b:bestTest(L.k)})).filter(x=>x.b)
+      .sort((a,b)=>b.b.v/bw-a.b.v/bw).slice(0,3);
+    dr.textContent=top.length?'('+top.map(x=>x.L.n.toLowerCase()+' '+xbw(x.b.v/bw)+'BW').join(' · ')+')':'(ver ratios más abajo)';
+  }
 }
 
 function renderLevels(){
