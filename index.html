@@ -762,6 +762,21 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
       </tbody>
     </table></div>
     <small class="note">Márcala en Registros → Salud articular, o con el botón de la pestaña Hoy: el sistema vigila que caigan las tres semanales.</small>
+
+    <h3>🔧 Bloque dip · el pinzamiento del muscle-up</h3>
+    <small class="note" style="margin-top:0;margin-bottom:10px">Los muscle-ups los tienes limpios: lo que falla es el dip de arriba. Añade estos 4 minutos a los mismos 3 días. La regla es una: <b>el rango que pinza no se entrena</b> — se gana profundidad cuando deja de avisar, no antes.</small>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Ejercicio</th><th>Series</th><th>Clave de ejecución</th></tr></thead>
+      <tbody>
+        <tr><td><b>Ring support hold</b> con turnout</td><td class="mono">3 × 20-30"</td><td>Anillas giradas hacia fuera, hombros abajo y atrás, costillas dentro. Es la posición que estabiliza el final del muscle-up — y es el test que ahora tienes en la batería.</td></tr>
+        <tr><td><b>Dip con recorrido limitado</b><div style="font-size:11.5px;color:var(--faint)">tempo 3" de bajada</div></td><td class="mono">3 × 5-8</td><td>Baja solo hasta donde <b>no</b> pinza, probablemente por encima del paralelo. Sin rebote abajo. Cada 1-2 semanas gana 2-3 cm de profundidad si sigue limpio.</td></tr>
+        <tr><td><b>Movilidad torácica</b><div style="font-size:11.5px;color:var(--faint)">foam roller o wall slides</div></td><td class="mono">2 × 8-10</td><td>Si la dorsal no extiende, el hombro se come el recorrido que le falta a la espalda. Es la causa más común del pinzamiento en dip.</td></tr>
+        <tr><td><b>Pectoral menor y cápsula anterior</b></td><td class="mono">2 × 30" / lado</td><td>En marco de puerta, codo a 90°, presión suave y progresiva. Nunca hasta el dolor.</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="alerts" style="margin-top:4px">
+      <li class="warn"><b>Cuándo parar y consultar:</b> si el pinchazo es agudo en vez de molestia sorda, si va a más semana a semana, si te despierta por la noche o si en 3-4 semanas sigue igual → fisio antes de seguir sumando volumen overhead. Este bloque es trabajo preventivo, no un tratamiento.</li>
+    </ul>
   </div>
 
   <div class="card">
@@ -1419,9 +1434,11 @@ const TESTS={
   hspu:{cat:'gym',name:'HSPU kipping máx',area:'Gimnástico · empuje',unit:'reps',dir:1,kind:'num',ph:'12',lv:[10,20,35],
     proto:'Una serie máxima de flexiones de pino con kipping contra pared sin bajarte, estándar de competición.'},
   mustrict:{cat:'gym',name:'Muscle-up estricto máx',area:'Gimnástico · skill',unit:'reps',dir:1,kind:'num',ph:'2',lv:[1,4,8],
-    proto:'Serie máxima de muscle-ups estrictos en anillas. Si sigues en progresión por el hombro, déjalo sin marca hasta tener luz verde.'},
+    proto:'Serie máxima de muscle-ups estrictos en anillas. Técnica ya la tienes: el freno es el dip. Para en cuanto el hombro avise, la marca no vale un pinzamiento.'},
   mukip:{cat:'gym',name:'Muscle-up kipping máx',area:'Gimnástico · skill',unit:'reps',dir:1,kind:'num',ph:'5',lv:[3,8,15],
-    proto:'Serie máxima de muscle-ups con kipping sin soltar, anotando si son anillas o barra (y manteniendo siempre el mismo para comparar).'},
+    proto:'Serie máxima de muscle-ups con kipping sin soltar, anotando si son anillas o barra (mantén siempre el mismo para poder comparar). Si pinza el dip, corta la serie ahí.'},
+  ringhold:{cat:'gym',name:'Ring support hold turnout',area:'Gimnástico · estabilidad dip',unit:'seg',dir:1,kind:'num',ph:'30',lv:[30,60,90],prio:1,
+    proto:'Sostén arriba en anillas con turnout: anillas giradas hacia fuera, hombros abajo y atrás, costillas dentro, brazos bloqueados. Mide justo la posición que te pinza en el muscle-up, y en isométrico es segura: para en cuanto avise.'},
   du:{cat:'gym',name:'Dobles máx unbroken',area:'Gimnástico · salto',unit:'reps',dir:1,kind:'num',ph:'100',lv:[50,100,150],
     proto:'Serie máxima de dobles sin fallo. Con el Aquiles recién resuelto: progresión controlada y nunca dos días seguidos de volumen alto de saltos.'},
   hswalk:{cat:'gym',name:'Handstand walk máx',area:'Gimnástico · equilibrio',unit:'m',dir:1,kind:'num',ph:'15',lv:[10,25,50],
