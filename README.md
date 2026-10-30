@@ -1,3 +1,5 @@
+> **Obsoleta (30/10/2026).** Este protocolo vive ahora como módulo **Entreno** de tracking-finance: https://tracking-finance-puce.vercel.app/entreno. Usa la misma base de datos de Supabase (tabla `entries`), así que no se ha migrado nada. `index.html` solo redirige allí; la app antigua sigue en `antiguo.html` por si hiciera falta, sin mantenimiento.
+
 Protocolo 6 Meses · RX — Carlos (v2 · mini-ERP)
 Web personal de seguimiento del plan completo: diagnóstico, dieta, entrenos, registros con gráficas, panel diario, alertas automáticas y análisis. Los registros se guardan en Supabase (base de datos en la nube) y se sincronizan entre dispositivos. Sin Supabase funciona igual en modo local (solo ese navegador).
 
