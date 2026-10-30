@@ -265,118 +265,137 @@ ul.clean li::before{content:"";position:absolute;left:0;top:12px;width:7px;heigh
 .pill.rx{background:var(--ink);color:#fff}
 tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;
   font-size:11px;color:var(--ink);font-weight:700;padding-top:11px;padding-bottom:7px}
+
+/* =========================================================
+   Modo minimalista: una cosa por pantalla, menos ruido visual
+   ========================================================= */
+:root{--bg:#F6F6F4;--panel:#FFFFFF;--panel2:#F1F1EE;--line:#E6E6E2;--line2:#EEEEEA;--ink:#1A1C1F;--muted:#6B7078;--faint:#A0A4AA}
+body{background:var(--bg);background-image:none;font-size:16px}
+.wrap{max-width:680px;padding:0 16px 80px}
+header.top{border-bottom:none;padding:20px 0 6px}
+.brand{font-family:var(--display);font-weight:700;font-size:15px;color:var(--muted);letter-spacing:.02em}
+nav.tabs{background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:20px;gap:4px}
+.tab{text-transform:none;letter-spacing:0;font-family:var(--body);font-size:15px;font-weight:500;padding:12px 12px;border-bottom-width:2px;margin-bottom:-1px}
+.tab[aria-selected="true"]{border-bottom-color:var(--ink)}
+.card{border:none;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card h2{font-family:var(--body);font-weight:600;font-size:18px;letter-spacing:0}
+.card h3{font-family:var(--body);text-transform:none;letter-spacing:0;font-size:14px;font-weight:600;color:var(--ink)}
+.eyebrow{font-family:var(--body);text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--muted)!important}
+small.note{font-family:var(--body);font-size:13px}
+.metrics{border:none;border-radius:14px;overflow:hidden}
+.label{font-size:13px;color:var(--muted);margin-bottom:6px}
+.sub{font-size:14px;color:var(--muted)}
+/* Hoy */
+.hero h2{font-size:26px;line-height:1.2;margin:2px 0 8px}
+.hero #hoy-session-desc{font-size:15px;color:var(--muted)}
+.readyline{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.readyline .sub{flex:1;min-width:200px}
+#alerts{margin:0 0 14px}
+#alerts li{border-radius:10px;border-left-width:0;margin-bottom:8px;font-size:14px}
+#alerts li.more{background:none;padding:0}
+#alerts li.more summary{cursor:pointer;font-size:13px;color:var(--muted);padding:4px 2px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0}
+.quick button{font-family:var(--body);text-transform:none;letter-spacing:0;font-size:15px;font-weight:500;padding:14px 8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+/* Más */
+.menu{display:flex;flex-direction:column;gap:8px}
+.menu button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--panel);border:none;border-radius:14px;padding:16px 18px;cursor:pointer;font-family:var(--body);color:var(--ink)}
+.menu button b{font-size:16px;font-weight:600}
+.menu button span{font-size:13px;color:var(--muted)}
+.back{background:none;border:none;color:var(--muted);font-family:var(--body);font-size:14px;padding:0 0 12px;cursor:pointer}
+/* Registrar: un registro cada vez */
+.chooser{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px}
+.chooser::-webkit-scrollbar{display:none}
+.chooser button{flex:none;font-family:var(--body);font-size:14px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chooser button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#registros > .card[id]{display:none}
+#registros > .card[id].sel{display:block}
+/* Plegables */
+.card.fold{padding:16px 20px}
+.card.fold .foldbody{display:none;margin-top:12px}
+.card.fold.open .foldbody{display:block}
+.foldhead{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0!important;font-size:16px!important}
+.foldhead::after{content:'+';font-weight:400;color:var(--faint);font-size:20px;line-height:1}
+.card.fold.open .foldhead::after{content:'–'}
+.diag{border-radius:14px}
+/* Hoy: comidas en una línea, el detalle vive en Dieta */
+#hoy-meals .mealrow .d,#hoy-meals .lock,#hoy-meals .kc,#hoy-session-phase{display:none}
+#hoy-meals .mealrow{align-items:center}
+.mealrow.crit{background:none;margin:0;padding-left:2px;padding-right:2px}
+.mealrow.now{outline:none;background:var(--panel2);border-radius:10px;margin:0 -8px;padding-left:10px;padding-right:10px}
+.mealrow .mr-body .n{font-family:var(--body);font-weight:500;font-size:15px}
+.mealrow .mr-time,.nowline,.saludline,.pill,button.mini,.mealprog .cnt{font-family:var(--body)!important}
+.nowline{font-size:13px;color:var(--muted)}
+.mealrow .lock{display:none}
+#dieta-day-metrics{display:none!important}
+.meal{border-left-width:2px!important}
+.meal .t,.meal .kc{font-family:var(--body)!important}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header class="top">
-  <div class="eyebrow">Protocolo de rendimiento · 6 meses</div>
-  <h1 class="title">DE RX A ATLETA<br>INTEGRAL</h1>
-  <div class="subid">
-    <span>ATLETA <b>Carlos</b></span>
-    <span>26 a · 170 cm</span>
-    <span>OBJETIVO <b>cerrar la mayoría de WODs RX en time cap</b></span>
-    <span class="mono">v2 · jul 2026</span>
-  </div>
+  <div class="brand">RX · Carlos</div>
 </header>
 
 <nav class="tabs" role="tablist">
   <button class="tab" role="tab" aria-selected="true"  data-t="hoy">Hoy</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="plan">Plan</button>
   <button class="tab" role="tab" aria-selected="false" data-t="dieta">Dieta</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="entrenos">Entrenos</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="wodcelona">Wodcelona</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="registros">Registros</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="analisis">Análisis</button>
-  <button class="tab" role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="registros">Registrar</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="mas">Más</button>
 </nav>
 
 <!-- ============ HOY ============ -->
 <section class="panelpage on" id="hoy">
 
-  <div class="card">
-    <div class="eyebrow">Estado del protocolo</div>
-    <h2 id="hoy-week-title" style="margin:4px 0 0">—</h2>
-    <div class="ribbon" id="ribbon"></div>
-    <div class="ribbon-cap"><span>F1 · rellenar & base</span><span>F2 · capacidad</span><span>F3 · pico</span></div>
-    <div style="margin-top:12px"><span class="pill neutral" id="cloudStatusHoy">● comprobando…</span></div>
-  </div>
-
-  <div class="two">
-    <div class="card">
-      <div class="eyebrow">Sesión de hoy · <span id="hoy-dayname">—</span></div>
-      <h2 id="hoy-session" style="margin:4px 0 6px">—</h2>
-      <p id="hoy-session-desc" style="font-size:14px;color:var(--muted)">—</p>
-      <p id="hoy-session-phase" style="font-size:13px;margin-top:8px"></p>
-      <div class="saludline" id="hoy-salud"></div>
-    </div>
-    <div class="card">
-      <div class="eyebrow">Nutrición de hoy</div>
-      <h2 style="margin:4px 0 6px"><span id="hoy-diet-label">—</span> <span id="hoy-diet-tag"></span></h2>
-      <table style="font-size:13.5px">
-        <tbody>
-          <tr><td>Calorías</td><td class="num" id="hoy-kcal">—</td></tr>
-          <tr><td>Carbohidrato</td><td class="num" id="hoy-carb">—</td></tr>
-          <tr><td>Proteína</td><td class="num" id="hoy-prot">—</td></tr>
-          <tr><td>Grasa</td><td class="num" id="hoy-fat">—</td></tr>
-        </tbody>
-      </table>
-      <small class="note" id="hoy-diet-note">La comida crítica es la merienda de las 16:30: tu pre-entreno.</small>
-    </div>
+  <div class="card hero">
+    <div class="label"><span id="hoy-dayname">—</span> · <span id="hoy-week-title">—</span></div>
+    <h2 id="hoy-session">—</h2>
+    <p id="hoy-session-desc">—</p>
+    <p id="hoy-session-phase" class="sub"></p>
+    <div class="readyline"><span class="pill neutral" id="rd-pill">sin check-in</span> <span id="rd-advice" class="sub">Haz el check-in y te digo si hoy toca apretar.</span></div>
+    <div class="saludline" id="hoy-salud"></div>
   </div>
 
   <div class="card">
-    <div class="eyebrow">Menú de hoy</div>
-    <h2 style="margin:4px 0 8px">Comidas de hoy</h2>
+    <div class="label">Comidas de hoy · <span id="hoy-kcal">—</span></div>
     <div class="mealprog">
       <div class="bar"><i id="hoy-meals-bar"></i></div>
       <span class="cnt" id="hoy-meals-cnt">—</span>
       <span class="streak" id="hoy-streak"></span>
-      <button class="mini" id="hoy-meals-all">✓ marcar todas</button>
     </div>
     <div class="nowline" id="hoy-meals-now" style="display:none"></div>
     <div id="hoy-meals"></div>
   </div>
 
-  <div class="card">
-    <div class="eyebrow">Readiness · último check-in</div>
-    <div class="gauge" style="margin-top:8px">
-      <div class="num" id="rd-num">—</div>
-      <div style="min-width:120px"><span class="pill neutral" id="rd-pill">sin check-in</span>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:5px" id="rd-date"></div></div>
-      <div class="bar"><i id="rd-bar" style="width:0%;background:var(--faint)"></i></div>
-    </div>
-    <small class="note" id="rd-advice">Rellena el check-in diario en Registros para que el sistema te diga si hoy toca apretar o levantar el pie.</small>
+  <ul class="alerts" id="alerts"></ul>
+
+  <div class="quick">
+    <button data-goto="registros:card-checkin">Check-in</button>
+    <button data-goto="registros:card-wod">WOD</button>
+    <button data-goto="registros:card-peso">Peso</button>
   </div>
 
-  <div class="card">
-    <h2>Avisos del sistema</h2>
-    <ul class="alerts" id="alerts"></ul>
+  <!-- elementos que el script sigue rellenando pero que no se muestran en Hoy -->
+  <div hidden>
+    <div id="ribbon"></div><span id="cloudStatusHoy"></span>
+    <span id="hoy-diet-label"></span><span id="hoy-diet-tag"></span>
+    <span id="hoy-carb"></span><span id="hoy-prot"></span><span id="hoy-fat"></span><span id="hoy-diet-note"></span>
+    <button id="hoy-meals-all"></button>
+    <div id="rd-num"></div><div id="rd-date"></div><i id="rd-bar"></i>
   </div>
 
-  <div class="metrics" id="hoy-kpis">
-    <div class="metric"><div class="k">Peso último</div><div class="v" id="kpi-peso">—</div><div class="u" id="kpi-peso-u">kg · banda 72–73</div></div>
-    <div class="metric"><div class="k">Motor W/bpm</div><div class="v blue" id="kpi-z2">—</div><div class="u" id="kpi-z2-u">último Z2</div></div>
-    <div class="metric"><div class="k">Press e1RM</div><div class="v" id="kpi-press">—</div><div class="u" id="kpi-press-u">kg estimado</div></div>
-    <div class="metric"><div class="k">RX cerrados</div><div class="v" id="kpi-rx">—</div><div class="u">últimos 30 días</div></div>
-  </div>
+</section>
 
-  <div class="card">
-    <h2>Registrar rápido</h2>
-    <div class="quick">
-      <button data-goto="registros:card-checkin">+ Check-in de hoy</button>
-      <button data-goto="registros:card-comida">+ Comida</button>
-      <button data-goto="registros:card-salud">+ Salud articular</button>
-      <button data-goto="registros:card-wod">+ WOD</button>
-      <button data-goto="registros:card-z2">+ Sesión Z2</button>
-      <button data-goto="registros:card-peso">+ Peso</button>
-      <button data-goto="registros:card-press">+ Press</button>
-      <button data-goto="registros:card-fuerza">+ Levantamiento</button>
-      <button data-goto="registros:card-test">+ Test atleta</button>
-    </div>
+<!-- ============ MÁS ============ -->
+<section class="panelpage" id="mas">
+  <div class="menu">
+    <button data-open="entrenos"><b>Entrenos</b><span>Semana tipo, pacing, press y hombros</span></button>
+    <button data-open="analisis"><b>Progreso</b><span>KPIs, PRs, benchmarks y tendencias</span></button>
+    <button data-open="plan"><b>Plan</b><span>Fases, diagnóstico e hitos</span></button>
+    <button data-open="wodcelona"><b>Wodcelona</b><span>Bloque de competición</span></button>
+    <button data-open="ajustes"><b>Ajustes</b><span>Fecha de inicio, peso, tests y datos</span></button>
   </div>
-
 </section>
 
 <!-- ============ PLAN ============ -->
@@ -412,7 +431,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </ul>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>La palanca táctica que cambia tus WODs hoy</h2>
     <p>Tu WOD de ejemplo — <span class="mono">24 cal + 20 thrusters DB 22,5 + 400 m · 5 rondas · cap 2'</span> — se hace fraccionando <b>a propósito desde la ronda 1</b>, no esperando a que se caiga solo:</p>
     <ul class="clean">
@@ -423,7 +442,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Regla general: si tu techo aeróbico no sostiene el "unbroken", fracciona pronto. Casi siempre baja el tiempo total.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Ratios de fuerza · dónde estás de verdad</h2>
     <small class="note" style="margin-top:0;margin-bottom:10px">Sale solo de tus mejores marcas de la batería (Registros → Tests), sobre un peso de referencia de <span id="planratio-bw">72</span> kg. La fuerza no es tu limitante — con una excepción técnica que sí vamos a trabajar.</small>
     <div class="tablewrap"><table>
@@ -440,7 +459,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="metric"><div class="k">Marcador motor</div><div class="v">W / bpm</div><div class="u">Z2 subiendo</div></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Hitos de control</h2>
     <p style="font-size:14px;color:var(--muted);margin-bottom:8px">Lo que el sistema vigila en cada fase. Si un hito no llega, se ajusta el plan antes de pasar de fase.</p>
     <div class="tablewrap"><table>
@@ -461,15 +480,16 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 <!-- ============ DIETA ============ -->
 <section class="panelpage" id="dieta">
 
-  <div class="card">
-    <div class="eyebrow">Tu dieta real · estructura fija + cena libre</div>
-    <h2 style="margin:4px 0 6px">Tres comidas que no se piensan y una cena que eliges tú.</h2>
-    <p style="font-size:14px;color:var(--muted)">Desayuno, almuerzo y merienda son siempre los mismos; la cena va variando, siempre sana. Gramajes en crudo/seco. Objetivo días duros: <b>~3.200 kcal</b> (lunes de doble sesión, ~3.400). La estructura base se queda en ~2.600–2.900 kcal, así que el hueco se cierra con <b>carbo generoso en almuerzo y cena</b> y la crema de cacahuete en el desayuno.</p>
+    <div class="card">
+    <div class="eyebrow">Menú día a día</div>
+    <h2 style="margin:4px 0 14px">Qué toca comer</h2>
+    <div class="daypicker" id="dieta-daypicker" role="tablist"></div>
+    <div class="metrics" id="dieta-day-metrics" style="margin-top:16px"></div>
+    <div id="dieta-day-meals"></div>
   </div>
 
-  <div class="card">
-    <div class="eyebrow" style="color:var(--red)">🔒 Los 3 fijos</div>
-    <h2 style="margin:4px 0 12px">No se piensan. No se cambian. Media dieta resuelta.</h2>
+  <div class="card fold">
+    <h2 style="margin:4px 0 12px">Los 3 fijos, en detalle</h2>
 
     <div class="meal crit">
       <div class="t">08:00 · Desayuno · bote de yogur (todos los días)</div>
@@ -504,26 +524,10 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </div>
   </div>
 
-<div class="card">
-    <div class="eyebrow">Menú día a día</div>
-    <h2 style="margin:4px 0 14px">Qué toca comer, comida por comida</h2>
-    <div class="daypicker" id="dieta-daypicker" role="tablist"></div>
-    <div class="metrics" id="dieta-day-metrics" style="margin-top:16px"></div>
-    <div id="dieta-day-meals"></div>
-  </div>
 
-  <div class="card">
-    <h3 style="margin-top:0">Estructura de la semana</h3>
-    <div class="tablewrap"><table id="dieta-week-table">
-      <thead><tr><th>Día</th><th>Tipo</th><th class="num">Kcal</th><th class="num">Carbo</th><th class="num">Prot</th><th class="num">Grasa</th></tr></thead>
-      <tbody id="dieta-week-body"></tbody>
-    </table></div>
-    <small class="note">Toca una fila para ver ese día arriba.</small>
-  </div>
-
-  <div class="card" id="recetas">
+  <div class="card fold" id="recetas">
     <div class="eyebrow">Recetario</div>
-    <h2 style="margin:4px 0 6px">¿Sin idea de qué cocinar? Tira de aquí.</h2>
+    <h2 style="margin:4px 0 6px">📖 Recetario</h2>
     <small class="note" style="margin-top:0;margin-bottom:10px">Gramajes en crudo/seco, para una ración. En el almuerzo, sube la proteína a tus 200–250 g y en días duros el carbo a 120–150 g en seco. Toca una receta para ver cómo se hace.</small>
     <h3>Almuerzos · proteína + carbo</h3>
     <details class="recipe"><summary>🥟 Ñoquis a la boloñesa</summary><div class="d">300 g ñoquis frescos + 130 g carne picada de ternera 5% + 200 g tomate triturado con cebolla y zanahoria + 20 g parmesano + 10 ml AOVE, albahaca y orégano</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Sofrito de cebolla y zanahoria 8 min, dora la carne, añade tomate y deja 15-20 min a fuego bajo (se puede hacer el domingo). Ñoquis 2-3 min en agua hirviendo, cuando floten, a la salsa.</div></details>
@@ -551,7 +555,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <details class="recipe"><summary>⚡ Tostadas de cacahuete y miel</summary><div class="d">80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%</div></details>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>🍳 Preparación · domingo</h2>
     <ul class="clean">
       <li><b>Proteína del almuerzo:</b> 1,2–1,5 kg en crudo para lunes–sábado (200–250 g/día). Pollo y pavo aguantan 4 días en nevera; el resto, congela.</li>
@@ -561,7 +565,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Al momento (no aguanta): pescado, huevos y la verdura del almuerzo.</small>
   </div>
 
-  <div class="card" id="card-shop">
+  <div class="card fold" id="card-shop">
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
       <h2>🛒 Lista de la compra · Mercadona</h2>
       <span style="display:flex;align-items:baseline;gap:10px">
@@ -609,8 +613,9 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Lo demás de la cena según lo que vayas a cocinar esa semana (ideas en el menú día a día).</small>
   </div>
 
-  <div class="card">
-    <h2>⚙️ Reglas de intercambio</h2>
+  <div class="card fold">
+    <h2>⚙️ Reglas y suplementos</h2>
+    <h3>Intercambios</h3>
     <h3 style="margin-top:8px">Cambia libre, sin recalcular</h3>
     <ul class="clean">
       <li>Ñoquis ↔ pasta ↔ arroz ↔ cuscús <i>(300 g de ñoquis ≈ 110 g de pasta seca ≈ 130 g de arroz seco)</i></li>
@@ -626,19 +631,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
       <li>❌ <b>La ración de carbo del almuerzo en día duro.</b> Es lo que cierra el hueco hasta las ~3.200 kcal.</li>
       <li>❌ Recortar carbo en día duro. Si tienes que recortar algo, recorta grasa.</li>
     </ul>
-  </div>
-
-  <div class="card">
-    <h2>📋 Chuleta de nevera</h2>
-    <div class="tablewrap"><table id="dieta-cheat">
-      <thead><tr><th></th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr></thead>
-      <tbody id="dieta-cheat-body"></tbody>
-    </table></div>
-    <small class="note">Adherencia &gt; precisión. ±30 kcal o ±10 g de un macro es ruido. Sostener esto 6 semanas importa más que clavar un día.</small>
-  </div>
-
-  <div class="card">
-    <h2>Regla de ajuste · el punto de partida no es un dogma</h2>
+    <h3>Regla de ajuste</h3>
     <ul class="clean">
       <li><b>Viernes de la semana 2:</b> si no marcas ≥ 71 kg → añade <b>+50 g de carbo/día</b> (+200 kcal): sube el carbo del almuerzo (+50 g en seco de arroz o pasta) o añade 20 g más de avena al bote del desayuno.</li>
       <li><b>Si superas 73,5 kg:</b> recorta 25–30 g de carbo solo en los días de recuperación. No toques los días duros.</li>
@@ -646,19 +639,13 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
       <li><b>Si subes calorías 2-3 semanas y el peso sigue cayendo</b> sin razón → revisión médica. Una pérdida sostenida e inexplicada no se entrena, se estudia.</li>
     </ul>
     <small class="note">Los primeros 2-3 kg de recuperación son glucógeno + agua, no grasa. Es exactamente lo que quieres: es el tanque llenándose.</small>
-  </div>
-
-  <div class="card">
-    <h2>Hidratación, sodio y cafeína</h2>
+    <h3>Hidratación, sodio y cafeína</h3>
     <ul class="clean">
       <li><b>Sodio:</b> entrenando a las 19:00 en verano sudas mucho más de lo que crees. Sala tu comida sin miedo y en dobles o WODs largos añade electrolitos (o una pizca de sal + limón en el agua del entreno).</li>
       <li><b>Agua:</b> llega al box ya hidratado; 500-750 ml repartidos en las 2 h previas. Beber a lo bestia durante el WOD no arregla llegar seco.</li>
       <li><b>Cafeína:</b> con entreno a las 19:00, nada de pre-workouts cafeinados después de las 15-16 h — te roban el sueño, y el sueño es el pilar del plan. Si compites por la mañana, ahí sí: ~3 mg/kg 45' antes.</li>
     </ul>
-  </div>
-
-  <div class="card">
-    <h2>Fijos del stack</h2>
+    <h3>Suplementos</h3>
     <ul class="clean">
       <li><b>Omega-3 EPA/DHA</b> ≥ 1–2 g/día — pescado azul 3×/sem mínimo o suplemento.</li>
       <li><b>Creatina monohidrato</b> 5 g/día (Creapure) — palanca principal para el press.</li>
@@ -680,7 +667,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
   </div>
 
   <div class="card">
-    <h3 style="margin-top:4px">Semana tipo <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--faint)">· hoy marcado en rojo</span></h3>
+    <h3 style="margin-top:4px">Semana tipo</h3>
     <div class="week" id="weekgrid">
       <div class="day" data-wd="1"><div class="dn">Lun</div><div class="body"><b>Doble sesión</b>AM: CrossFit en clase (+ press clusters 10-12' antes)<br>PM: Hyrox</div></div>
       <div class="day" data-wd="2"><div class="dn">Mar</div><div class="body"><b>CrossFit</b>Clase</div></div>
@@ -693,20 +680,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Viernes: readiness verde → lo que te apetezca a intensidad normal; ámbar → Hyrox a ritmo conversacional o CrossFit sin perseguir marca; rojo → descanso o movilidad. El Hyrox hace de trabajo de motor: ya no hay Z2 de miércoles.</small>
   </div>
 
-  <div class="card">
-    <h2>Progresión semana a semana</h2>
-    <div class="tablewrap"><table>
-      <thead><tr><th>Sem</th><th>Z2 miércoles</th><th>Foco</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">1</td><td>35' constante ~140 bpm</td><td>Baseline W/bpm. Registrar.</td></tr>
-        <tr><td class="mono">2</td><td>40' mismo bpm</td><td>Aguantar el vatio en los últimos 10'.</td></tr>
-        <tr><td class="mono">3</td><td>45' · subir W manteniendo bpm</td><td>Si W/bpm sube → motor adaptando.</td></tr>
-        <tr><td class="mono">4</td><td>50' test completo</td><td>Confirmar si el +W se mantiene al final.</td></tr>
-      </tbody>
-    </table></div>
-  </div>
-
-  <div class="card">
+  <div class="card fold">
     <h2>Playbook de pacing · tus fallos reales, con esquema</h2>
     <small class="note" style="margin-top:0;margin-bottom:10px">La regla madre: si tu techo aeróbico no sostiene el "unbroken", fracciona ANTES de necesitarlo. Descanso corto y planificado &gt; parón largo por reventón.</small>
     <div class="tablewrap"><table>
@@ -723,7 +697,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Objetivo mental por WOD: llegar a la ronda 4-5 pudiendo mantener, no sobrevivir. El que fracciona a propósito casi siempre firma mejor tiempo total que el que aguanta y revienta.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Press estricto — el punto a corregir</h2>
     <p>60 kg = 0,86× BW. Objetivo 0,93–1,0× (≈65 → 70 kg). Requiere clusters de fuerza, no trabajo tipo condición. Correlaciona con desarrollo de dorsal/trapecio medio.</p>
     <ul class="clean">
@@ -733,7 +707,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </ul>
   </div>
 
-  <div class="card" id="hombros">
+  <div class="card fold" id="hombros">
     <h2>🛡️ Hombros blindados · salud articular</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px"><b>3×/semana después del WOD</b> · 8-10 min · intensidad ligera o moderada: debes terminar sintiendo que has trabajado, no destruido. Manguito rotador, escápula, serrato, estabilidad overhead y capacidad de los tendones — justo lo que sostiene el press estricto, el snatch y los muscle-ups.</small>
     <div class="tablewrap"><table>
@@ -764,7 +738,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </ul>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Fase 2 · mes 2-4 — sesiones concretas</h2>
     <p style="font-size:14px">Solo se entra en F2 con los dos hitos de F1 cumplidos: <b>peso estable 72-73</b> y <b>baseline W/bpm confirmado</b>. Si falta uno, F1 se alarga 1-2 semanas — es la decisión correcta, no un fracaso.</p>
     <h3>Intervalos float · 1×/semana (sustituye al Z2 del domingo, el miércoles se mantiene)</h3>
@@ -791,7 +765,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">La comparativa primera vs última se genera sola en Análisis si usas el mismo nombre.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Fase 3 · mes 5-6 — camino a Wodcelona</h2>
     <p style="font-size:14px">Trabajo específico de competición sobre la base ya construida: WODs test a intensidad real 1×/sem, tolerancia al lactato afinada (intervalos más cortos y duros, recuperaciones incompletas), volumen Z2 de mantenimiento, y taper hacia <b>Wodcelona 2027 · miércoles 16 de diciembre de 2026</b>, en la semana 24. Bloque semana a semana completo en la pestaña <b>Wodcelona</b>.</p>
   </div>
@@ -820,7 +794,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note" id="wod-note">Wodcelona todavía no ha publicado fecha para 2027. En cuanto la sepas, indícala en Ajustes y aquí verás la cuenta atrás real.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Cómo se monta el bloque</h2>
     <p style="font-size:14px;color:var(--muted)">Calculado sobre la fecha de trabajo (16 dic 2026, semana 24). El bloque específico entra justo cuando arranca la Fase 3 (semana 18) — no hay margen para más: solo quedan 7 semanas entre el inicio de Fase 3 y la competición.</p>
     <div class="tablewrap"><table>
@@ -837,7 +811,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">16 de diciembre es miércoles, día laborable: gestiona con antelación el permiso o día libre en el trabajo si la fecha real se confirma en un entre semana.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Sesiones tipo · bloque específico <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--faint)">· sem 18-19 · 2-15 nov</span></h2>
     <small class="note" style="margin-top:0;margin-bottom:10px">2×/semana, sustituyendo la clase normal esos días. Genérico en movimientos hasta que Wodcelona publique el formato real — la lógica (varias pruebas, transiciones cortas) no cambia.</small>
     <div class="tablewrap"><table>
@@ -850,7 +824,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Sesiones tipo · bloque pico <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--faint)">· sem 20-21 · 16-29 nov</span></h2>
     <small class="note" style="margin-top:0;margin-bottom:10px">Baja el volumen de acumulación, sube la especificidad. Nada de perseguir PRs nuevos aquí.</small>
     <div class="tablewrap"><table>
@@ -862,7 +836,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Progresión día a día · 30 nov - 16 dic</h2>
     <div class="tablewrap"><table>
       <thead><tr><th>Fecha</th><th>Qué toca</th><th>Nota</th></tr></thead>
@@ -878,7 +852,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Semana de taper · 30 nov - 13 dic</h2>
     <ul class="clean">
       <li><b>Volumen −40/50%</b>, la intensidad se mantiene: series cortas y explosivas, nada de acumular fatiga nueva.</li>
@@ -889,7 +863,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </ul>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Checklist de competición</h2>
     <div class="two">
       <div>
@@ -931,7 +905,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Lo que falta por decidir</h2>
     <ul class="clean">
       <li>Fecha real confirmada por la organización — de momento se trabaja con el 16 dic 2026 como hipótesis; en cuanto se publique, actualízala en Ajustes</li>
@@ -946,16 +920,16 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 <!-- ============ REGISTROS ============ -->
 <section class="panelpage" id="registros">
 
-  <div class="card">
-    <h2>Registros</h2>
-    <p style="font-size:14px;color:var(--muted);margin-bottom:8px">Con Supabase configurado, tus registros viven en la nube y se sincronizan entre el móvil y el portátil. Sin configurar, funciona solo en este navegador.</p>
-    <div style="margin-bottom:12px"><span class="pill neutral" id="cloudStatus">● comprobando…</span></div>
-    <div class="datatools">
-      <button class="mini" id="exportBtn">↧ Exportar JSON</button>
-      <label class="mini" style="cursor:pointer">↥ Importar JSON<input type="file" id="importFile" accept="application/json" style="display:none"></label>
-      <span class="sp"></span>
-      <span class="mono" style="font-size:11px;color:var(--faint)" id="saveStatus"></span>
-    </div>
+  <div class="chooser" id="reg-chooser">
+    <button data-reg="card-checkin">Check-in</button>
+    <button data-reg="card-wod">WOD</button>
+    <button data-reg="card-peso">Peso</button>
+    <button data-reg="card-comida">Comida</button>
+    <button data-reg="card-salud">Hombros</button>
+    <button data-reg="card-press">Press</button>
+    <button data-reg="card-fuerza">Levantamiento</button>
+    <button data-reg="card-z2">Z2</button>
+    <button data-reg="card-test">Tests</button>
   </div>
 
   <!-- COMIDA -->
@@ -1127,6 +1101,13 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 <!-- ============ ANÁLISIS ============ -->
 <section class="panelpage" id="analisis">
 
+  <div class="metrics" id="hoy-kpis">
+    <div class="metric"><div class="k">Peso último</div><div class="v" id="kpi-peso">—</div><div class="u" id="kpi-peso-u">kg · banda 72–73</div></div>
+    <div class="metric"><div class="k">Motor W/bpm</div><div class="v blue" id="kpi-z2">—</div><div class="u" id="kpi-z2-u">último Z2</div></div>
+    <div class="metric"><div class="k">Press e1RM</div><div class="v" id="kpi-press">—</div><div class="u" id="kpi-press-u">kg estimado</div></div>
+    <div class="metric"><div class="k">RX cerrados</div><div class="v" id="kpi-rx">—</div><div class="u">últimos 30 días</div></div>
+  </div>
+
   <div class="metrics" id="an-kpis">
     <div class="metric"><div class="k">Sesiones / sem</div><div class="v" id="an-ses">—</div><div class="u">media últimas 4 sem</div></div>
     <div class="metric"><div class="k">Adherencia dieta</div><div class="v" id="an-diet">—</div><div class="u">últimos 14 check-ins</div></div>
@@ -1148,19 +1129,19 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     </div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>PRs · mejores marcas por ejercicio</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px">e1RM = carga × (1 + reps/30). Sirve para comparar un 3RM con un 5RM.</small>
     <div class="tablewrap"><table><thead><tr><th>Ejercicio</th><th class="num">Mejor serie</th><th class="num">e1RM</th><th class="num">×BW</th><th class="num">Fecha</th></tr></thead><tbody id="pr-body"></tbody></table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Benchmarks repetidos</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px">WODs registrados 2+ veces con el mismo nombre. Primera vs última: aquí se ve si el motor está funcionando.</small>
     <div class="tablewrap"><table><thead><tr><th>WOD</th><th class="num">Veces</th><th>Primera</th><th>Última</th><th>Cap</th></tr></thead><tbody id="bm-body"></tbody></table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Atleta integral · batería de tests</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px">Primera vs última marca de cada test de la batería (Registros → Tests). El índice integral es la mejora media (%) de todas las áreas: si sube, mejoras como atleta completo y no solo en tu punto fuerte. En los tests de tiempo, bajar tiempo cuenta como mejora.</small>
     <div class="metrics" style="margin-bottom:14px">
@@ -1170,7 +1151,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="tablewrap"><table><thead><tr><th>Área</th><th>Test</th><th class="num">Primera</th><th class="num">Última</th><th class="num">Δ%</th><th>Lectura</th></tr></thead><tbody id="ai-body"></tbody></table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Nivel de atleta · dónde estás</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px">Cada mejor marca de la batería contra umbrales de referencia masculinos de Intermedio, Avanzado y RX competitivo. Los de fuerza van en múltiplos de tu peso de referencia (<span id="lv-bw">72</span> kg, editable en Ajustes). Son referencias de orientación para ver qué área te frena, no estándares oficiales de la competición.</small>
     <div class="metrics" style="margin-bottom:14px">
@@ -1182,13 +1163,13 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <small class="note">Ordenado de más flojo a más fuerte: lo de arriba es donde más rinde invertir tiempo de entreno.</small>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Ratios de fuerza · coherencia del perfil</h2>
     <small class="note" style="margin-top:0;margin-bottom:12px">Se calculan solos con tus mejores marcas. Un ratio fuera de rango no es "malo": señala dónde está el cuello de botella real — si el snatch va corto respecto al back squat, el problema es técnico, no de fuerza.</small>
     <div class="tablewrap"><table><thead><tr><th>Ratio</th><th class="num">Actual</th><th class="num">Rango sano</th><th>Lectura</th></tr></thead><tbody id="ratio-body"></tbody></table></div>
   </div>
 
-  <div class="card">
+  <div class="card fold">
     <h2>Motor y combustible · 4 semanas</h2>
     <div class="tablewrap"><table><thead><tr><th>Marcador</th><th class="num">Hace 4 sem</th><th class="num">Ahora</th><th class="num">Δ</th><th>Lectura</th></tr></thead><tbody id="trend-body"></tbody></table></div>
   </div>
@@ -1197,6 +1178,19 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 
 <!-- ============ AJUSTES ============ -->
 <section class="panelpage" id="ajustes">
+
+  <div class="card">
+    <h2>Datos y sincronización</h2>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:8px">Con Supabase configurado, tus registros viven en la nube y se sincronizan entre el móvil y el portátil. Sin configurar, funciona solo en este navegador.</p>
+    <div style="margin-bottom:12px"><span class="pill neutral" id="cloudStatus">● comprobando…</span></div>
+    <div class="datatools">
+      <button class="mini" id="exportBtn">↧ Exportar JSON</button>
+      <label class="mini" style="cursor:pointer">↥ Importar JSON<input type="file" id="importFile" accept="application/json" style="display:none"></label>
+      <span class="sp"></span>
+      <span class="mono" style="font-size:11px;color:var(--faint)" id="saveStatus"></span>
+    </div>
+  </div>
+
 
   <div class="card">
     <h2>Parámetros del plan</h2>
@@ -1564,18 +1558,49 @@ async function del(type,id){
 }
 
 /* ---------------- bindings ---------------- */
+function isMainTab(n){return ['hoy','dieta','registros','mas'].includes(n)}
 function showTab(name){
-  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===name?'true':'false'));
+  const sel=isMainTab(name)?name:'mas';
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===sel?'true':'false'));
   document.querySelectorAll('.panelpage').forEach(p=>p.classList.toggle('on',p.id===name));
+}
+function showReg(id){
+  document.querySelectorAll('#registros > .card[id]').forEach(c=>c.classList.toggle('sel',c.id===id));
+  document.querySelectorAll('#reg-chooser button').forEach(b=>b.classList.toggle('on',b.dataset.reg===id));
+}
+// tarjetas plegables: el primer título abre y cierra el resto del contenido
+function bindFolds(){
+  document.querySelectorAll('.card.fold').forEach(card=>{
+    const head=card.querySelector('h2')||card.querySelector('h3');if(!head)return;
+    let top=head;while(top.parentElement!==card)top=top.parentElement;
+    const box=document.createElement('div');box.className='foldbody';
+    [...card.childNodes].forEach(n=>{if(n!==top)box.appendChild(n)});
+    card.appendChild(box);
+    head.classList.add('foldhead');
+    head.addEventListener('click',()=>card.classList.toggle('open'));
+  });
 }
 function bindTabs(){
   document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
     showTab(t.dataset.t);window.scrollTo({top:0,behavior:'smooth'});
   }));
+  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{
+    showTab(b.dataset.open);window.scrollTo({top:0});
+  }));
+  document.querySelectorAll('.panelpage').forEach(p=>{
+    if(isMainTab(p.id))return;
+    const back=document.createElement('button');back.className='back';back.textContent='← Más';
+    back.addEventListener('click',()=>{showTab('mas');window.scrollTo({top:0})});
+    p.insertBefore(back,p.firstChild);
+  });
+  document.querySelectorAll('#reg-chooser button').forEach(b=>b.addEventListener('click',()=>showReg(b.dataset.reg)));
+  showReg('card-checkin');
+  bindFolds();
   document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{
     const [tab,anchor]=b.dataset.goto.split(':');
     showTab(tab);
-    setTimeout(()=>{const el=$(anchor);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);
+    if(tab==='registros'&&anchor){showReg(anchor);window.scrollTo({top:0});return}
+    setTimeout(()=>{const el=$(anchor);if(!el)return;if(el.classList.contains('fold'))el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'start'})},60);
   }));
 }
 function bindAdders(){
@@ -1783,8 +1808,8 @@ function renderHoy(){
   let title;
   if(ph===0){const days=Math.ceil((new Date(CFG.start)-new Date())/86400000);
     title='El plan empieza el '+fmtd(CFG.start)+' · faltan '+Math.max(days,0)+' días';}
-  else if(ph===4){title='Plan de 26 semanas completado · toca retest y decidir el siguiente bloque';}
-  else{title='Semana '+wk+' de 26 · Fase '+ph+' · '+PHASES[ph].name;}
+  else if(ph===4){title='Plan completado';}
+  else{title='Semana '+wk+' de 26';}
   $('hoy-week-title').textContent=title;
 
   const rb=$('ribbon');rb.innerHTML='';
@@ -1954,7 +1979,15 @@ function renderAlerts(wk,ph){
   }
   if(!A.some(a=>a.lv==='bad'||a.lv==='warn'))push('ok','<b>Todo en orden.</b> Sin alertas: ejecuta el día tal como está planificado.');
 
-  $('alerts').innerHTML=A.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('');
+  // Hoy enseña como mucho los dos avisos más importantes; el resto queda detrás de "ver todos"
+  const RANK={bad:0,warn:1,info:2,ok:3};
+  A.sort((x,y)=>RANK[x.lv]-RANK[y.lv]);
+  const urgent=A.filter(a=>a.lv==='bad'||a.lv==='warn');
+  const shown=(urgent.length?urgent:A.filter(a=>a.lv==='ok')).slice(0,2);
+  const rest=A.filter(a=>!shown.includes(a)&&a.lv!=='ok');
+  $('alerts').innerHTML=shown.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('')+
+    (rest.length?'<li class="more"><details><summary>Ver '+rest.length+' aviso'+(rest.length>1?'s':'')+' más</summary><ul class="alerts">'+
+      rest.map(a=>'<li class="'+a.lv+'">'+a.t+'</li>').join('')+'</ul></details></li>':'');
 }
 
 function mealRow(m,opt){
