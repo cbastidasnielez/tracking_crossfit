@@ -689,23 +689,23 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
 <section class="panelpage" id="entrenos">
 
   <div class="card">
-    <h2>Fase 1 · Semanas 1–4</h2>
-    <p>No buscamos progresar en WODs todavía. El objetivo es <b>estabilizar peso y poner cimiento aeróbico</b>. Cambias un día de machaque por Z2 en bici: construye motor y encima recupera. Sigues yendo a clase casi todos los días.</p>
-    <small class="note">Asunción: duermes ~7-8 h de calidad decente. Si duermes 6 h o mal → quita un día duro más (pasa el sábado a Z2 suave o descanso). No recuperas lo que no duermes. El check-in diario vigila esto por ti.</small>
+    <h2>Semana real · CrossFit + Hyrox</h2>
+    <p>Box de <b>lunes a sábado</b>: CrossFit en clase cuatro o cinco días y Hyrox dos o tres, con doble sesión el lunes. Son 7 sesiones en 6 días, así que el <b>domingo es descanso de verdad</b> y el viernes se decide con el readiness del check-in.</p>
+    <small class="note">Asunción: duermes ~7-8 h de calidad decente. Si duermes 6 h o mal → el viernes va a la opción suave (o descanso) y el sábado sin apretar. No recuperas lo que no duermes. El check-in diario vigila esto por ti.</small>
   </div>
 
   <div class="card">
     <h3 style="margin-top:4px">Semana tipo <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--faint)">· hoy marcado en rojo</span></h3>
     <div class="week" id="weekgrid">
-      <div class="day" data-wd="1"><div class="dn">Lun</div><div class="body"><b>Clase</b>Pacing: fracciona desde ronda 1. <br>+ press estricto clusters 10-12'</div></div>
-      <div class="day" data-wd="2"><div class="dn">Mar</div><div class="body"><b>Clase</b>Normal</div></div>
-      <div class="day" data-wd="3"><div class="dn">Mié</div><div class="body"><b>Z2 bici</b><span id="z2-min-wk">35-40'</span> · ~140 bpm · resist. 15. <br>NO clase dura</div></div>
-      <div class="day" data-wd="4"><div class="dn">Jue</div><div class="body"><b>Clase</b>Normal</div></div>
-      <div class="day" data-wd="5"><div class="dn">Vie</div><div class="body"><b>Clase</b>Normal · pesaje AM</div></div>
-      <div class="day" data-wd="6"><div class="dn">Sáb</div><div class="body"><b>Clase</b>Partner WOD</div></div>
-      <div class="day rest" data-wd="0"><div class="dn">Dom</div><div class="body"><b>Z2 suave</b>30' o descanso total</div></div>
+      <div class="day" data-wd="1"><div class="dn">Lun</div><div class="body"><b>Doble sesión</b>AM: CrossFit en clase (+ press clusters 10-12' antes)<br>PM: Hyrox</div></div>
+      <div class="day" data-wd="2"><div class="dn">Mar</div><div class="body"><b>CrossFit</b>Clase</div></div>
+      <div class="day" data-wd="3"><div class="dn">Mié</div><div class="body"><b>Hyrox</b>Motor y estaciones</div></div>
+      <div class="day" data-wd="4"><div class="dn">Jue</div><div class="body"><b>CrossFit</b>Clase</div></div>
+      <div class="day" data-wd="5"><div class="dn">Vie</div><div class="body"><b>CrossFit o Hyrox</b>Según sensaciones · pesaje AM</div></div>
+      <div class="day" data-wd="6"><div class="dn">Sáb</div><div class="body"><b>CrossFit</b>Clase · partner WOD</div></div>
+      <div class="day rest" data-wd="0"><div class="dn">Dom</div><div class="body"><b>Descanso</b>Total, o 20-30' Z2 muy suave si el cuerpo lo pide</div></div>
     </div>
-    <small class="note">5 clases + 2 Z2 en vez de 6 clases a saco. Menos smashing mientras rellenas, base que empieza a subir.</small>
+    <small class="note">Viernes: readiness verde → lo que te apetezca a intensidad normal; ámbar → Hyrox a ritmo conversacional o CrossFit sin perseguir marca; rojo → descanso o movilidad. El Hyrox hace de trabajo de motor: ya no hay Z2 de miércoles.</small>
   </div>
 
   <div class="card">
@@ -1291,13 +1291,13 @@ const PHASES=[
   {n:3,name:'Específico & pico',cls:'f3',range:[18,26]}
 ];
 const DAYPLAN={
-  1:{n:'Clase + press estricto',d:'Clusters 5×2 al 85–90% (15–20" entre reps) además de la clase. Pacing: fracciona desde la ronda 1.'},
-  2:{n:'Clase',d:'Normal. Máquina al 80%, fracciona pronto, corre controlado.'},
-  3:{n:'Z2 en bici',d:'~140 bpm · resistencia 15 · NO clase dura. Al acabar, registra minutos, vatios y bpm.'},
-  4:{n:'Clase',d:'Normal.'},
-  5:{n:'Clase + pesaje AM',d:'Pesaje en ayunas y post-evacuación antes de desayunar. Después, clase normal.'},
-  6:{n:'Clase · partner WOD',d:'Comparte trabajo, no ritmo: fracciona según TU plan, no el de tu pareja.'},
-  0:{n:'Z2 suave o descanso',d:"30' muy suaves o descanso total. El día que construye la semana."}
+  1:{n:'Doble sesión · CrossFit AM + Hyrox PM',d:'Mañana: clase de CrossFit, con los clusters de press estricto (5×2 al 85–90%) antes si hay margen. Tarde: Hyrox. Come bien entre sesiones: es el día más largo de la semana.'},
+  2:{n:'CrossFit',d:'Clase. Máquina al 80%, fracciona pronto, corre controlado.'},
+  3:{n:'Hyrox',d:'Motor y estaciones. Ritmo sostenible en carrera; las estaciones son donde se pierde el tiempo, no la carrera.'},
+  4:{n:'CrossFit',d:'Clase normal.'},
+  5:{n:'CrossFit o Hyrox · pesaje AM',d:'Pesaje en ayunas y post-evacuación. Elige la sesión con el readiness: verde, lo que apetezca; ámbar, la opción más suave; rojo, descanso o movilidad.'},
+  6:{n:'CrossFit · partner WOD',d:'Comparte trabajo, no ritmo: fracciona según TU plan, no el de tu pareja.'},
+  0:{n:'Descanso',d:"Descanso total, o 20-30' de Z2 muy suave si el cuerpo lo pide. Tras 7 sesiones en 6 días, este día no se negocia."}
 };
 /* ---------------- dieta semanal cerrada v2 ---------------- */
 const WEEKMENU={
@@ -1370,7 +1370,6 @@ const WEEKMENU={
       {time:'22:45',icon:'🌙',name:'Pre-sueño',desc:'Magnesio bisglicinato + ashwagandha',locked:true}
     ]}
 };
-const Z2MIN={1:"35'",2:"40'",3:"45'",4:"50' (test)"};
 const DAYNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
 /* ---------------- batería de tests · atleta integral ----------------
@@ -1825,8 +1824,6 @@ function renderHoy(){
   }
   // timeline "AHORA" en Plan
   [1,2,3].forEach(n=>{const el=$('tlseg-'+n);if(el)el.dataset.now=(n===ph)?'1':'0'});
-  // Z2 minutos de la semana en Entrenos
-  const zm=$('z2-min-wk');if(zm)zm.textContent=(ph===1&&Z2MIN[wk])?Z2MIN[wk]:(ph===2?"45–60'":ph===3?"40–50'":"35–40'");
   // día actual en semana tipo
   const wd=new Date().getDay();
   document.querySelectorAll('#weekgrid .day').forEach(d=>d.classList.toggle('today',parseInt(d.dataset.wd)===wd));
@@ -1837,8 +1834,7 @@ function renderHoy(){
   $('hoy-session').textContent=dp.n;
   $('hoy-session-desc').textContent=dp.d;
   const phNote=$('hoy-session-phase');
-  if(ph===1&&wd===3)phNote.innerHTML='<b>Esta semana:</b> Z2 de '+(Z2MIN[wk]||"35'")+'.';
-  else if(ph===2)phNote.innerHTML='<b>Fase 2:</b> añade intervalos float 1×/semana y ve testeando benchmarks.';
+  if(ph===2)phNote.innerHTML='<b>Fase 2:</b> añade intervalos float 1×/semana y ve testeando benchmarks.';
   else if(ph===3)phNote.innerHTML='<b>Fase 3:</b> trabajo específico de competición; protege el sueño.';
   else phNote.textContent='';
 
@@ -1943,11 +1939,6 @@ function renderAlerts(wk,ph){
     if(!DB.salud.length)push('info','<b>Rutina de hombros sin estrenar.</b> 8-10 min después del WOD, 3×/semana: es lo que sostiene el press estricto, el snatch y los muscle-ups (Entrenos → Hombros blindados).');
     else if(sw>=SALUD_TARGET)push('ok','<b>Hombros blindados: '+sw+'/'+SALUD_TARGET+' esta semana.</b> Objetivo semanal cubierto.');
     else if(wd===5||wd===6||wd===0)push('warn','<b>Hombros blindados: '+sw+'/'+SALUD_TARGET+' esta semana.</b> Te falta'+(SALUD_TARGET-sw>1?'n '+(SALUD_TARGET-sw)+' sesiones':' 1 sesión')+' y la semana se acaba. Son 8-10 min después del WOD.');
-  }
-  // z2 semana
-  if(ph>=1&&ph<=3&&wd>=4){
-    const mon=iso(mondayOf(new Date()));
-    if(!DB.z2.some(z=>z.date>=mon))push('warn','<b>Aún sin Z2 esta semana.</b> El miércoles era el hueco; recupéralo el domingo como muy tarde.');
   }
   // sueño
   const cks=[...DB.checkin].sort(byDate);
