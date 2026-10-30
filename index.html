@@ -178,6 +178,10 @@ button.pill{border:none;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.nowline::before{animation:none}}
 .mealrow.now{background:var(--panel2);outline:2px solid var(--ink);outline-offset:-2px;border-radius:3px;margin:0 -8px;padding-left:10px;padding-right:10px}
 
+/* ---- recetario ---- */
+.recipe{border-top:1px solid var(--line);padding:8px 0}
+.recipe summary{cursor:pointer;font-weight:600;font-size:14px}
+.recipe .d{font-size:13px;color:var(--muted);margin-top:6px}
 /* ---- shopping list ---- */
 #card-shop label{cursor:pointer}
 #card-shop label:has(input:checked){text-decoration:line-through;color:var(--faint)}
@@ -495,7 +499,7 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
     <div class="meal">
       <div class="t">21:15 · Cena libre</div>
       <div class="n">Va variando según te apetezca, siempre sana: proteína + carbo + verdura.</div>
-      <div class="d">Ideas en el menú día a día de abajo: burrito bowl, tortilla de patatas, pollo con boniato, caballa con cuscús, hamburguesa casera, poke de salmón, revuelto de gambas.</div>
+      <div class="d">Ideas en el menú día a día y en el recetario de abajo: burrito bowl, tortilla de patatas, pollo con boniato, caballa con cuscús, hamburguesa casera, poke de salmón, revuelto de gambas.</div>
       <div class="kc">≈ 650–850 kcal</div>
     </div>
   </div>
@@ -515,6 +519,36 @@ tr.catrow td{background:var(--panel2);font-family:var(--display);text-transform:
       <tbody id="dieta-week-body"></tbody>
     </table></div>
     <small class="note">Toca una fila para ver ese día arriba.</small>
+  </div>
+
+  <div class="card" id="recetas">
+    <div class="eyebrow">Recetario</div>
+    <h2 style="margin:4px 0 6px">¿Sin idea de qué cocinar? Tira de aquí.</h2>
+    <small class="note" style="margin-top:0;margin-bottom:10px">Gramajes en crudo/seco, para una ración. En el almuerzo, sube la proteína a tus 200–250 g y en días duros el carbo a 120–150 g en seco. Toca una receta para ver cómo se hace.</small>
+    <h3>Almuerzos · proteína + carbo</h3>
+    <details class="recipe"><summary>🥟 Ñoquis a la boloñesa</summary><div class="d">300 g ñoquis frescos + 130 g carne picada de ternera 5% + 200 g tomate triturado con cebolla y zanahoria + 20 g parmesano + 10 ml AOVE, albahaca y orégano</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Sofrito de cebolla y zanahoria 8 min, dora la carne, añade tomate y deja 15-20 min a fuego bajo (se puede hacer el domingo). Ñoquis 2-3 min en agua hirviendo, cuando floten, a la salsa.</div></details>
+    <details class="recipe"><summary>🐟 Salmón al horno con patata y brócoli</summary><div class="d">180 g salmón fresco + 350 g patata en gajos + 200 g brócoli al ajillo + 15 ml AOVE, limón, ajo, pimentón</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Patata en gajos con AOVE y pimentón a 200 °C 25 min; añade el salmón con limón y 12-15 min más. Brócoli salteado con ajo 5 min.</div></details>
+    <details class="recipe"><summary>🍝 Pasta carbonara fit</summary><div class="d">110 g pasta integral + 120 g bacon de pavo (o taquitos de jamón) + 2 huevos M + 1 yema + 30 g parmesano + pimienta negra</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Bate huevos, yema y parmesano. Dora el bacon. Pasta escurrida a la sartén fuera del fuego, añade la mezcla y un chorro de agua de cocción, remueve hasta que emulsione. Sin nata.</div></details>
+    <details class="recipe"><summary>🍗 Pollo teriyaki con arroz y verduras al wok</summary><div class="d">130 g arroz basmati seco + 170 g pechuga de pollo + 200 g verduras (brócoli, pimiento, zanahoria, cebolleta) + 30 ml salsa teriyaki + 10 ml aceite de sésamo + sésamo</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Pollo en dados a fuego fuerte 5-6 min, fuera. Verduras al wok 4 min, vuelve el pollo, teriyaki 1 min hasta que glasee. Sésamo por encima.</div></details>
+    <details class="recipe"><summary>🥟 Ñoquis al pesto con pollo</summary><div class="d">300 g ñoquis frescos + 160 g pechuga de pollo a tiras + 30 g pesto genovés + 100 g tomates cherry + 20 g parmesano + piñones + albahaca</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Pollo a tiras a la plancha. Ñoquis cocidos (2-3 min) a la sartén con el pollo, cherry partidos y pesto fuera del fuego. Parmesano y piñones al servir.</div></details>
+    <details class="recipe"><summary>🍝 Pasta al pesto con pollo y cherry</summary><div class="d">120 g pasta integral + 170 g pechuga de pollo + 30 g pesto + 100 g tomates cherry + 20 g parmesano + rúcula</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Igual que los ñoquis al pesto, con pasta. La rúcula en crudo al final.</div></details>
+    <details class="recipe"><summary>🍗 Pollo asado al limón con patatas</summary><div class="d">200 g pollo + 300 g patata + 200 g verduras (calabacín, pimiento, cebolla) + 15 ml AOVE, limón, romero, ajo</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Todo en una bandeja con AOVE, limón, ajo y romero. 200 °C, 40-45 min, dando la vuelta a mitad.</div></details>
+    <h3>Cenas</h3>
+    <details class="recipe"><summary>🌯 Burrito bowl de pollo</summary><div class="d">70 g arroz basmati seco + 150 g pollo desmenuzado + 50 g maíz + 25 g queso rallado + 40 g guacamole + tomate, cilantro, lima, comino</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Pollo cocido o a la plancha y desmenuzado con comino y lima. Monta el bol: arroz, pollo, maíz, tomate, queso y guacamole.</div></details>
+    <details class="recipe"><summary>🍳 Tortilla de patatas con jamón</summary><div class="d">3 huevos M + 200 g patata + 40 g cebolla + 10 ml AOVE + 40 g jamón serrano + ensalada de tomate</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Patata y cebolla finas al microondas 6-7 min (o pochadas con poco aceite). Mezcla con el huevo batido, cuaja 3 min por lado. Jamón y ensalada al lado.</div></details>
+    <details class="recipe"><summary>🍗 Pollo asado con boniato</summary><div class="d">170 g pechuga de pollo + 250 g boniato + 150 g pimientos asados + 10 ml AOVE, pimentón, ajo, tomillo</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Boniato en cubos a 200 °C 25 min; el pollo con especias a la misma bandeja los últimos 18-20 min.</div></details>
+    <details class="recipe"><summary>🐟 Caballa a la plancha con cuscús</summary><div class="d">180 g caballa (o sardinas) + 80 g cuscús seco + 150 g pimientos asados + 10 ml AOVE, limón, perejil</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Cuscús con el mismo volumen de agua hirviendo y sal, tapado 5 min. Caballa a la plancha 3 min por lado, piel primero.</div></details>
+    <details class="recipe"><summary>🍔 Hamburguesa casera con patatas gajo</summary><div class="d">140 g carne picada de ternera 5% + 1 pan de hamburguesa + 30 g cheddar + lechuga, tomate, cebolla, pepinillo, mostaza + 250 g patata en gajos</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Patata a 200 °C 25-30 min. Hamburguesa formada a mano, solo sal y pimienta, 3 min por lado; el cheddar encima el último minuto.</div></details>
+    <details class="recipe"><summary>🐟 Poke bowl de salmón</summary><div class="d">90 g arroz basmati seco + 150 g salmón fresco en dados + 60 g aguacate + 60 g mango + pepino, zanahoria, cebolleta + soja, sésamo, lima</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Arroz cocido y templado. Salmón (congelado antes 48 h si es crudo) marinado 10 min en soja y lima. Monta con el resto en crudo.</div></details>
+    <details class="recipe"><summary>🍤 Revuelto de gambas con tostada</summary><div class="d">3 huevos M + 120 g gambas peladas + 80 g pan masa madre + 100 g espárragos trigueros + 10 ml AOVE</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Trigueros a la plancha. Gambas 1 min en la sartén, añade el huevo y remueve a fuego bajo hasta que cuaje jugoso. Sobre la tostada.</div></details>
+    <h3>Desayunos y pre-entrenos alternativos</h3>
+    <details class="recipe"><summary>🍳 Tostadas con huevo y aguacate</summary><div class="d">100 g pan de masa madre + 3 huevos M revueltos + 60 g aguacate + 1 naranja + café</div></details>
+    <details class="recipe"><summary>🥣 Porridge de avena, plátano y cacahuete</summary><div class="d">70 g avena + 250 ml leche semidesnatada + 1 plátano + 15 g crema de cacahuete + 10 g miel + canela</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Avena y leche al fuego 4-5 min removiendo. Encima plátano, cacahuete, miel y canela.</div></details>
+    <details class="recipe"><summary>🥞 Tortitas de avena y plátano</summary><div class="d">70 g avena + 1 plátano + 2 huevos M + 25 g whey + 100 ml leche + levadura y canela. Encima: 150 g yogur griego + 15 g miel + 15 g crema de cacahuete + frutos rojos</div><div class="d" style="margin-top:4px"><b>Cómo:</b> Todo a la batidora. Sartén antiadherente a fuego medio, 2 min por lado.</div></details>
+    <details class="recipe"><summary>🥑 Brunch: huevos, aguacate y masa madre</summary><div class="d">100 g pan masa madre + 3 huevos (poché o revueltos) + 70 g aguacate + 40 g jamón serrano + tomate y AOVE</div></details>
+    <details class="recipe"><summary>⚡ Bocadillo de pavo y queso</summary><div class="d">100 g pan masa madre + 80 g pavo + 30 g queso havarti + tomate + 1 plátano</div></details>
+    <details class="recipe"><summary>⚡ Arroz con atún</summary><div class="d">70 g arroz basmati seco + 1 lata de atún + tomate rallado + AOVE + 3 dátiles</div></details>
+    <details class="recipe"><summary>⚡ Tostadas de cacahuete y miel</summary><div class="d">80 g pan masa madre + 20 g crema de cacahuete + 10 g miel + 1 plátano + 200 g queso batido 0%</div></details>
   </div>
 
   <div class="card">
